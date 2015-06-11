@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <sstream>
 #include <map>
 #include "sieve_parser.tab.hh"
 
@@ -20,7 +21,7 @@ public:
     void scan_end();
     bool trace_scanning;
     
-    int parse( const std::string &f );
+    int parse_file( const std::string &f );
     std::string file;
     bool trace_parsing;
     
@@ -38,6 +39,8 @@ public:
 private:
     std::map<std::string, bool> _command_map;
     std::map<std::string, bool> _module_map;
+    
+    std::istringstream _input_stream;
 };
 
 #endif

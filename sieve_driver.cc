@@ -17,11 +17,12 @@ sieve_driver::sieve_driver()
     _command_map["addflag"] = 1;
     _command_map["removeflag"] = 1;
     _command_map["set"] = 1;
+    _command_map["vacation"] = 1;
 }
 
 sieve_driver::~sieve_driver() {}
 
-int sieve_driver::parse( const std::string &f ) {
+int sieve_driver::parse_file( const std::string &f ) {
     file = f;
     scan_begin();
     yy::sieve_parser parser( *this );

@@ -88,6 +88,11 @@ command :
                 exit( EXIT_FAILURE );
             }
             
+            if (!driver.supports_module("vacation") && ($1 == "vacation")) {
+                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require vacation");
+                exit( EXIT_FAILURE );
+            }
+            
             if ($1 == "reject" && $2 != 1) {
                 driver.error(@2, "Incorrect arguments to \"reject\" command.", "Syntax:   reject <reason: string>");
                 exit( EXIT_FAILURE );
@@ -135,6 +140,11 @@ command :
                 exit( EXIT_FAILURE );
             }
             
+            if ($1 == "vacation") {
+                driver.error(@2, "Incorrect arguments to \"vacation\" command.");
+                exit( EXIT_FAILURE );
+            }
+            
             if (!driver.valid_command($1)) {
                 driver.error(@1, "Unrecognized command \"" + $1 + "\".");
                 exit( EXIT_FAILURE );
@@ -173,7 +183,7 @@ test :
       IDENTIFIER test_list
         {
             if ($1 != "allof" && $1 != "anyof") {
-                driver.error("Invalid test \"" + $1 + "\": expected \"allof\" or \"anyof\"");
+                driver.error(@1, "Invalid test \"" + $1 + "\": expected \"allof\" or \"anyof\"");
                 exit( EXIT_FAILURE );
             }
         }
@@ -184,43 +194,43 @@ test :
             if ($1 == "address" || $1 == "envelope") {
                 if ($2.size() > 3) {
                     stream << "\"" << $1 << "\" test takes up to 3 tags, but " << $2.size() << " provided.";
-                    driver.error(stream.str());
+                    driver.error(@2, stream.str());
                     exit( EXIT_FAILURE );
                 }
             } else if ($1 == "header") {
                 if ($2.size() > 2) {
                     stream << "\"" << $1 << "\" test takes up to 2 tags, but " << $2.size() << " provided.";
-                    driver.error(stream.str()); 
+                    driver.error(@2, stream.str()); 
                     exit( EXIT_FAILURE );
                 }
             } else {
-                driver.error("Unrecognized test " + $1 + ": expected allof, anyof, address, envelope, header, size, not, exists, true, or false.");
+                driver.error(@1, "Unrecognized test " + $1 + ": expected allof, anyof, address, envelope, header, size, not, exists, true, or false.");
                 exit( EXIT_FAILURE );
             }
         }
     | IDENTIFIER TAG numeric
         {
             if ($1 != "size") {
-                driver.error("Invalid test " + $1 + ": expected \"size\"");
+                driver.error(@1, "Invalid test " + $1 + ": expected \"size\"");
                 exit( EXIT_FAILURE );
             }
             
             if ($2 != ":over" && $2 != ":under") {
-                driver.error("\"" + $2 + "\" is invalid for the size test. Expected :over, or :under." );
+                driver.error(@2, "\"" + $2 + "\" is invalid for the size test. Expected :over, or :under." );
                 exit( EXIT_FAILURE );
             }
         }
     | IDENTIFIER test
         {
             if ($1 != "not") {
-                driver.error("Invalid test " + $1 + ": expected \"not\"");
+                driver.error(@1, "Invalid test " + $1 + ": expected \"not\"");
                 exit( EXIT_FAILURE );
             }
         }
     | IDENTIFIER string_list
         {
             if ($1 != "exists") {
-                driver.error("Invalid test " + $1 + ": expected \"exists\"");
+                driver.error(@1, "Invalid test " + $1 + ": expected \"exists\"");
                 exit( EXIT_FAILURE );
             }
         } 

@@ -19,7 +19,13 @@ int sieve_driver::parse( const std::string &f ) {
     return result;
 }
 
-void sieve_driver::error( const yy::location &l, const std::string &m ) {
+void sieve_driver::error( const yy::location &l, const std::string &message, const std::string &suggestion ) {
+    error( l, message );
+    
+    std::cerr << std::endl << suggestion << std::endl;
+}
+
+void sieve_driver::error( const yy::location &l, const std::string &message ) {
     std::ifstream fin( file );
     std::string line;
     
@@ -30,7 +36,7 @@ void sieve_driver::error( const yy::location &l, const std::string &m ) {
             break;
     }
     
-    std::cerr << file << ": " << m << std::endl;
+    std::cerr << file << ": " << message << std::endl;
     std::cerr << "On line " << l.begin.line << ":" << std::endl;
     std::cerr << line << std::endl;
     std::cerr << std::string(l.begin.column - 1, ' ') << std::string(l.end.column - l.begin.column, '^') << std::endl;

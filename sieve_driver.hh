@@ -25,7 +25,8 @@ public:
     
     int result;
     
-    void error( const yy::location &l, const std::string &m );
+    void error( const yy::location &l, const std::string &message, const std::string &suggestion);
+    void error( const yy::location &l, const std::string &message );
     void error( const std::string &m ); 
 };
 

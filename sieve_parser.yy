@@ -54,8 +54,8 @@ class sieve_driver;
 %token <std::string> STRING_LITERAL "string literal"
 %token <int> NUMBER "number"
 
-%type <int> tag_list
 %type <int> arguments
+%type <std::vector<std::string>> tag_list
 %type <std::vector<std::string>> strings
 %type <std::vector<std::string>> string_list
 
@@ -89,27 +89,27 @@ command :
             }
             
             if ($1 == "reject" && $2 != 1) {
-                driver.error(@1, "Incorrect arguments to \"reject\" command.", "Syntax:   reject <reason: string>");
+                driver.error(@2, "Incorrect arguments to \"reject\" command.", "Syntax:   reject <reason: string>");
                 exit( EXIT_FAILURE );
             }
             
             if ($1 == "fileinto" && $2 != 1) {
-                driver.error(@1, "Incorrect arguments to \"fileinto\" command.", "Syntax:   fileinto <folder: string>");
+                driver.error(@2, "Incorrect arguments to \"fileinto\" command.", "Syntax:   fileinto <folder: string>");
                 exit( EXIT_FAILURE );
             }
             
             if ($1 == "redirect" && $2 != 1) {
-                driver.error(@1, "Incorrect arguments to \"redirect\" command.", "Syntax:   fileinto <address: string>");
+                driver.error(@2, "Incorrect arguments to \"redirect\" command.", "Syntax:   fileinto <address: string>");
                 exit( EXIT_FAILURE );
             }
             
             if ($1 == "keep") {
-                driver.error(@1, "Too many arguments passed to \"keep\" command.", "Syntax:   keep");
+                driver.error(@2, "Too many arguments passed to \"keep\" command.", "Syntax:   keep");
                 exit( EXIT_FAILURE );
             }
             
             if ($1 == "discard") {
-                driver.error(@1, "Too many arguments passed to \"discard\" command.", "Syntax:   discard");
+                driver.error(@2, "Too many arguments passed to \"discard\" command.", "Syntax:   discard");
                 exit( EXIT_FAILURE );
             }
             
@@ -121,17 +121,17 @@ command :
     | IDENTIFIER ";"
         {
             if ($1 == "reject") {
-                driver.error(@1, "Incorrect arguments to \"reject\" command.", "Syntax:   reject <reason: string>");
+                driver.error(@2, "Incorrect arguments to \"reject\" command.", "Syntax:   reject <reason: string>");
                 exit( EXIT_FAILURE );
             }
             
             if ($1 == "fileinto") {
-                driver.error(@1, "Incorrect arguments to \"fileinto\" command.", "Syntax:   fileinto <folder: string>");
+                driver.error(@2, "Incorrect arguments to \"fileinto\" command.", "Syntax:   fileinto <folder: string>");
                 exit( EXIT_FAILURE );
             }
             
             if ($1 == "redirect") {
-                driver.error(@1, "Incorrect arguments to \"redirect\" command.", "Syntax:   fileinto <address: string>");
+                driver.error(@2, "Incorrect arguments to \"redirect\" command.", "Syntax:   fileinto <address: string>");
                 exit( EXIT_FAILURE );
             }
             
@@ -182,14 +182,14 @@ test :
             std::ostringstream stream;
             
             if ($1 == "address" || $1 == "envelope") {
-                if ($2 > 3) {
-                    stream << "\"" << $1 << "\" test takes up to 3 tags, but " << $2 << " provided.";
+                if ($2.size() > 3) {
+                    stream << "\"" << $1 << "\" test takes up to 3 tags, but " << $2.size() << " provided.";
                     driver.error(stream.str());
                     exit( EXIT_FAILURE );
                 }
             } else if ($1 == "header") {
-                if ($2 > 2) {
-                    stream << "\"" << $1 << "\" test takes up to 2 tags, but " << $2 << " provided.";
+                if ($2.size() > 2) {
+                    stream << "\"" << $1 << "\" test takes up to 2 tags, but " << $2.size() << " provided.";
                     driver.error(stream.str()); 
                     exit( EXIT_FAILURE );
                 }
@@ -236,8 +236,8 @@ strings : STRING_LITERAL {$$ = std::vector<std::string>(1, $1); }
     | strings "," STRING_LITERAL { $1.push_back($3); $$ = $1; }
     ;
 
-tag_list : TAG { $$ = 1; }
-    | tag_list TAG { $$ = $1 + 1; }
+tag_list : TAG { $$ = std::vector<std::string>(1, $1); }
+    | tag_list TAG { $1.push_back($2); $$ = $1; }
     ;
 
 numeric : NUMBER

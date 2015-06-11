@@ -67,8 +67,7 @@ commands : command
     ;
 
 command : 
-      IDENTIFIER arguments block
-    | REQUIRE string_list ";"
+      REQUIRE string_list ";"
         {
             driver.set_required_modules( $2 );
         }
@@ -108,6 +107,16 @@ command :
                 driver.error(@1, "Too many arguments passed to \"keep\" command.", "Syntax:   keep");
                 exit( EXIT_FAILURE );
             }
+            
+            if ($1 == "discard") {
+                driver.error(@1, "Too many arguments passed to \"discard\" command.", "Syntax:   discard");
+                exit( EXIT_FAILURE );
+            }
+            
+            if (!driver.valid_command($1)) {
+                driver.error(@1, "Unrecognized command \"" + $1 + "\".");
+                exit( EXIT_FAILURE );
+            }
         }
     | IDENTIFIER ";"
         {
@@ -123,6 +132,11 @@ command :
             
             if ($1 == "redirect") {
                 driver.error(@1, "Incorrect arguments to \"redirect\" command.", "Syntax:   fileinto <address: string>");
+                exit( EXIT_FAILURE );
+            }
+            
+            if (!driver.valid_command($1)) {
+                driver.error(@1, "Unrecognized command \"" + $1 + "\".");
                 exit( EXIT_FAILURE );
             }
         }

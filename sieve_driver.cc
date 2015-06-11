@@ -5,7 +5,19 @@
 #include "sieve_parser.tab.hh"
 
 sieve_driver::sieve_driver()
-    : trace_scanning( false ), trace_parsing( false ), _module_map() {}
+    : trace_scanning( false ), trace_parsing( false ), _module_map(), _command_map() {
+    
+    _command_map["keep"] = 1;
+    _command_map["discard"] = 1;
+    _command_map["redirect"] = 1;
+    _command_map["reject"] = 1;
+    _command_map["fileinto"] = 1;
+    _command_map["stop"] = 1;
+    _command_map["setflag"] = 1;
+    _command_map["addflag"] = 1;
+    _command_map["removeflag"] = 1;
+    _command_map["set"] = 1;
+}
 
 sieve_driver::~sieve_driver() {}
 
@@ -55,4 +67,8 @@ void sieve_driver::set_required_modules(std::vector<std::string> &modules) {
 
 bool sieve_driver::supports_module(const std::string &mod) {
     return _module_map[mod];
+}
+
+bool sieve_driver::valid_command(const std::string &command) {
+    return _command_map[command];
 }

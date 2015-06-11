@@ -29,11 +29,14 @@ public:
     void set_required_modules(std::vector<std::string> &modules);
     bool supports_module(const std::string &mod);
     
+    bool valid_command(const std::string &command);
+    
     void error( const yy::location &l, const std::string &message, const std::string &suggestion);
     void error( const yy::location &l, const std::string &message );
     void error( const std::string &m ); 
 
 private:
+    std::map<std::string, bool> _command_map;
     std::map<std::string, bool> _module_map;
 };
 

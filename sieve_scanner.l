@@ -17,10 +17,11 @@ static yy::location loc;
 
 comment   #.*\n
 id        [a-zA-Z][a-zA-Z]*
-int       [0-9]+
+int       [0-9]+/[KGM]?
+quant     [KGM]?
 blank     [ \t]
 string    \"(\.|[^\"])*\"
-tag       :(is|matches|contains|localpart|domain|all|over|under|lower)
+tag       :[a-zA-Z][a-zA-Z]*
 
 %{
 #define YY_USER_ACTION  loc.columns (yyleng);
@@ -55,13 +56,14 @@ tag       :(is|matches|contains|localpart|domain|all|over|under|lower)
 
 {string}    return yy::sieve_parser::make_STRING_LITERAL( yytext, loc );
 
-{int}       {
-                errno = 0;
-                long n = strtol( yytext, NULL, 10 );
-                if (! (INT_MIN <= n && n <= INT_MAX && errno != ERANGE))
-                    driver.error (loc, "integer is out of range");
-                return yy::sieve_parser::make_NUMBER( n, loc );
-            }
+[0-9]+/[KGM]?   {
+                    errno = 0;
+                    long n = strtol( yytext, NULL, 10 );
+                    if (! (INT_MIN <= n && n <= INT_MAX && errno != ERANGE))
+                        driver.error (loc, "integer is out of range");
+                    return yy::sieve_parser::make_NUMBER( n, loc );
+                }
+[KGM]?      return yy::sieve_parser::make_QUANTIFIER( loc );
 {id}        return yy::sieve_parser::make_IDENTIFIER( yytext, loc );
 {tag}       return yy::sieve_parser::make_TAG( yytext, loc );
 

@@ -5,7 +5,7 @@
 #include "sieve_parser.tab.hh"
 
 sieve_driver::sieve_driver()
-    : trace_scanning( false ), trace_parsing( false ) {}
+    : trace_scanning( false ), trace_parsing( false ), _module_map() {}
 
 sieve_driver::~sieve_driver() {}
 
@@ -44,4 +44,15 @@ void sieve_driver::error( const yy::location &l, const std::string &message ) {
 
 void sieve_driver::error( const std::string &m ) {
     std::cerr << m << std::endl;
+}
+
+void sieve_driver::set_required_modules(std::vector<std::string> &modules) {
+    for (std::vector<std::string>::const_iterator i = modules.begin(); i < modules.end(); ++i) {
+        std::string str = *i;
+        _module_map.insert(std::pair<std::string, bool>(str.substr(1, str.size() - 2), true));
+    }
+}
+
+bool sieve_driver::supports_module(const std::string &mod) {
+    return _module_map[mod];
 }

@@ -46,6 +46,7 @@ class sieve_driver;
     COMMA         ","
     TRUE          "true"
     FALSE         "false"
+    QUANTIFIER    "quantifier"
   ;
 
 %token <std::string> IDENTIFIER "identifier"
@@ -68,14 +69,63 @@ commands : command
 command : 
       IDENTIFIER arguments block
     | REQUIRE string_list ";"
+        {
+            driver.set_required_modules( $2 );
+        }
     | IDENTIFIER arguments ";"
         {
-            if ($1 != "keep" && $1 != "discard" && $1 != "redirect" && $1 != "reject" && $1 != "fileinto") {
-                driver.error(@1, "Unknown command \"" + $1 + "\"");
+            if (!driver.supports_module("imap4flags") && ($1 == "addflag" || $1 == "setflag" || $1 == "removeflag" || $1 == "hasflag")) {
+                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require imap4flags");
+                exit( EXIT_FAILURE );
+            }
+            
+            if (!driver.supports_module("variables") && ($1 == "set")) {
+                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require variables");
+                exit( EXIT_FAILURE );
+            }
+            
+            if (!driver.supports_module("fileinto") && ($1 == "fileinto")) {
+                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require fileinto");
+                exit( EXIT_FAILURE );
+            }
+            
+            if ($1 == "reject" && $2 != 1) {
+                driver.error(@1, "Incorrect arguments to \"reject\" command.", "Syntax:   reject <reason: string>");
+                exit( EXIT_FAILURE );
+            }
+            
+            if ($1 == "fileinto" && $2 != 1) {
+                driver.error(@1, "Incorrect arguments to \"fileinto\" command.", "Syntax:   fileinto <folder: string>");
+                exit( EXIT_FAILURE );
+            }
+            
+            if ($1 == "redirect" && $2 != 1) {
+                driver.error(@1, "Incorrect arguments to \"redirect\" command.", "Syntax:   fileinto <address: string>");
+                exit( EXIT_FAILURE );
+            }
+            
+            if ($1 == "keep") {
+                driver.error(@1, "Too many arguments passed to \"keep\" command.", "Syntax:   keep");
                 exit( EXIT_FAILURE );
             }
         }
     | IDENTIFIER ";"
+        {
+            if ($1 == "reject") {
+                driver.error(@1, "Incorrect arguments to \"reject\" command.", "Syntax:   reject <reason: string>");
+                exit( EXIT_FAILURE );
+            }
+            
+            if ($1 == "fileinto") {
+                driver.error(@1, "Incorrect arguments to \"fileinto\" command.", "Syntax:   fileinto <folder: string>");
+                exit( EXIT_FAILURE );
+            }
+            
+            if ($1 == "redirect") {
+                driver.error(@1, "Incorrect arguments to \"redirect\" command.", "Syntax:   fileinto <address: string>");
+                exit( EXIT_FAILURE );
+            }
+        }
     | if_flow
     | if_flow ELSE block
     ;
@@ -94,7 +144,7 @@ arguments : argument { $$ = 1; }
     ;
 
 argument : string_list
-    | NUMBER
+    | numeric
     | TAG
     ;
 
@@ -134,7 +184,7 @@ test :
                 exit( EXIT_FAILURE );
             }
         }
-    | IDENTIFIER TAG NUMBER
+    | IDENTIFIER TAG numeric
         {
             if ($1 != "size") {
                 driver.error("Invalid test " + $1 + ": expected \"size\"");
@@ -174,6 +224,10 @@ strings : STRING_LITERAL {$$ = std::vector<std::string>(1, $1); }
 
 tag_list : TAG { $$ = 1; }
     | tag_list TAG { $$ = $1 + 1; }
+    ;
+
+numeric : NUMBER
+    | NUMBER QUANTIFIER
     ;
 
 %%

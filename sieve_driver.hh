@@ -1,6 +1,7 @@
 #ifndef __SIEVE_DRIVER_HH__
 #define __SIEVE_DRIVER_HH__
 
+#include <vector>
 #include <string>
 #include <map>
 #include "sieve_parser.tab.hh"
@@ -25,9 +26,15 @@ public:
     
     int result;
     
+    void set_required_modules(std::vector<std::string> &modules);
+    bool supports_module(const std::string &mod);
+    
     void error( const yy::location &l, const std::string &message, const std::string &suggestion);
     void error( const yy::location &l, const std::string &message );
     void error( const std::string &m ); 
+
+private:
+    std::map<std::string, bool> _module_map;
 };
 
 #endif

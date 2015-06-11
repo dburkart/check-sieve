@@ -15,7 +15,7 @@ static yy::location loc;
 
 %option noyywrap nounput batch debug noinput
 
-comment   #.*\n
+comment   #.*$
 id        [a-zA-Z][a-zA-Z]*
 int       [0-9]+/[KGM]?
 quant     [KGM]?
@@ -36,7 +36,7 @@ tag       :[a-zA-Z][a-zA-Z]*
 {blank}+    loc.step();
 [\n]+       loc.lines(yyleng); loc.step();
 
-{comment}   ;
+{comment}   loc.step();
 
 ";"         return yy::sieve_parser::make_SEMICOLON( loc );
 "["         return yy::sieve_parser::make_LBRACKET( loc );

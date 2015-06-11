@@ -1025,10 +1025,12 @@ YY_RULE_SETUP
 loc.lines(yyleng); loc.step();
 	YY_BREAK
 case 3:
-/* rule 3 can match eol */
+*yy_cp = (yy_hold_char); /* undo effects of setting up yytext */
+(yy_c_buf_p) = yy_cp -= 1;
+YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 #line 39 "sieve_scanner.l"
-;
+loc.step();
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
@@ -1146,7 +1148,7 @@ YY_RULE_SETUP
 #line 72 "sieve_scanner.l"
 ECHO;
 	YY_BREAK
-#line 1150 "lex.yy.c"
+#line 1152 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{

@@ -10,6 +10,7 @@
 %code requires {
 #include <string>
 #include <sstream>
+#include <vector>
 class sieve_driver;
 }
 
@@ -54,8 +55,8 @@ class sieve_driver;
 
 %type <int> tag_list
 %type <int> arguments
-
-%printer { yyoutput << $$; } <*>;
+%type <std::vector<std::string>> strings
+%type <std::vector<std::string>> string_list
 
 %%
 %start commands;
@@ -163,12 +164,12 @@ test :
     | "false"
     ;
 
-string_list : STRING_LITERAL
-    | "[" strings "]"
+string_list : STRING_LITERAL {$$ = std::vector<std::string>(1, $1); }
+    | "[" strings "]" { $$ = $2; }
     ;
 
-strings : STRING_LITERAL
-    | strings "," STRING_LITERAL
+strings : STRING_LITERAL {$$ = std::vector<std::string>(1, $1); }
+    | strings "," STRING_LITERAL { $1.push_back($3); $$ = $1; }
     ;
 
 tag_list : TAG { $$ = 1; }

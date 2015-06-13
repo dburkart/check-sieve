@@ -5,16 +5,17 @@
 
 %define api.token.constructor
 %define api.value.type variant
-%define parse.assert
+
+%lex-param {yyscan_t scanner} {sieve_driver &driver}
+%parse-param {yyscan_t scanner} {sieve_driver &driver}
 
 %code requires {
 #include <string>
 #include <sstream>
 #include <vector>
 class sieve_driver;
+typedef void* yyscan_t;
 }
-
-%param { sieve_driver &driver }
 
 %locations
 %initial-action {
@@ -26,6 +27,7 @@ class sieve_driver;
 
 %code {
 #include "sieve_driver.hh"
+#include "sieve_scanner.h"
 }
 
 %define api.token.prefix {TOK_}

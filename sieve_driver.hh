@@ -8,7 +8,7 @@
 #include "sieve_parser.tab.hh"
 
 #define YY_DECL \
-    yy::sieve_parser::symbol_type yylex( sieve_driver &driver )
+    yy::sieve_parser::symbol_type yylex( yyscan_t yyscanner, sieve_driver &driver )
 
 YY_DECL;
 
@@ -41,6 +41,7 @@ private:
     std::map<std::string, bool> _module_map;
     
     std::istringstream _input_stream;
+    yyscan_t yyscanner;
 };
 
 #endif

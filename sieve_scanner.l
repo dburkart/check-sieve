@@ -4,16 +4,13 @@
 #include <cstdlib>
 #include <string>
 
-#include "sieve_driver.hh"
 #include "sieve_parser.tab.hh"
-
-#undef yywrap
-#define yywrap() 1
+#include "sieve_driver.hh"
 
 static yy::location loc;
 %}
 
-%option noyywrap nounput batch debug noinput
+%option nounput batch debug noinput reentrant
 
 comment   #.*$
 id        [a-zA-Z][a-zA-Z]*
@@ -71,16 +68,25 @@ tag       :[a-zA-Z][a-zA-Z]*
 <<EOF>>     return yy::sieve_parser::make_END( loc );
 %%
 
+int yywrap(yyscan_t yyscanner)
+{
+    return 1;
+}
+
+
 void sieve_driver::scan_begin() {
-    yy_flex_debug = trace_scanning;
-    if (file.empty() || file == "-")
-        yyin = stdin;
-    else if (!(yyin = fopen(file.c_str(), "r"))) {
+    struct yyguts_t * yyg;
+    
+    yylex_init(&yyscanner);
+    yyg = (struct yyguts_t*)yyscanner;
+    loc = yy::location();
+    
+    if (!(yyin = fopen(file.c_str(), "r"))) {
         error( "cannot open " + file + ": " + strerror(errno) );
         exit( EXIT_FAILURE );
     }
 }
 
 void sieve_driver::scan_end() {
-    fclose(yyin);
+    yylex_destroy(yyscanner);
 }

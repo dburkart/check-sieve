@@ -40,23 +40,24 @@
 #ifndef YY_YY_SIEVE_PARSER_TAB_HH_INCLUDED
 # define YY_YY_SIEVE_PARSER_TAB_HH_INCLUDED
 // //                    "%code requires" blocks.
-#line 10 "sieve_parser.yy" // lalr1.cc:387
+#line 12 "sieve_parser.yy" // lalr1.cc:387
 
 #include <string>
 #include <sstream>
 #include <vector>
 class sieve_driver;
+typedef void* yyscan_t;
 
-#line 51 "sieve_parser.tab.hh" // lalr1.cc:387
+#line 52 "sieve_parser.tab.hh" // lalr1.cc:387
 
-# include <cassert>
+
 # include <vector>
 # include <iostream>
 # include <stdexcept>
 # include <string>
 # include "stack.hh"
 # include "location.hh"
-#include <typeinfo>
+
 #ifndef YYASSERT
 # include <cassert>
 # define YYASSERT assert
@@ -123,7 +124,7 @@ class sieve_driver;
 
 
 namespace yy {
-#line 127 "sieve_parser.tab.hh" // lalr1.cc:387
+#line 128 "sieve_parser.tab.hh" // lalr1.cc:387
 
 
 
@@ -140,13 +141,11 @@ namespace yy {
 
     /// Empty construction.
     variant ()
-      : yytname_ (YY_NULLPTR)
     {}
 
     /// Construct and fill.
     template <typename T>
     variant (const T& t)
-      : yytname_ (typeid (T).name ())
     {
       YYASSERT (sizeof (T) <= S);
       new (yyas_<T> ()) T (t);
@@ -154,18 +153,13 @@ namespace yy {
 
     /// Destruction, allowed only if empty.
     ~variant ()
-    {
-      YYASSERT (!yytname_);
-    }
+    {}
 
     /// Instantiate an empty \a T in here.
     template <typename T>
     T&
     build ()
     {
-      YYASSERT (!yytname_);
-      YYASSERT (sizeof (T) <= S);
-      yytname_ = typeid (T).name ();
       return *new (yyas_<T> ()) T;
     }
 
@@ -174,9 +168,6 @@ namespace yy {
     T&
     build (const T& t)
     {
-      YYASSERT (!yytname_);
-      YYASSERT (sizeof (T) <= S);
-      yytname_ = typeid (T).name ();
       return *new (yyas_<T> ()) T (t);
     }
 
@@ -185,8 +176,6 @@ namespace yy {
     T&
     as ()
     {
-      YYASSERT (yytname_ == typeid (T).name ());
-      YYASSERT (sizeof (T) <= S);
       return *yyas_<T> ();
     }
 
@@ -195,8 +184,6 @@ namespace yy {
     const T&
     as () const
     {
-      YYASSERT (yytname_ == typeid (T).name ());
-      YYASSERT (sizeof (T) <= S);
       return *yyas_<T> ();
     }
 
@@ -212,8 +199,6 @@ namespace yy {
     void
     swap (self_type& other)
     {
-      YYASSERT (yytname_);
-      YYASSERT (yytname_ == other.yytname_);
       std::swap (as<T> (), other.as<T> ());
     }
 
@@ -243,7 +228,6 @@ namespace yy {
     destroy ()
     {
       as<T> ().~T ();
-      yytname_ = YY_NULLPTR;
     }
 
   private:
@@ -276,9 +260,6 @@ namespace yy {
       /// A buffer large enough to store any of the semantic values.
       char yyraw[S];
     } yybuffer_;
-
-    /// Whether the content is built: if defined, the name of the stored type.
-    const char *yytname_;
   };
 
 
@@ -530,7 +511,7 @@ namespace yy {
 
 
     /// Build a parser object.
-    sieve_parser (sieve_driver &driver_yyarg);
+    sieve_parser (yyscan_t scanner_yyarg, sieve_driver &driver_yyarg);
     virtual ~sieve_parser ();
 
     /// Parse.
@@ -634,7 +615,7 @@ namespace yy {
     static const char* const yytname_[];
 #if YYDEBUG
   // YYRLINE[YYN] -- Source line where rule number YYN was defined.
-  static const unsigned char yyrline_[];
+  static const unsigned short int yyrline_[];
     /// Report on the debug stream that the rule \a r is going to be reduced.
     virtual void yy_reduce_print_ (int r);
     /// Print the state stack on the debug stream.
@@ -739,6 +720,7 @@ namespace yy {
 
 
     // User arguments.
+    yyscan_t scanner;
     sieve_driver &driver;
   };
 
@@ -1148,7 +1130,7 @@ namespace yy {
 
 
 } // yy
-#line 1152 "sieve_parser.tab.hh" // lalr1.cc:387
+#line 1134 "sieve_parser.tab.hh" // lalr1.cc:387
 
 
 

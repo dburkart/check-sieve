@@ -25,7 +25,7 @@ sieve_driver::~sieve_driver() {}
 int sieve_driver::parse_file( const std::string &f ) {
     file = f;
     scan_begin();
-    yy::sieve_parser parser( *this );
+    yy::sieve_parser parser( yyscanner, *this );
     parser.set_debug_level( trace_parsing );
     result = parser.parse();
     scan_end();

@@ -1,12 +1,24 @@
 #include <string>
 #include <fstream>
+#include <sstream>
 
 #include "sieve_driver.hh"
 #include "sieve_parser.tab.hh"
 
 sieve_driver::sieve_driver()
-    : trace_scanning( false ), trace_parsing( false ), _module_map(), _command_map() {
-    
+    : trace_scanning( false ), trace_parsing( false ), _module_map(), _command_map(), _suppress_output(false) {
+    init_maps();
+}
+
+sieve_driver::sieve_driver( bool quiet )
+    : trace_scanning( false ), trace_parsing( false ), _module_map(), _command_map(), _suppress_output(false) {
+    init_maps();
+    _suppress_output = quiet;
+}
+
+sieve_driver::~sieve_driver() {}
+
+void sieve_driver::init_maps() {
     _command_map["keep"] = 1;
     _command_map["discard"] = 1;
     _command_map["redirect"] = 1;
@@ -20,11 +32,23 @@ sieve_driver::sieve_driver()
     _command_map["vacation"] = 1;
 }
 
-sieve_driver::~sieve_driver() {}
-
 int sieve_driver::parse_file( const std::string &f ) {
     file = f;
-    scan_begin();
+    std::ifstream fin( file );
+    std::string line;
+    std::string buffer;
+    
+    for (int i = 1; !fin.eof(); i++) {
+        getline(fin, line);
+        buffer += line + "\n";
+    }
+    
+    return parse_string(buffer);
+}
+
+int sieve_driver::parse_string( const std::string &sieve ) {
+    sieve_string = sieve + "\n";
+    scan_begin( sieve_string );
     yy::sieve_parser parser( yyscanner, *this );
     parser.set_debug_level( trace_parsing );
     result.status = parser.parse();
@@ -35,27 +59,29 @@ int sieve_driver::parse_file( const std::string &f ) {
 void sieve_driver::error( const yy::location &l, const std::string &message, const std::string &suggestion ) {
     error( l, message );
     
-    std::cerr << std::endl << suggestion << std::endl;
+    if (!_suppress_output) {
+        std::cerr << std::endl << suggestion << std::endl;
+    }
 }
 
 void sieve_driver::error( const yy::location &l, const std::string &message ) {
-    std::ifstream fin( file );
+    std::istringstream f( sieve_string );
     std::string line;
     
-    result.location = l;
-    result.error = message;
-    
-    for (int i = 1; !fin.eof(); i++) {
-        getline(fin, line);
-        
+    for (int i = 1; getline(f, line, '\n'); i++) {
         if (i == l.begin.line)
             break;
     }
-    
-    std::cerr << file << ": " << message << std::endl;
-    std::cerr << "On line " << l.begin.line << ":" << std::endl;
-    std::cerr << line << std::endl;
-    std::cerr << std::string(l.begin.column - 1, ' ') << std::string(l.end.column - l.begin.column, '^') << std::endl;
+ 
+    result.location = l;
+    result.error = message;
+
+    if (!_suppress_output) {
+        std::cerr << message << std::endl;
+        std::cerr << "On line " << l.begin.line << ":" << std::endl;
+        std::cerr << line << std::endl;
+        std::cerr << std::string(l.begin.column - 1, ' ') << std::string(l.end.column - l.begin.column, '^') << std::endl;
+    }
 }
 
 void sieve_driver::error( const std::string &m ) {
@@ -80,5 +106,11 @@ bool sieve_driver::valid_command(const std::string &command) {
 struct parse_result sieve_parse_file( const char *filename ) {
     sieve_driver driver;
     driver.parse_file(filename);
+    return driver.result;
+}
+
+struct parse_result sieve_parse_string( const char *sieve ) {
+    sieve_driver driver;
+    driver.parse_string(sieve);
     return driver.result;
 }

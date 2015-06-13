@@ -87,6 +87,16 @@ void sieve_driver::scan_begin() {
     }
 }
 
+void sieve_driver::scan_begin(const std::string &sieve) {
+    struct yyguts_t *yyg;
+    
+    yylex_init(&yyscanner);
+    yyg = (struct yyguts_t*)yyscanner;
+    loc = yy::location();
+    
+    yy_scan_string(sieve.c_str(), yyscanner);
+}
+
 void sieve_driver::scan_end() {
     yylex_destroy(yyscanner);
 }

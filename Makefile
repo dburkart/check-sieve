@@ -18,5 +18,13 @@ gen/sieve_parser.tab.cc: src/sieve_parser.yy
 gen/sieve_scanner.c: src/sieve_scanner.l
 	$(LEX) --header-file=gen/sieve_scanner.h --outfile gen/sieve_scanner.c src/sieve_scanner.l
 
+checksieve.so: src/python.cc
+	python test/setup.py build_ext -i
+
+test: FORCE libchecksieve.a checksieve.so
+	python -m unittest discover -s test -p '*_test.py'
+
+FORCE:
+
 clean:
-	rm *.o gen/*
+	rm *.o gen/* checksieve.so libchecksieve.a check-sieve

@@ -16,14 +16,18 @@ YY_DECL;
 class sieve_driver {
 public:
     sieve_driver();
+    sieve_driver(bool quiet);
     virtual ~sieve_driver();
     
     void scan_begin();
+    void scan_begin( const std::string &sieve);
     void scan_end();
     bool trace_scanning;
     
     int parse_file( const std::string &f );
+    int parse_string( const std::string &sieve );
     std::string file;
+    std::string sieve_string;
     bool trace_parsing;
     
     struct parse_result result;
@@ -31,6 +35,7 @@ public:
     void set_required_modules(std::vector<std::string> &modules);
     bool supports_module(const std::string &mod);
     
+    void init_maps();
     bool valid_command(const std::string &command);
     
     void error( const yy::location &l, const std::string &message, const std::string &suggestion);
@@ -43,6 +48,7 @@ private:
     
     std::istringstream _input_stream;
     yyscan_t yyscanner;
+    bool _suppress_output;
 };
 
 #endif

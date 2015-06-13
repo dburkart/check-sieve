@@ -64,7 +64,8 @@ typedef void* yyscan_t;
 %%
 %start commands;
 
-commands : command
+commands : END
+    | command
     | commands command
     ;
 

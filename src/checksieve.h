@@ -15,5 +15,6 @@ struct parse_result {
 };
 
 struct parse_result sieve_parse_file( const char *filename );
+struct parse_result sieve_parse_string( const char *sieve );
 
 #endif

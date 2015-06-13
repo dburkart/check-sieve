@@ -6,6 +6,7 @@
 #include <sstream>
 #include <map>
 #include "sieve_parser.tab.hh"
+#include "checksieve.h"
 
 #define YY_DECL \
     yy::sieve_parser::symbol_type yylex( yyscan_t yyscanner, sieve_driver &driver )
@@ -25,7 +26,7 @@ public:
     std::string file;
     bool trace_parsing;
     
-    int result;
+    struct parse_result result;
     
     void set_required_modules(std::vector<std::string> &modules);
     bool supports_module(const std::string &mod);

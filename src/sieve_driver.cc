@@ -27,9 +27,9 @@ int sieve_driver::parse_file( const std::string &f ) {
     scan_begin();
     yy::sieve_parser parser( yyscanner, *this );
     parser.set_debug_level( trace_parsing );
-    result = parser.parse();
+    result.status = parser.parse();
     scan_end();
-    return result;
+    return result.status;
 }
 
 void sieve_driver::error( const yy::location &l, const std::string &message, const std::string &suggestion ) {
@@ -41,6 +41,9 @@ void sieve_driver::error( const yy::location &l, const std::string &message, con
 void sieve_driver::error( const yy::location &l, const std::string &message ) {
     std::ifstream fin( file );
     std::string line;
+    
+    result.location = l;
+    result.error = message;
     
     for (int i = 1; !fin.eof(); i++) {
         getline(fin, line);
@@ -72,4 +75,10 @@ bool sieve_driver::supports_module(const std::string &mod) {
 
 bool sieve_driver::valid_command(const std::string &command) {
     return _command_map[command];
+}
+
+struct parse_result sieve_parse_file( const char *filename ) {
+    sieve_driver driver;
+    driver.parse_file(filename);
+    return driver.result;
 }

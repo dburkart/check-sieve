@@ -2,11 +2,15 @@ LEX = flex -I
 YACC = bison -d
 
 CC = clang++ -DYYDEBUG=1
-CFLAGS = -Igen -Isrc
+CFLAGS = -Igen/ -Isrc/
 
-check-sieve: gen/sieve_parser.tab.cc gen/sieve_scanner.c src/sieve_driver.cc src/sieve.cc
-	$(CC) $(CFLAGS) -c gen/sieve_scanner.c gen/sieve_parser.tab.cc src/sieve_driver.cc src/sieve.cc
-	$(CC) $(CFLAGS) -o check-sieve sieve_scanner.o sieve_parser.tab.o sieve_driver.o sieve.o
+check-sieve: libchecksieve.a src/sieve.cc
+	$(CC) $(CFLAGS) -c src/sieve.cc
+	$(CC) $(CFLAGS) libchecksieve.a sieve.o -o check-sieve
+
+libchecksieve.a: gen/sieve_parser.tab.cc gen/sieve_scanner.c src/sieve_driver.cc
+	$(CC) $(CFLAGS) -c gen/sieve_parser.tab.cc gen/sieve_scanner.c src/sieve_driver.cc
+	ar rc libchecksieve.a sieve_scanner.o sieve_parser.tab.o sieve_driver.o
 
 gen/sieve_parser.tab.cc: src/sieve_parser.yy
 	$(YACC) --file-prefix=gen/sieve_parser src/sieve_parser.yy

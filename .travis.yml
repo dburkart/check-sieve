@@ -2,13 +2,10 @@ language: cpp
 compiler: clang
 
 before_install:
-    - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get update && sudo apt-get install -y llvm-3.4 llvm-3.4-dev; fi
+    - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get update && sudo apt-get install -y llvm-3.4 llvm-3.4-dev bison flex; fi
     - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install bison flex; fi
 
-script: 
-    - make
-    - make test
-    
+script: make test
 
 os:
     - linux

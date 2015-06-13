@@ -34,7 +34,7 @@ void sieve_driver::init_maps() {
 
 int sieve_driver::parse_file( const std::string &f ) {
     file = f;
-    std::ifstream fin( file );
+    std::ifstream fin( file.c_str() );
     std::string line;
     std::string buffer;
     

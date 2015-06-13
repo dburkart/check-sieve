@@ -31,18 +31,18 @@
 // version 2.2 of Bison.
 
 /**
- ** \file stack.hh
+ ** \file gen/stack.hh
  ** Define the yy::stack class.
  */
 
-#ifndef YY_YY_STACK_HH_INCLUDED
-# define YY_YY_STACK_HH_INCLUDED
+#ifndef YY_YY_GEN_STACK_HH_INCLUDED
+# define YY_YY_GEN_STACK_HH_INCLUDED
 
 # include <vector>
 
 
 namespace yy {
-#line 46 "stack.hh" // stack.hh:152
+#line 46 "gen/stack.hh" // stack.hh:152
   template <class T, class S = std::vector<T> >
   class stack
   {
@@ -153,6 +153,6 @@ namespace yy {
 
 
 } // yy
-#line 157 "stack.hh" // stack.hh:152
+#line 157 "gen/stack.hh" // stack.hh:152
 
-#endif // !YY_YY_STACK_HH_INCLUDED
+#endif // !YY_YY_GEN_STACK_HH_INCLUDED

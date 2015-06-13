@@ -2,7 +2,9 @@
 #define yyHEADER_H 1
 #define yyIN_HEADER 1
 
-#line 6 "sieve_scanner.h"
+#line 6 "gen/sieve_scanner.h"
+
+#line 8 "gen/sieve_scanner.h"
 
 #define  YY_INT_ALIGNED short int
 
@@ -441,9 +443,9 @@ extern int yylex (yyscan_t yyscanner);
 #undef YY_DECL
 #endif
 
-#line 69 "sieve_scanner.l"
+#line 69 "src/sieve_scanner.l"
 
 
-#line 448 "sieve_scanner.h"
+#line 450 "gen/sieve_scanner.h"
 #undef yyIN_HEADER
 #endif /* yyHEADER_H */

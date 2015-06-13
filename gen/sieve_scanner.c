@@ -1,5 +1,6 @@
+#line 2 "gen/sieve_scanner.c"
 
-#line 3 "lex.yy.c"
+#line 4 "gen/sieve_scanner.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -580,8 +581,8 @@ goto find_rule; \
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "sieve_scanner.l"
-#line 2 "sieve_scanner.l"
+#line 1 "src/sieve_scanner.l"
+#line 2 "src/sieve_scanner.l"
 #include <cerrno>
 #include <climits>
 #include <cstdlib>
@@ -592,9 +593,9 @@ goto find_rule; \
 
 static yy::location loc;
 #define YY_NO_INPUT 1
-#line 24 "sieve_scanner.l"
+#line 24 "src/sieve_scanner.l"
 #define YY_USER_ACTION  loc.columns (yyleng);
-#line 598 "lex.yy.c"
+#line 599 "gen/sieve_scanner.c"
 
 #define INITIAL 0
 
@@ -888,14 +889,14 @@ YY_DECL
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
 /* %% [7.0] user's declarations go here */
-#line 27 "sieve_scanner.l"
+#line 27 "src/sieve_scanner.l"
 
 
 
     loc.step();
 
 
-#line 899 "lex.yy.c"
+#line 900 "gen/sieve_scanner.c"
 
 	if ( !yyg->yy_init )
 		{
@@ -1041,13 +1042,13 @@ do_action:	/* This label is used only to access EOF actions. */
 /* %% [13.0] actions go here */
 case 1:
 YY_RULE_SETUP
-#line 33 "sieve_scanner.l"
+#line 33 "src/sieve_scanner.l"
 loc.step();
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 34 "sieve_scanner.l"
+#line 34 "src/sieve_scanner.l"
 loc.lines(yyleng); loc.step();
 	YY_BREAK
 case 3:
@@ -1055,88 +1056,88 @@ case 3:
 yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 36 "sieve_scanner.l"
+#line 36 "src/sieve_scanner.l"
 loc.step();
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 38 "sieve_scanner.l"
+#line 38 "src/sieve_scanner.l"
 return yy::sieve_parser::make_SEMICOLON( loc );
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 39 "sieve_scanner.l"
+#line 39 "src/sieve_scanner.l"
 return yy::sieve_parser::make_LBRACKET( loc );
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 40 "sieve_scanner.l"
+#line 40 "src/sieve_scanner.l"
 return yy::sieve_parser::make_RBRACKET( loc );
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 41 "sieve_scanner.l"
+#line 41 "src/sieve_scanner.l"
 return yy::sieve_parser::make_LPAREN( loc );
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 42 "sieve_scanner.l"
+#line 42 "src/sieve_scanner.l"
 return yy::sieve_parser::make_RPAREN( loc );
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 43 "sieve_scanner.l"
+#line 43 "src/sieve_scanner.l"
 return yy::sieve_parser::make_LCURLY( loc );
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 44 "sieve_scanner.l"
+#line 44 "src/sieve_scanner.l"
 return yy::sieve_parser::make_RCURLY( loc );
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 45 "sieve_scanner.l"
+#line 45 "src/sieve_scanner.l"
 return yy::sieve_parser::make_COMMA( loc );
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 46 "sieve_scanner.l"
+#line 46 "src/sieve_scanner.l"
 return yy::sieve_parser::make_TRUE( loc );
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 47 "sieve_scanner.l"
+#line 47 "src/sieve_scanner.l"
 return yy::sieve_parser::make_FALSE( loc );
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 48 "sieve_scanner.l"
+#line 48 "src/sieve_scanner.l"
 return yy::sieve_parser::make_REQUIRE( loc );
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 50 "sieve_scanner.l"
+#line 50 "src/sieve_scanner.l"
 return yy::sieve_parser::make_IF( loc );
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 51 "sieve_scanner.l"
+#line 51 "src/sieve_scanner.l"
 return yy::sieve_parser::make_ELSIF( loc );
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 52 "sieve_scanner.l"
+#line 52 "src/sieve_scanner.l"
 return yy::sieve_parser::make_ELSE( loc );
 	YY_BREAK
 case 18:
 /* rule 18 can match eol */
 YY_RULE_SETUP
-#line 54 "sieve_scanner.l"
+#line 54 "src/sieve_scanner.l"
 return yy::sieve_parser::make_STRING_LITERAL( yytext, loc );
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 56 "sieve_scanner.l"
+#line 56 "src/sieve_scanner.l"
 {
                     errno = 0;
                     long n = strtol( yytext, NULL, 10 );
@@ -1147,34 +1148,34 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 63 "sieve_scanner.l"
+#line 63 "src/sieve_scanner.l"
 return yy::sieve_parser::make_QUANTIFIER( loc );
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 64 "sieve_scanner.l"
+#line 64 "src/sieve_scanner.l"
 return yy::sieve_parser::make_IDENTIFIER( yytext, loc );
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 65 "sieve_scanner.l"
+#line 65 "src/sieve_scanner.l"
 return yy::sieve_parser::make_TAG( yytext, loc );
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 67 "sieve_scanner.l"
+#line 67 "src/sieve_scanner.l"
 driver.error( loc, "invalid character" );
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 68 "sieve_scanner.l"
+#line 68 "src/sieve_scanner.l"
 return yy::sieve_parser::make_END( loc );
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 69 "sieve_scanner.l"
+#line 69 "src/sieve_scanner.l"
 ECHO;
 	YY_BREAK
-#line 1178 "lex.yy.c"
+#line 1179 "gen/sieve_scanner.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2396,7 +2397,7 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 
 /* %ok-for-header */
 
-#line 69 "sieve_scanner.l"
+#line 69 "src/sieve_scanner.l"
 
 
 

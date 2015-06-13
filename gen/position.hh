@@ -31,12 +31,12 @@
 // version 2.2 of Bison.
 
 /**
- ** \file position.hh
+ ** \file gen/position.hh
  ** Define the yy::position class.
  */
 
-#ifndef YY_YY_POSITION_HH_INCLUDED
-# define YY_YY_POSITION_HH_INCLUDED
+#ifndef YY_YY_GEN_POSITION_HH_INCLUDED
+# define YY_YY_GEN_POSITION_HH_INCLUDED
 
 # include <algorithm> // std::max
 # include <iostream>
@@ -52,7 +52,7 @@
 
 
 namespace yy {
-#line 56 "position.hh" // location.cc:332
+#line 56 "gen/position.hh" // location.cc:332
   /// Abstract a position.
   class position
   {
@@ -176,5 +176,5 @@ namespace yy {
 
 
 } // yy
-#line 180 "position.hh" // location.cc:332
-#endif // !YY_YY_POSITION_HH_INCLUDED
+#line 180 "gen/position.hh" // location.cc:332
+#endif // !YY_YY_GEN_POSITION_HH_INCLUDED

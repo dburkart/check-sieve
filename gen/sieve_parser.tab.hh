@@ -31,16 +31,16 @@
 // version 2.2 of Bison.
 
 /**
- ** \file sieve_parser.tab.hh
+ ** \file gen/sieve_parser.tab.hh
  ** Define the yy::parser class.
  */
 
 // C++ LALR(1) parser skeleton written by Akim Demaille.
 
-#ifndef YY_YY_SIEVE_PARSER_TAB_HH_INCLUDED
-# define YY_YY_SIEVE_PARSER_TAB_HH_INCLUDED
+#ifndef YY_YY_GEN_SIEVE_PARSER_TAB_HH_INCLUDED
+# define YY_YY_GEN_SIEVE_PARSER_TAB_HH_INCLUDED
 // //                    "%code requires" blocks.
-#line 12 "sieve_parser.yy" // lalr1.cc:387
+#line 12 "src/sieve_parser.yy" // lalr1.cc:387
 
 #include <string>
 #include <sstream>
@@ -48,7 +48,7 @@
 class sieve_driver;
 typedef void* yyscan_t;
 
-#line 52 "sieve_parser.tab.hh" // lalr1.cc:387
+#line 52 "gen/sieve_parser.tab.hh" // lalr1.cc:387
 
 
 # include <vector>
@@ -124,7 +124,7 @@ typedef void* yyscan_t;
 
 
 namespace yy {
-#line 128 "sieve_parser.tab.hh" // lalr1.cc:387
+#line 128 "gen/sieve_parser.tab.hh" // lalr1.cc:387
 
 
 
@@ -1130,9 +1130,9 @@ namespace yy {
 
 
 } // yy
-#line 1134 "sieve_parser.tab.hh" // lalr1.cc:387
+#line 1134 "gen/sieve_parser.tab.hh" // lalr1.cc:387
 
 
 
 
-#endif // !YY_YY_SIEVE_PARSER_TAB_HH_INCLUDED
+#endif // !YY_YY_GEN_SIEVE_PARSER_TAB_HH_INCLUDED

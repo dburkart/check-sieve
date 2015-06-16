@@ -3,7 +3,7 @@
 #include <climits>
 #include <cstdlib>
 #include <string>
-
+#include <iostream>
 #include "sieve_parser.tab.hh"
 #include "sieve_driver.hh"
 
@@ -24,6 +24,8 @@ tag       :[a-zA-Z][a-zA-Z]*
 #define YY_USER_ACTION  loc.columns (yyleng);
 %}
 
+%s COMMENT
+
 %%
 
 %{
@@ -34,6 +36,11 @@ tag       :[a-zA-Z][a-zA-Z]*
 [\n]+       loc.lines(yyleng); loc.step();
 
 {comment}   loc.step();
+
+\/\*          { BEGIN COMMENT; std::cout << "Begin comment" << std::endl; }
+<COMMENT>\*\/ { BEGIN 0; }
+<COMMENT>[^\*] ;
+<COMMENT>\*/[^\/] ;
 
 ";"         return yy::sieve_parser::make_SEMICOLON( loc );
 "["         return yy::sieve_parser::make_LBRACKET( loc );

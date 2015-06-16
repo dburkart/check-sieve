@@ -1,3 +1,10 @@
+/*
+ * python.cc
+ *
+ * This python module lets us easily test libchecksieve using python. The
+ * 'test' target will automatically compile this against libchecksieve.a
+ */
+
 #include <python.h>
 
 #include "checksieve.h"

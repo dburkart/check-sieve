@@ -6,12 +6,12 @@
 #include "sieve_parser.tab.hh"
 
 sieve_driver::sieve_driver()
-    : trace_scanning( false ), trace_parsing( false ), _module_map(), _command_map(), _suppress_output(false) {
+    : trace_scanning( false ), trace_parsing( false ), _module_map(), _command_map(), _test_map(), _suppress_output(false) {
     init_maps();
 }
 
 sieve_driver::sieve_driver( bool quiet )
-    : trace_scanning( false ), trace_parsing( false ), _module_map(), _command_map(), _suppress_output(false) {
+    : trace_scanning( false ), trace_parsing( false ), _module_map(), _command_map(), _test_map(), _suppress_output(false) {
     init_maps();
     _suppress_output = quiet;
 }
@@ -30,6 +30,15 @@ void sieve_driver::init_maps() {
     _command_map["removeflag"] = 1;
     _command_map["set"] = 1;
     _command_map["vacation"] = 1;
+    
+    _test_map["allof"] = 1;
+    _test_map["anyof"] = 1;
+    _test_map["address"] = 1;
+    _test_map["envelope"] = 1;
+    _test_map["header"] = 1;
+    _test_map["size"] = 1;
+    _test_map["not"] = 1;
+    _test_map["exists"] = 1;
 }
 
 int sieve_driver::parse_file( const std::string &f ) {
@@ -101,6 +110,10 @@ bool sieve_driver::supports_module(const std::string &mod) {
 
 bool sieve_driver::valid_command(const std::string &command) {
     return _command_map[command];
+}
+
+bool sieve_driver::valid_test(const std::string &test) {
+    return _test_map[test];
 }
 
 struct parse_result sieve_parse_file( const char *filename ) {

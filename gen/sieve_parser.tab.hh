@@ -272,7 +272,7 @@ namespace yy {
     union union_type
     {
       // "number"
-      // arguments
+      // numeric
       char dummy1[sizeof(int)];
 
       // "identifier"
@@ -280,9 +280,13 @@ namespace yy {
       // "string literal"
       char dummy2[sizeof(std::string)];
 
+      // arguments
+      // argument
+      // test_list
+      // tests
+      // test
       // string_list
       // strings
-      // tag_list
       char dummy3[sizeof(std::vector<std::string>)];
 };
 
@@ -615,7 +619,7 @@ namespace yy {
     static const char* const yytname_[];
 #if YYDEBUG
   // YYRLINE[YYN] -- Source line where rule number YYN was defined.
-  static const unsigned short int yyrline_[];
+  static const unsigned char yyrline_[];
     /// Report on the debug stream that the rule \a r is going to be reduced.
     virtual void yy_reduce_print_ (int r);
     /// Print the state stack on the debug stream.
@@ -709,8 +713,8 @@ namespace yy {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 69,     ///< Last index in yytable_.
-      yynnts_ = 14,  ///< Number of nonterminal symbols.
+      yylast_ = 58,     ///< Last index in yytable_.
+      yynnts_ = 13,  ///< Number of nonterminal symbols.
       yyempty_ = -2,
       yyfinal_ = 22, ///< Termination state number.
       yyterror_ = 1,
@@ -796,7 +800,7 @@ namespace yy {
       switch (other.type_get ())
     {
       case 22: // "number"
-      case 28: // arguments
+      case 35: // numeric
         value.copy< int > (other.value);
         break;
 
@@ -806,9 +810,13 @@ namespace yy {
         value.copy< std::string > (other.value);
         break;
 
+      case 28: // arguments
+      case 29: // argument
+      case 30: // test_list
+      case 31: // tests
+      case 32: // test
       case 33: // string_list
       case 34: // strings
-      case 35: // tag_list
         value.copy< std::vector<std::string> > (other.value);
         break;
 
@@ -830,7 +838,7 @@ namespace yy {
       switch (this->type_get ())
     {
       case 22: // "number"
-      case 28: // arguments
+      case 35: // numeric
         value.copy< int > (v);
         break;
 
@@ -840,9 +848,13 @@ namespace yy {
         value.copy< std::string > (v);
         break;
 
+      case 28: // arguments
+      case 29: // argument
+      case 30: // test_list
+      case 31: // tests
+      case 32: // test
       case 33: // string_list
       case 34: // strings
-      case 35: // tag_list
         value.copy< std::vector<std::string> > (v);
         break;
 
@@ -899,7 +911,7 @@ namespace yy {
     switch (yytype)
     {
       case 22: // "number"
-      case 28: // arguments
+      case 35: // numeric
         value.template destroy< int > ();
         break;
 
@@ -909,9 +921,13 @@ namespace yy {
         value.template destroy< std::string > ();
         break;
 
+      case 28: // arguments
+      case 29: // argument
+      case 30: // test_list
+      case 31: // tests
+      case 32: // test
       case 33: // string_list
       case 34: // strings
-      case 35: // tag_list
         value.template destroy< std::vector<std::string> > ();
         break;
 
@@ -930,7 +946,7 @@ namespace yy {
       switch (this->type_get ())
     {
       case 22: // "number"
-      case 28: // arguments
+      case 35: // numeric
         value.move< int > (s.value);
         break;
 
@@ -940,9 +956,13 @@ namespace yy {
         value.move< std::string > (s.value);
         break;
 
+      case 28: // arguments
+      case 29: // argument
+      case 30: // test_list
+      case 31: // tests
+      case 32: // test
       case 33: // string_list
       case 34: // strings
-      case 35: // tag_list
         value.move< std::vector<std::string> > (s.value);
         break;
 
@@ -1130,7 +1150,7 @@ namespace yy {
 
 
 } // yy
-#line 1134 "gen/sieve_parser.tab.hh" // lalr1.cc:387
+#line 1154 "gen/sieve_parser.tab.hh" // lalr1.cc:387
 
 
 

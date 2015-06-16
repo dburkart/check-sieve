@@ -56,8 +56,12 @@ typedef void* yyscan_t;
 %token <std::string> STRING_LITERAL "string literal"
 %token <int> NUMBER "number"
 
-%type <int> arguments
-%type <std::vector<std::string>> tag_list
+%type <int> numeric
+%type <std::vector<std::string>> argument
+%type <std::vector<std::string>> arguments
+%type <std::vector<std::string>> test
+%type <std::vector<std::string>> tests
+%type <std::vector<std::string>> test_list
 %type <std::vector<std::string>> strings
 %type <std::vector<std::string>> string_list
 
@@ -96,17 +100,17 @@ command :
                 YYABORT;
             }
             
-            if ($1 == "reject" && $2 != 1) {
+            if ($1 == "reject" && $2.size() != 1) {
                 driver.error(@2, "Incorrect arguments to \"reject\" command.", "Syntax:   reject <reason: string>");
                 YYABORT;
             }
             
-            if ($1 == "fileinto" && $2 != 1) {
+            if ($1 == "fileinto" && $2.size() != 1) {
                 driver.error(@2, "Incorrect arguments to \"fileinto\" command.", "Syntax:   fileinto <folder: string>");
                 YYABORT;
             }
             
-            if ($1 == "redirect" && $2 != 1) {
+            if ($1 == "redirect" && $2.size() != 1) {
                 driver.error(@2, "Incorrect arguments to \"redirect\" command.", "Syntax:   fileinto <address: string>");
                 YYABORT;
             }
@@ -164,81 +168,35 @@ if_flow : IF test block
     | if_flow ELSIF test block
     ;
 
-arguments : argument { $$ = 1; }
-    | argument test { $$ = 2; }
-    | argument test_list { $$ = 2; }
-    | arguments argument { $$ = $1 + 1; }
+arguments : argument { $$ = $1; }
+    | argument test { $1.insert($1.end(), $2.begin(), $2.end()); $$ = $1; }
+    | argument test_list { $1.insert($1.end(), $2.begin(), $2.end()); $$ = $1; }
+    | arguments argument { $1.insert($1.end(), $2.begin(), $2.end()); $$ = $1; }
     ;
 
-argument : string_list
-    | numeric
-    | TAG
+argument : string_list { $$ = $1; }
+    | numeric { $$ = std::vector<std::string>( 1, std::to_string($1) ); }
+    | TAG { $$ = std::vector<std::string>(1, $1); }
     ;
 
-test_list : "(" tests ")"
+test_list : "(" tests ")" { $$ = $2; }
     ;
 
-tests : test
-    | tests "," test
+tests : test { $$ = $1; }
+    | tests "," test { $1.insert($1.end(), $3.begin(), $3.end()); $$ = $1; }
     ;
 
 test : 
-      IDENTIFIER test_list
-        {
-            if ($1 != "allof" && $1 != "anyof") {
-                driver.error(@1, "Invalid test \"" + $1 + "\": expected \"allof\" or \"anyof\"");
-                YYABORT;
-            }
-        }
-    | IDENTIFIER tag_list string_list string_list
-        {
-            std::ostringstream stream;
-            
-            if ($1 == "address" || $1 == "envelope") {
-                if ($2.size() > 3) {
-                    stream << "\"" << $1 << "\" test takes up to 3 tags, but " << $2.size() << " provided.";
-                    driver.error(@2, stream.str());
-                    YYABORT;
-                }
-            } else if ($1 == "header") {
-                if ($2.size() > 2) {
-                    stream << "\"" << $1 << "\" test takes up to 2 tags, but " << $2.size() << " provided.";
-                    driver.error(@2, stream.str()); 
-                    YYABORT;
-                }
-            } else {
-                driver.error(@1, "Unrecognized test " + $1 + ": expected allof, anyof, address, envelope, header, size, not, exists, true, or false.");
-                YYABORT;
-            }
-        }
-    | IDENTIFIER TAG numeric
-        {
-            if ($1 != "size") {
-                driver.error(@1, "Invalid test " + $1 + ": expected \"size\"");
-                YYABORT;
-            }
-            
-            if ($2 != ":over" && $2 != ":under") {
-                driver.error(@2, "\"" + $2 + "\" is invalid for the size test. Expected :over, or :under." );
-                YYABORT;
-            }
-        }
-    | IDENTIFIER test
-        {
-            if ($1 != "not") {
-                driver.error(@1, "Invalid test " + $1 + ": expected \"not\"");
-                YYABORT;
-            }
-        }
-    | IDENTIFIER string_list
-        {
-            if ($1 != "exists") {
-                driver.error(@1, "Invalid test " + $1 + ": expected \"exists\"");
-                YYABORT;
-            }
-        } 
-    | "true"
-    | "false"
+     IDENTIFIER arguments {
+         if (!driver.valid_test($1)) {
+             driver.error(@1, "Unrecognized test \"" + $1 + "\".");
+             YYABORT;
+         }
+         
+         $2.push_back($1); 
+     } 
+    | "true" { $$ = std::vector<std::string>(1, "true"); }
+    | "false" { $$ = std::vector<std::string>(1, "false"); }
     ;
 
 string_list : STRING_LITERAL {$$ = std::vector<std::string>(1, $1); }
@@ -249,12 +207,8 @@ strings : STRING_LITERAL {$$ = std::vector<std::string>(1, $1); }
     | strings "," STRING_LITERAL { $1.push_back($3); $$ = $1; }
     ;
 
-tag_list : TAG { $$ = std::vector<std::string>(1, $1); }
-    | tag_list TAG { $1.push_back($2); $$ = $1; }
-    ;
-
-numeric : NUMBER
-    | NUMBER QUANTIFIER
+numeric : NUMBER { $$ = $1; }
+    | NUMBER QUANTIFIER { $$ = $1; }
     ;
 
 %%

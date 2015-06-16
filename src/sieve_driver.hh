@@ -37,6 +37,7 @@ public:
     
     void init_maps();
     bool valid_command(const std::string &command);
+    bool valid_test(const std::string &command);
     
     void error( const yy::location &l, const std::string &message, const std::string &suggestion);
     void error( const yy::location &l, const std::string &message );
@@ -45,6 +46,7 @@ public:
 private:
     std::map<std::string, bool> _command_map;
     std::map<std::string, bool> _module_map;
+    std::map<std::string, bool> _test_map;
     
     std::istringstream _input_stream;
     yyscan_t yyscanner;

@@ -172,6 +172,8 @@ arguments : argument { $$ = $1; }
     | argument test { $1.insert($1.end(), $2.begin(), $2.end()); $$ = $1; }
     | argument test_list { $1.insert($1.end(), $2.begin(), $2.end()); $$ = $1; }
     | arguments argument { $1.insert($1.end(), $2.begin(), $2.end()); $$ = $1; }
+    | test { $$ = $1; }
+    | test_list { $$ = $1; }
     ;
 
 argument : string_list { $$ = $1; }

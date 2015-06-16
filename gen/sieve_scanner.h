@@ -286,6 +286,7 @@ void yyfree (void * ,yyscan_t yyscanner );
 
 #ifdef YY_HEADER_EXPORT_START_CONDITIONS
 #define INITIAL 0
+#define COMMENT 1
 
 #endif
 
@@ -443,9 +444,9 @@ extern int yylex (yyscan_t yyscanner);
 #undef YY_DECL
 #endif
 
-#line 69 "src/sieve_scanner.l"
+#line 76 "src/sieve_scanner.l"
 
 
-#line 450 "gen/sieve_scanner.h"
+#line 451 "gen/sieve_scanner.h"
 #undef yyIN_HEADER
 #endif /* yyHEADER_H */

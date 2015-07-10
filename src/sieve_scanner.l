@@ -24,7 +24,7 @@ tag       :[a-zA-Z][a-zA-Z]*
 #define YY_USER_ACTION  loc.columns (yyleng);
 %}
 
-%s COMMENT
+%x COMMENT
 
 %%
 
@@ -37,10 +37,9 @@ tag       :[a-zA-Z][a-zA-Z]*
 
 {comment}   loc.step();
 
-\/\*          { BEGIN COMMENT; std::cout << "Begin comment" << std::endl; }
-<COMMENT>\*\/ { BEGIN 0; }
-<COMMENT>[^\*] ;
-<COMMENT>\*/[^\/] ;
+"/*"            { BEGIN(COMMENT); }
+<COMMENT>"*/"   { BEGIN(0); }
+<COMMENT>.*     ; // Eat comment
 
 ";"         return yy::sieve_parser::make_SEMICOLON( loc );
 "["         return yy::sieve_parser::make_LBRACKET( loc );

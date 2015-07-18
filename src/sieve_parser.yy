@@ -164,6 +164,7 @@ command :
     ;
 
 block : "{" commands "}"
+    | "{" "}"
     ;
 
 if_flow : IF test block

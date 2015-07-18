@@ -49,7 +49,44 @@ class TestExamples(unittest.TestCase):
             }
         '''
         self.assertFalse(checksieve.parse_string(sieve, False))
+    
+    def test_match_variables(self):
+        sieve = '''
+      require ["fileinto", "variables"];
 
+      if header :matches "List-ID" "*<*@*" {
+          fileinto "INBOX.lists.${2}"; stop;
+      }
+
+      # Imagine the header
+      # Subject: [acme-users] [fwd] version 1.0 is out
+      if header :matches "Subject" "[*] *" {
+          # ${1} will hold "acme-users",
+          # ${2} will hold "[fwd] version 1.0 is out"
+          fileinto "INBOX.lists.${1}"; stop;
+      }
+
+      # Imagine the header
+      # To: coyote@ACME.Example.COM
+      if address :matches ["To", "Cc"] ["coyote@**.com",
+              "wile@**.com"] {
+          # ${0} is the matching address
+          # ${1} is always the empty string
+          # ${2} is part of the domain name ("ACME.Example")
+          fileinto "INBOX.business.${2}"; stop;
+      } else {
+          # Control wouldn't reach this block if any match was
+          # successful, so no match variables are set at this
+          # point.
+      }
+
+      if anyof (true, address :domain :matches "To" "*.com") {
+          # The second test is never evaluated, so there are
+          # still no match variables set.
+          stop;
+      }
+        '''
+        self.assertFalse(checksieve.parse_string(sieve, False))
 
 if __name__ == '__main__':
     unittest.main()

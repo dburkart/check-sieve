@@ -43,6 +43,10 @@ void sieve_driver::init_maps() {
     
     // RFC 5229
     _test_map["string"] = 1;
+    
+    // RFC 5260
+    _test_map["date"] = 1;
+    _test_map["currentdate"] = 1;
 }
 
 int sieve_driver::parse_file( const std::string &f ) {

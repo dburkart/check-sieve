@@ -39,6 +39,9 @@ void sieve_driver::init_maps() {
     _test_map["size"] = 1;
     _test_map["not"] = 1;
     _test_map["exists"] = 1;
+    
+    // RFC 5229
+    _test_map["string"] = 1;
 }
 
 int sieve_driver::parse_file( const std::string &f ) {

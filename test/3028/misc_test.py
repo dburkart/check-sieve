@@ -20,5 +20,23 @@ class TestMiscellany(unittest.TestCase):
         sieve = 'if header :matches "Subject" "*" { keep; stop; };'
         self.assertFalse(checksieve.parse_string(sieve, False))
 
+    def test_multiline_string(self):
+        sieve = '''
+        require "fileinto";
+        fileinto text:
+            Inbox
+.
+;'''
+        self.assertFalse(checksieve.parse_string(sieve, False))
+    
+    def test_multiline_string_with_comment(self):
+        sieve = '''
+        require "fileinto";
+        fileinto text: #inline comment
+            Inbox
+.
+;'''
+        self.assertFalse(checksieve.parse_string(sieve, False))
+
 if __name__ == '__main__':
     unittest.main()

@@ -8,6 +8,8 @@
 #include "sieve_driver.hh"
 
 static yy::location loc;
+
+std::string multiline_buffer;
 %}
 
 %option nounput batch debug noinput reentrant
@@ -24,7 +26,7 @@ tag       :[a-zA-Z][a-zA-Z]*
 #define YY_USER_ACTION  loc.columns (yyleng);
 %}
 
-%x COMMENT
+%x COMMENT MULTILINE
 
 %%
 
@@ -37,9 +39,15 @@ tag       :[a-zA-Z][a-zA-Z]*
 
 {comment}   loc.step();
 
-"/*"            { BEGIN(COMMENT); }
-<COMMENT>"*/"   { BEGIN(0); }
-<COMMENT>.*     ; // Eat comment
+"/*"                       { BEGIN(COMMENT); loc.step(); }
+<COMMENT>"*/"              { BEGIN(0); loc.step(); }
+<COMMENT>[\n]+             { loc.lines(yyleng); loc.step(); }
+<COMMENT>[^\n]*            { loc.step(); }
+
+"text:"[ \t]*[\n]           { BEGIN(MULTILINE); loc.step(); loc.lines(yyleng); multiline_buffer = ""; }
+"text:"[ \t]*#.*[\n]      { BEGIN(MULTILINE); loc.step(); loc.lines(yyleng); multiline_buffer = ""; }
+<MULTILINE>[^\.][^\n]*[\n] { loc.lines(yyleng); loc.step(); multiline_buffer += yytext; }
+<MULTILINE>[\.][\n]        { loc.lines(yyleng); loc.step(); BEGIN(0); return yy::sieve_parser::make_STRING_LITERAL( multiline_buffer.c_str(), loc); }
 
 ";"         return yy::sieve_parser::make_SEMICOLON( loc );
 "["         return yy::sieve_parser::make_LBRACKET( loc );

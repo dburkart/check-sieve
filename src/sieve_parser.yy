@@ -10,6 +10,7 @@
 %parse-param {yyscan_t scanner} {sieve_driver &driver}
 
 %code requires {
+#include <algorithm>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -191,6 +192,7 @@ tests : test { $$ = $1; }
 
 test : 
      IDENTIFIER arguments {
+         std::transform($1.begin(), $1.end(), $1.begin(), ::tolower);
          if (!driver.valid_test($1)) {
              driver.error(@1, "Unrecognized test \"" + $1 + "\".");
              YYABORT;

@@ -713,10 +713,10 @@ namespace yy {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 73,     ///< Last index in yytable_.
+      yylast_ = 76,     ///< Last index in yytable_.
       yynnts_ = 13,  ///< Number of nonterminal symbols.
       yyempty_ = -2,
-      yyfinal_ = 25, ///< Termination state number.
+      yyfinal_ = 26, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
       yyntokens_ = 23  ///< Number of tokens.

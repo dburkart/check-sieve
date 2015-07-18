@@ -16,6 +16,9 @@ class TestMiscellany(unittest.TestCase):
         fileinto "Inbox";'''
         self.assertFalse(checksieve.parse_string(sieve, False))
     
+    def test_unnecessary_semicolon(self):
+        sieve = 'if header :matches "Subject" "*" { keep; stop; };'
+        self.assertFalse(checksieve.parse_string(sieve, False))
 
 if __name__ == '__main__':
     unittest.main()

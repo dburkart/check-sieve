@@ -42,13 +42,14 @@
 // //                    "%code requires" blocks.
 #line 12 "src/sieve_parser.yy" // lalr1.cc:387
 
+#include <algorithm>
 #include <string>
 #include <sstream>
 #include <vector>
 class sieve_driver;
 typedef void* yyscan_t;
 
-#line 52 "gen/sieve_parser.tab.hh" // lalr1.cc:387
+#line 53 "gen/sieve_parser.tab.hh" // lalr1.cc:387
 
 
 # include <vector>
@@ -124,7 +125,7 @@ typedef void* yyscan_t;
 
 
 namespace yy {
-#line 128 "gen/sieve_parser.tab.hh" // lalr1.cc:387
+#line 129 "gen/sieve_parser.tab.hh" // lalr1.cc:387
 
 
 
@@ -1150,7 +1151,7 @@ namespace yy {
 
 
 } // yy
-#line 1154 "gen/sieve_parser.tab.hh" // lalr1.cc:387
+#line 1155 "gen/sieve_parser.tab.hh" // lalr1.cc:387
 
 
 

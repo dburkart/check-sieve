@@ -159,6 +159,7 @@ command :
         }
     | if_flow
     | if_flow ELSE block
+    | ";"
     ;
 
 block : "{" commands "}"

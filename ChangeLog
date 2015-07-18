@@ -1,0 +1,4 @@
+Version 0.1:
+ * Python test harness
+ * Implementation of Variables extension (RFC 5229)
+ * Basic support for RFC 5228

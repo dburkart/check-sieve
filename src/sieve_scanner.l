@@ -15,12 +15,12 @@ std::string multiline_buffer;
 %option nounput batch debug noinput reentrant
 
 comment   #.*$
-id        [a-zA-Z][a-zA-Z]*
+id        [a-zA-Z_][a-zA-Z0-9_]*
 int       [0-9]+/[KGM]?
 quant     [KGM]?
 blank     [ \t]
 string    \"(\.|[^\"])*\"
-tag       :[a-zA-Z][a-zA-Z]*
+tag       :[a-zA-Z_][a-zA-Z0-9_]*
 
 %{
 #define YY_USER_ACTION  loc.columns (yyleng);

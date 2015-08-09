@@ -31,7 +31,9 @@ void sieve_driver::init_maps() {
     _command_map["removeflag"] = 1;
     _command_map["set"] = 1;
     _command_map["vacation"] = 1;
-    
+    _command_map["include"] = 1;
+    _command_map["return"] = 1;
+
     _test_map["allof"] = 1;
     _test_map["anyof"] = 1;
     _test_map["address"] = 1;
@@ -40,10 +42,10 @@ void sieve_driver::init_maps() {
     _test_map["size"] = 1;
     _test_map["not"] = 1;
     _test_map["exists"] = 1;
-    
+
     // RFC 5229
     _test_map["string"] = 1;
-    
+
     // RFC 5260
     _test_map["date"] = 1;
     _test_map["currentdate"] = 1;
@@ -54,12 +56,12 @@ int sieve_driver::parse_file( const std::string &f ) {
     std::ifstream fin( file.c_str() );
     std::string line;
     std::string buffer;
-    
+
     for (int i = 1; !fin.eof(); i++) {
         getline(fin, line);
         buffer += line + "\n";
     }
-    
+
     return parse_string(buffer);
 }
 
@@ -75,7 +77,7 @@ int sieve_driver::parse_string( const std::string &sieve ) {
 
 void sieve_driver::error( const yy::location &l, const std::string &message, const std::string &suggestion ) {
     error( l, message );
-    
+
     if (!_suppress_output) {
         std::cerr << std::endl << suggestion << std::endl;
     }
@@ -84,12 +86,12 @@ void sieve_driver::error( const yy::location &l, const std::string &message, con
 void sieve_driver::error( const yy::location &l, const std::string &message ) {
     std::istringstream f( sieve_string );
     std::string line;
-    
+
     for (int i = 1; getline(f, line, '\n'); i++) {
         if (i == l.begin.line)
             break;
     }
- 
+
     result.location = l;
     result.error = message;
 

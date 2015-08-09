@@ -74,7 +74,7 @@ commands : END
     | commands command
     ;
 
-command : 
+command :
       REQUIRE string_list ";"
         {
             driver.set_required_modules( $2 );
@@ -85,47 +85,57 @@ command :
                 driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require imap4flags");
                 YYABORT;
             }
-            
+
             if (!driver.supports_module("variables") && ($1 == "set")) {
                 driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require variables");
                 YYABORT;
             }
-            
+
             if (!driver.supports_module("fileinto") && ($1 == "fileinto")) {
                 driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require fileinto");
                 YYABORT;
             }
-            
+
             if (!driver.supports_module("vacation") && ($1 == "vacation")) {
                 driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require vacation");
                 YYABORT;
             }
-            
+
+            if (!driver.supports_module("include") && ($1 == "include")) {
+                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require include");
+                YYABORT;
+            }
+
             if ($1 == "reject" && $2.size() != 1) {
                 driver.error(@2, "Incorrect arguments to \"reject\" command.", "Syntax:   reject <reason: string>");
                 YYABORT;
             }
-            
+
             if ($1 == "fileinto" && $2.size() != 1) {
                 driver.error(@2, "Incorrect arguments to \"fileinto\" command.", "Syntax:   fileinto <folder: string>");
                 YYABORT;
             }
-            
+
             if ($1 == "redirect" && $2.size() != 1) {
                 driver.error(@2, "Incorrect arguments to \"redirect\" command.", "Syntax:   fileinto <address: string>");
                 YYABORT;
             }
-            
+
             if ($1 == "keep") {
                 driver.error(@2, "Too many arguments passed to \"keep\" command.", "Syntax:   keep");
                 YYABORT;
             }
-            
+
             if ($1 == "discard") {
                 driver.error(@2, "Too many arguments passed to \"discard\" command.", "Syntax:   discard");
                 YYABORT;
             }
-            
+
+            if ($1 == "return") {
+                driver.error(@2, "Too many arguments passed to \"return\" command.", "Syntax:   return");
+                YYABORT;
+            }
+
             if (!driver.valid_command($1)) {
                 driver.error(@1, "Unrecognized command \"" + $1 + "\".");
                 YYABORT;
@@ -133,26 +143,36 @@ command :
         }
     | IDENTIFIER ";"
         {
+            if (!driver.supports_module("include") && ($1 == "return")) {
+                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require include");
+                YYABORT;
+            }
+
             if ($1 == "reject") {
                 driver.error(@2, "Incorrect arguments to \"reject\" command.", "Syntax:   reject <reason: string>");
                 YYABORT;
             }
-            
+
             if ($1 == "fileinto") {
                 driver.error(@2, "Incorrect arguments to \"fileinto\" command.", "Syntax:   fileinto <folder: string>");
                 YYABORT;
             }
-            
+
             if ($1 == "redirect") {
                 driver.error(@2, "Incorrect arguments to \"redirect\" command.", "Syntax:   fileinto <address: string>");
                 YYABORT;
             }
-            
+
             if ($1 == "vacation") {
                 driver.error(@2, "Incorrect arguments to \"vacation\" command.");
                 YYABORT;
             }
-            
+
+            if ($1 == "include") {
+                driver.error(@2, "Incorrect arguments to \"include\" command.");
+                YYABORT;
+            }
+
             if (!driver.valid_command($1)) {
                 driver.error(@1, "Unrecognized command \"" + $1 + "\".");
                 YYABORT;
@@ -191,16 +211,16 @@ tests : test { $$ = $1; }
     | tests "," test { $1.insert($1.end(), $3.begin(), $3.end()); $$ = $1; }
     ;
 
-test : 
+test :
      IDENTIFIER arguments {
          std::transform($1.begin(), $1.end(), $1.begin(), ::tolower);
          if (!driver.valid_test($1)) {
              driver.error(@1, "Unrecognized test \"" + $1 + "\".");
              YYABORT;
          }
-         
-         $2.push_back($1); 
-     } 
+
+         $2.push_back($1);
+     }
     | "true" { $$ = std::vector<std::string>(1, "true"); }
     | "false" { $$ = std::vector<std::string>(1, "false"); }
     ;

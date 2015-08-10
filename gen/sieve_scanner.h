@@ -288,6 +288,7 @@ void yyfree (void * ,yyscan_t yyscanner );
 #define INITIAL 0
 #define COMMENT 1
 #define MULTILINE 2
+#define STRING 3
 
 #endif
 
@@ -445,9 +446,9 @@ extern int yylex (yyscan_t yyscanner);
 #undef YY_DECL
 #endif
 
-#line 83 "src/sieve_scanner.l"
+#line 87 "src/sieve_scanner.l"
 
 
-#line 452 "gen/sieve_scanner.h"
+#line 453 "gen/sieve_scanner.h"
 #undef yyIN_HEADER
 #endif /* yyHEADER_H */

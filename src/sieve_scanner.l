@@ -19,14 +19,13 @@ id        [a-zA-Z_][a-zA-Z0-9_]*
 int       [0-9]+/[KGM]?
 quant     [KGM]?
 blank     [ \t]
-string    \"(\.|[^\"])*\"
 tag       :[a-zA-Z_][a-zA-Z0-9_]*
 
 %{
 #define YY_USER_ACTION  loc.columns (yyleng);
 %}
 
-%x COMMENT MULTILINE
+%x COMMENT MULTILINE STRING
 
 %%
 
@@ -44,8 +43,15 @@ tag       :[a-zA-Z_][a-zA-Z0-9_]*
 <COMMENT>[\n]+             { loc.lines(yyleng); loc.step(); }
 <COMMENT>[^\n]*            { loc.step(); }
 
-"text:"[ \t]*[\n]           { BEGIN(MULTILINE); loc.step(); loc.lines(yyleng); multiline_buffer = ""; }
-"text:"[ \t]*#.*[\n]      { BEGIN(MULTILINE); loc.step(); loc.lines(yyleng); multiline_buffer = ""; }
+["]                        { BEGIN(STRING); loc.step(); multiline_buffer = ""; }
+<STRING>\\\"               { loc.step(); multiline_buffer += '"'; }
+<STRING>\\                 { loc.step(); multiline_buffer += yytext; }
+<STRING>["]                { loc.step(); BEGIN(0); return yy::sieve_parser::make_STRING_LITERAL( multiline_buffer.c_str(), loc); }
+<STRING>[^"\\\n]*          { loc.step(); multiline_buffer += yytext; }
+<STRING>[\n]+              { loc.lines(yyleng); loc.step(); multiline_buffer += yytext; }
+
+"text:"[ \t]*[\n]          { BEGIN(MULTILINE); loc.step(); loc.lines(yyleng); multiline_buffer = ""; }
+"text:"[ \t]*#.*[\n]       { BEGIN(MULTILINE); loc.step(); loc.lines(yyleng); multiline_buffer = ""; }
 <MULTILINE>[^\.][^\n]*[\n] { loc.lines(yyleng); loc.step(); multiline_buffer += yytext; }
 <MULTILINE>[\.][\n]        { loc.lines(yyleng); loc.step(); BEGIN(0); return yy::sieve_parser::make_STRING_LITERAL( multiline_buffer.c_str(), loc); }
 
@@ -64,8 +70,6 @@ tag       :[a-zA-Z_][a-zA-Z0-9_]*
 "if"        return yy::sieve_parser::make_IF( loc );
 "elsif"     return yy::sieve_parser::make_ELSIF( loc );
 "else"      return yy::sieve_parser::make_ELSE( loc );
-
-{string}    return yy::sieve_parser::make_STRING_LITERAL( yytext, loc );
 
 [0-9]+/[KGM]?   {
                     errno = 0;

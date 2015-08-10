@@ -110,7 +110,7 @@ void sieve_driver::error( const std::string &m ) {
 void sieve_driver::set_required_modules(std::vector<std::string> &modules) {
     for (std::vector<std::string>::const_iterator i = modules.begin(); i < modules.end(); ++i) {
         std::string str = *i;
-        _module_map.insert(std::pair<std::string, bool>(str.substr(1, str.size() - 2), true));
+        _module_map.insert(std::pair<std::string, bool>(str, true));
     }
 }
 

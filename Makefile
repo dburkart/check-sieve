@@ -1,5 +1,5 @@
 LEX = flex -I
-YACC = bison -d
+YACC = ~/homebrew/Cellar/bison/3.0.2/bin/bison -d
 
 CC = clang++ -DYYDEBUG=1
 CFLAGS = -Igen/ -Isrc/

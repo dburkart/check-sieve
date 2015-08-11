@@ -14,6 +14,15 @@ class TestDate(unittest.TestCase):
      { fileinto "weekend"; }
         '''
         self.assertFalse(checksieve.parse_string(sieve, False))
+
+    def test_date_no_require(self):
+        sieve = '''
+     require ["relational", "fileinto"];
+     if anyof(date :is "received" "weekday" "0",
+              date :is "received" "weekday" "6")
+     { fileinto "weekend"; }
+        '''
+        self.assertTrue(checksieve.parse_string(sieve, True))
     
     def test_date_2(self):
         sieve = '''

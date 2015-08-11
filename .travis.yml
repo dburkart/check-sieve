@@ -1,16 +1,21 @@
 language: cpp
-compiler: clang
+compiler:
+    - clang
+    - gcc
 
 before_install:
-    - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get update && sudo apt-get install -y llvm-3.4 llvm-3.4-dev python-dev; fi
-    - if [ $TRAVIS_OS_NAME == osx ]; then brew update && brew install bison flex; fi
+    - echo $LANG
+    - echo $LC_ALL
+    - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get update && sudo apt-get install -y llvm-3.4 llvm-3.4-dev python2.7-dev; fi
 
 script: make test
-
-os:
-    - linux
-    - osx
 
 branches:
     only: master
 
+notifications:
+    email: false
+
+os:
+    - linux
+    - osx

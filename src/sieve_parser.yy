@@ -218,6 +218,11 @@ argument : string_list { $$ = $1; }
     | numeric { $$ = std::vector<std::string>( 1, std::to_string($1) ); }
     | TAG 
         { 
+            if ( !driver.supports_module("index") && $1 == ":index" ) {
+                driver.error(@1, "Unrecognized tag \"" + $1 + "\".", "Hint: require index");
+                YYABORT;
+            }
+
             if ( !driver.supports_module("copy") && $1 == ":copy" ) {
                 driver.error(@1, "Unrecognized tag \"" + $1 + "\".", "Hint: require copy");
                 YYABORT;

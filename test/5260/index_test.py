@@ -18,6 +18,18 @@ class TestIndex(unittest.TestCase):
         '''
         self.assertFalse(checksieve.parse_string(sieve, False))
 
+    def test_index_no_require(self):
+        sieve = '''
+     # Implement the Internet-Draft cutoff date check assuming the
+     # second Received: field specifies when the message first
+     # entered the local email infrastructure.
+     require ["date", "relational"];
+     if date :value "gt" :index 2 :zone "-0500" "received"
+             "iso8601" "2007-02-26T09:00:00-05:00"
+     { redirect "aftercutoff@example.org"; }
+        '''
+        self.assertTrue(checksieve.parse_string(sieve, True))
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -105,9 +105,24 @@ command :
                 driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require include");
                 YYABORT;
             }
+            
+            if (!driver.supports_module("reject") && ($1 == "reject")) {
+                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require reject");
+                YYABORT;
+            }
+            
+            if (!driver.supports_module("ereject") && ($1 == "ereject")) {
+                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require ereject");
+                YYABORT;
+            }
 
             if ($1 == "reject" && $2.size() != 1) {
                 driver.error(@2, "Incorrect arguments to \"reject\" command.", "Syntax:   reject <reason: string>");
+                YYABORT;
+            }
+            
+            if ($1 == "ereject" && $2.size() != 1) {
+                driver.error(@2, "Incorrect arguments to \"reject\" command.", "Syntax:   ereject <reason: string>");
                 YYABORT;
             }
 

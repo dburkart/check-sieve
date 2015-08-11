@@ -111,13 +111,13 @@ command :
                 YYABORT;
             }
 
-            if ($1 == "fileinto" && $2.size() != 1) {
-                driver.error(@2, "Incorrect arguments to \"fileinto\" command.", "Syntax:   fileinto <folder: string>");
+            if ($1 == "fileinto" && ($2.size() > 2 || $2.size() < 1)) {
+                driver.error(@2, "Incorrect arguments to \"fileinto\" command.", "Syntax:   fileinto [\":copy\"] <folder: string>");
                 YYABORT;
             }
 
-            if ($1 == "redirect" && $2.size() != 1) {
-                driver.error(@2, "Incorrect arguments to \"redirect\" command.", "Syntax:   fileinto <address: string>");
+            if ($1 == "redirect" && ($2.size() > 2 || $2.size() < 1)) {
+                driver.error(@2, "Incorrect arguments to \"redirect\" command.", "Syntax:   redirect [\":copy\"] <address: string>");
                 YYABORT;
             }
 
@@ -154,7 +154,7 @@ command :
             }
 
             if ($1 == "fileinto") {
-                driver.error(@2, "Incorrect arguments to \"fileinto\" command.", "Syntax:   fileinto <folder: string>");
+                driver.error(@2, "Incorrect arguments to \"fileinto\" command.", "Syntax:   fileinto [\":copy\"] <folder: string>");
                 YYABORT;
             }
 
@@ -201,7 +201,15 @@ arguments : argument { $$ = $1; }
 
 argument : string_list { $$ = $1; }
     | numeric { $$ = std::vector<std::string>( 1, std::to_string($1) ); }
-    | TAG { $$ = std::vector<std::string>(1, $1); }
+    | TAG 
+        { 
+            if ( !driver.supports_module("copy") && $1 == ":copy" ) {
+                driver.error(@1, "Unrecognized tag \"" + $1 + "\".", "Hint: require copy");
+                YYABORT;
+            }
+
+            $$ = std::vector<std::string>(1, $1); 
+        }
     ;
 
 test_list : "(" tests ")" { $$ = $2; }

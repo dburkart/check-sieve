@@ -1,3 +1,4 @@
+sudo: false
 language: cpp
 compiler:
     - clang
@@ -6,7 +7,6 @@ compiler:
 before_install:
     - echo $LANG
     - echo $LC_ALL
-    - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get update && sudo apt-get install -y llvm-3.4 llvm-3.4-dev python2.7-dev; fi
 
 script: make test
 

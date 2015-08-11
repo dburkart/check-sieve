@@ -1,17 +1,17 @@
 LEX = flex -I
 YACC = bison -d
 
-CC = clang++ -DYYDEBUG=1
-CFLAGS = -Igen/ -Isrc/
+CXX ?= clang++ -DYYDEBUG=1
+CFLAGS = -Igen/ -Isrc/ -std=c++0x -fPIC
 
 check-sieve: libchecksieve.a src/sieve.cc
-	$(CC) $(CFLAGS) -c src/sieve.cc
-	$(CC) $(CFLAGS) libchecksieve.a sieve.o -o check-sieve
+	$(CXX) $(CFLAGS) -c src/sieve.cc
+	$(CXX) $(CFLAGS) libchecksieve.a sieve.o -o check-sieve
 
 all: codegen check-sieve test
 
 libchecksieve.a: gen/sieve_parser.tab.cc gen/sieve_scanner.c src/sieve_driver.cc
-	$(CC) $(CFLAGS) -c gen/sieve_parser.tab.cc gen/sieve_scanner.c src/sieve_driver.cc
+	$(CXX) $(CFLAGS) -c gen/sieve_parser.tab.cc gen/sieve_scanner.c src/sieve_driver.cc
 	ar rc libchecksieve.a sieve_scanner.o sieve_parser.tab.o sieve_driver.o
 
 codegen: src/sieve_parser.yy src/sieve_scanner.l

@@ -5,7 +5,7 @@
  * 'test' target will automatically compile this against libchecksieve.a
  */
 
-#include <python.h>
+#include <Python.h>
 
 #include "checksieve.h"
 #include "sieve_driver.hh"
@@ -13,10 +13,10 @@
 static PyObject *parse_string(PyObject *self, PyObject *args) {
     const char *sieve;
     PyObject *quiet;
-    
+
     if (!PyArg_ParseTuple(args, "sO:parse_string", &sieve, &quiet))
         return NULL;
-    
+
     sieve_driver driver(PyObject_IsTrue(quiet));
     return Py_BuildValue("i", driver.parse_string(sieve));
 }

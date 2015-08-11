@@ -33,6 +33,9 @@ void sieve_driver::init_maps() {
     _command_map["vacation"] = 1;
     _command_map["include"] = 1;
     _command_map["return"] = 1;
+    
+    // RFC 5429
+    _command_map["ereject"] = 1;
 
     _test_map["allof"] = 1;
     _test_map["anyof"] = 1;

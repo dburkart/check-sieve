@@ -241,11 +241,26 @@ tests : test { $$ = $1; }
 
 test :
      IDENTIFIER arguments {
-         std::transform($1.begin(), $1.end(), $1.begin(), ::tolower);
-         if (!driver.valid_test($1)) {
-             driver.error(@1, "Unrecognized test \"" + $1 + "\".");
-             YYABORT;
-         }
+        std::transform($1.begin(), $1.end(), $1.begin(), ::tolower);
+        if (!driver.valid_test($1)) {
+            driver.error(@1, "Unknown test \"" + $1 + "\".");
+            YYABORT;
+        }
+         
+        if ( !driver.supports_module("imap4flags") && $1 == "hasflag" ) {
+            driver.error(@1, "Unrecognized test \"" + $1 + "\".", "Hint: require imap4flags");
+            YYABORT;
+        }
+         
+        if ( !driver.supports_module("variables") && $1 == "string" ) {
+            driver.error(@1, "Unrecognized test \"" + $1 + "\".", "Hint: require variables");
+            YYABORT;
+        }
+        
+        if ( !driver.supports_module("date") && ($1 == "date" || $1 == "currentdate") ) {
+            driver.error(@1, "Unrecognized test \"" + $1 + "\".", "Hint: require date");
+            YYABORT;
+        }
 
          $2.push_back($1);
      }

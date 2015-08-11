@@ -6,20 +6,22 @@ import checksieve
 
 class TestTests(unittest.TestCase):
     
-    def test_string(self):
+    def test_hasflag(self):
         sieve = '''
-            require ["variables"];
-            if string :matches " ${state} " "* pending *" {
-              # the above test always succeeds
-            }
+        require ["imap4flags"];
+        if hasflag :contains "MyVar" "Junk" {
+            discard;
+            stop;
+        }
         '''
         self.assertFalse(checksieve.parse_string(sieve, False))
     
-    def test_string_no_require(self):
+    def test_hasflag_no_require(self):
         sieve = '''
-            if string :matches " ${state} " "* pending *" {
-              # the above test always succeeds
-            }
+        if hasflag :contains "MyVar" "Junk" {
+            discard;
+            stop;
+        }
         '''
         self.assertTrue(checksieve.parse_string(sieve, True))
 

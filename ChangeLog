@@ -1,3 +1,12 @@
+Version 0.2:
+ * Fix a handful of RFC conformance bugs.
+ * Fix Travis-CI builds.
+ * Add support for reject and extended reject extensions (RFC 5429).
+ * Implement "Copying without side effects" (RFC 3894).
+ * Add support for the Include extension (RFC 6609)
+ * Add support for the Vacation extension (RFC 5230).
+ * Add support for the Date and Index Extensions (RFC 5260).
+
 Version 0.1:
  * Python test harness
  * Implementation of Variables extension (RFC 5229)

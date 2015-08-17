@@ -105,12 +105,12 @@ command :
                 driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require include");
                 YYABORT;
             }
-            
+
             if (!driver.supports_module("reject") && ($1 == "reject")) {
                 driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require reject");
                 YYABORT;
             }
-            
+
             if (!driver.supports_module("ereject") && ($1 == "ereject")) {
                 driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require ereject");
                 YYABORT;
@@ -120,7 +120,7 @@ command :
                 driver.error(@2, "Incorrect arguments to \"reject\" command.", "Syntax:   reject <reason: string>");
                 YYABORT;
             }
-            
+
             if ($1 == "ereject" && $2.size() != 1) {
                 driver.error(@2, "Incorrect arguments to \"reject\" command.", "Syntax:   ereject <reason: string>");
                 YYABORT;
@@ -216,8 +216,8 @@ arguments : argument { $$ = $1; }
 
 argument : string_list { $$ = $1; }
     | numeric { $$ = std::vector<std::string>( 1, std::to_string($1) ); }
-    | TAG 
-        { 
+    | TAG
+        {
             if ( !driver.supports_module("index") && $1 == ":index" ) {
                 driver.error(@1, "Unrecognized tag \"" + $1 + "\".", "Hint: require index");
                 YYABORT;
@@ -228,7 +228,7 @@ argument : string_list { $$ = $1; }
                 YYABORT;
             }
 
-            $$ = std::vector<std::string>(1, $1); 
+            $$ = std::vector<std::string>(1, $1);
         }
     ;
 
@@ -246,23 +246,28 @@ test :
             driver.error(@1, "Unknown test \"" + $1 + "\".");
             YYABORT;
         }
-         
+
         if ( !driver.supports_module("imap4flags") && $1 == "hasflag" ) {
             driver.error(@1, "Unrecognized test \"" + $1 + "\".", "Hint: require imap4flags");
             YYABORT;
         }
-         
+
         if ( !driver.supports_module("variables") && $1 == "string" ) {
             driver.error(@1, "Unrecognized test \"" + $1 + "\".", "Hint: require variables");
             YYABORT;
         }
-        
+
         if ( !driver.supports_module("date") && ($1 == "date" || $1 == "currentdate") ) {
             driver.error(@1, "Unrecognized test \"" + $1 + "\".", "Hint: require date");
             YYABORT;
         }
 
-         $2.push_back($1);
+        if ( !driver.supports_module("body") && ($1 == "body") ) {
+            driver.error(@1, "Unrecognized test \"" + $1 + "\".", "Hint: require body");
+            YYABORT;
+        }
+
+        $2.push_back($1);
      }
     | "true" { $$ = std::vector<std::string>(1, "true"); }
     | "false" { $$ = std::vector<std::string>(1, "false"); }

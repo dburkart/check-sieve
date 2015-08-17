@@ -26,22 +26,22 @@ void sieve_driver::init_maps() {
     _command_map["reject"] = 1;
     _command_map["fileinto"] = 1;
     _command_map["stop"] = 1;
-    
+
     // RFC 5232
     _command_map["setflag"] = 1;
     _command_map["addflag"] = 1;
     _command_map["removeflag"] = 1;
-    
+
     // RFC 5229
     _command_map["set"] = 1;
-    
+
     // RFC 6609
     _command_map["include"] = 1;
     _command_map["return"] = 1;
-    
+
     // RFC 5230
     _command_map["vacation"] = 1;
-    
+
     // RFC 5429
     _command_map["ereject"] = 1;
 
@@ -53,7 +53,10 @@ void sieve_driver::init_maps() {
     _test_map["size"] = 1;
     _test_map["not"] = 1;
     _test_map["exists"] = 1;
-    
+
+    // RFC 5173
+    _test_map["body"] = 1;
+
     // RFC 5232
     _test_map["hasflag"] = 1;
 

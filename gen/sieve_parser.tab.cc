@@ -1,8 +1,8 @@
-// A Bison parser, made by GNU Bison 3.0.2.
+// A Bison parser, made by GNU Bison 3.0.4.
 
 // Skeleton implementation for Bison LALR(1) parsers in C++
 
-// Copyright (C) 2002-2013 Free Software Foundation, Inc.
+// Copyright (C) 2002-2015 Free Software Foundation, Inc.
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 
 // First part of user declarations.
 
-#line 37 "gen/sieve_parser.tab.cc" // lalr1.cc:399
+#line 37 "gen/sieve_parser.tab.cc" // lalr1.cc:404
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -47,14 +47,14 @@
 
 // User implementation prologue.
 
-#line 51 "gen/sieve_parser.tab.cc" // lalr1.cc:407
+#line 51 "gen/sieve_parser.tab.cc" // lalr1.cc:412
 // Unqualified %code blocks.
-#line 29 "src/sieve_parser.yy" // lalr1.cc:408
+#line 29 "src/sieve_parser.yy" // lalr1.cc:413
 
 #include "sieve_driver.hh"
 #include "sieve_scanner.h"
 
-#line 58 "gen/sieve_parser.tab.cc" // lalr1.cc:408
+#line 58 "gen/sieve_parser.tab.cc" // lalr1.cc:413
 
 
 #ifndef YY_
@@ -131,7 +131,7 @@
 #endif // !YYDEBUG
 
 #define yyerrok         (yyerrstatus_ = 0)
-#define yyclearin       (yyempty = true)
+#define yyclearin       (yyla.clear ())
 
 #define YYACCEPT        goto yyacceptlab
 #define YYABORT         goto yyabortlab
@@ -140,7 +140,7 @@
 
 
 namespace yy {
-#line 144 "gen/sieve_parser.tab.cc" // lalr1.cc:474
+#line 144 "gen/sieve_parser.tab.cc" // lalr1.cc:479
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -204,7 +204,7 @@ namespace yy {
   // by_state.
   inline
   sieve_parser::by_state::by_state ()
-    : state (empty)
+    : state (empty_state)
   {}
 
   inline
@@ -214,10 +214,17 @@ namespace yy {
 
   inline
   void
+  sieve_parser::by_state::clear ()
+  {
+    state = empty_state;
+  }
+
+  inline
+  void
   sieve_parser::by_state::move (by_state& that)
   {
     state = that.state;
-    that.state = empty;
+    that.clear ();
   }
 
   inline
@@ -229,7 +236,10 @@ namespace yy {
   sieve_parser::symbol_number_type
   sieve_parser::by_state::type_get () const
   {
-    return state == empty ? 0 : yystos_[state];
+    if (state == empty_state)
+      return empty_symbol;
+    else
+      return yystos_[state];
   }
 
   inline
@@ -269,7 +279,7 @@ namespace yy {
     }
 
     // that is emptied.
-    that.type = empty;
+    that.type = empty_symbol;
   }
 
   inline
@@ -327,6 +337,10 @@ namespace yy {
     std::ostream& yyoutput = yyo;
     YYUSE (yyoutput);
     symbol_number_type yytype = yysym.type_get ();
+    // Avoid a (spurious) G++ 4.8 warning about "array subscript is
+    // below array bounds".
+    if (yysym.empty ())
+      std::abort ();
     yyo << (yytype < yyntokens_ ? "token" : "nterm")
         << ' ' << yytname_[yytype] << " ("
         << yysym.location << ": ";
@@ -411,9 +425,6 @@ namespace yy {
   int
   sieve_parser::parse ()
   {
-    /// Whether yyla contains a lookahead.
-    bool yyempty = true;
-
     // State.
     int yyn;
     /// Length of the RHS of the rule being reduced.
@@ -440,12 +451,12 @@ namespace yy {
 
 
     // User initialization code.
-    #line 22 "src/sieve_parser.yy" // lalr1.cc:729
+    #line 22 "src/sieve_parser.yy" // lalr1.cc:745
 {
     yyla.location.begin.filename = yyla.location.end.filename = &driver.file;
 }
 
-#line 449 "gen/sieve_parser.tab.cc" // lalr1.cc:729
+#line 460 "gen/sieve_parser.tab.cc" // lalr1.cc:745
 
     /* Initialize the stack.  The initial state will be set in
        yynewstate, since the latter expects the semantical and the
@@ -473,7 +484,7 @@ namespace yy {
       goto yydefault;
 
     // Read a lookahead token.
-    if (yyempty)
+    if (yyla.empty ())
       {
         YYCDEBUG << "Reading a token: ";
         try
@@ -486,7 +497,6 @@ namespace yy {
             error (yyexc);
             goto yyerrlab1;
           }
-        yyempty = false;
       }
     YY_SYMBOL_PRINT ("Next token is", yyla);
 
@@ -505,9 +515,6 @@ namespace yy {
         yyn = -yyn;
         goto yyreduce;
       }
-
-    // Discard the token being shifted.
-    yyempty = true;
 
     // Count tokens shifted since error; after three, turn off error status.
     if (yyerrstatus_)
@@ -578,15 +585,15 @@ namespace yy {
           switch (yyn)
             {
   case 5:
-#line 79 "src/sieve_parser.yy" // lalr1.cc:847
+#line 79 "src/sieve_parser.yy" // lalr1.cc:859
     {
             driver.set_required_modules( yystack_[1].value.as< std::vector<std::string> > () );
         }
-#line 586 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 593 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 6:
-#line 83 "src/sieve_parser.yy" // lalr1.cc:847
+#line 83 "src/sieve_parser.yy" // lalr1.cc:859
     {
             if (!driver.supports_module("imap4flags") && (yystack_[2].value.as< std::string > () == "addflag" || yystack_[2].value.as< std::string > () == "setflag" || yystack_[2].value.as< std::string > () == "removeflag" || yystack_[2].value.as< std::string > () == "hasflag")) {
                 driver.error(yystack_[2].location, "Unrecognized command \"" + yystack_[2].value.as< std::string > () + "\".", "Hint: require imap4flags");
@@ -612,12 +619,12 @@ namespace yy {
                 driver.error(yystack_[2].location, "Unrecognized command \"" + yystack_[2].value.as< std::string > () + "\".", "Hint: require include");
                 YYABORT;
             }
-            
+
             if (!driver.supports_module("reject") && (yystack_[2].value.as< std::string > () == "reject")) {
                 driver.error(yystack_[2].location, "Unrecognized command \"" + yystack_[2].value.as< std::string > () + "\".", "Hint: require reject");
                 YYABORT;
             }
-            
+
             if (!driver.supports_module("ereject") && (yystack_[2].value.as< std::string > () == "ereject")) {
                 driver.error(yystack_[2].location, "Unrecognized command \"" + yystack_[2].value.as< std::string > () + "\".", "Hint: require ereject");
                 YYABORT;
@@ -627,7 +634,7 @@ namespace yy {
                 driver.error(yystack_[1].location, "Incorrect arguments to \"reject\" command.", "Syntax:   reject <reason: string>");
                 YYABORT;
             }
-            
+
             if (yystack_[2].value.as< std::string > () == "ereject" && yystack_[1].value.as< std::vector<std::string> > ().size() != 1) {
                 driver.error(yystack_[1].location, "Incorrect arguments to \"reject\" command.", "Syntax:   ereject <reason: string>");
                 YYABORT;
@@ -663,11 +670,11 @@ namespace yy {
                 YYABORT;
             }
         }
-#line 667 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 674 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 7:
-#line 160 "src/sieve_parser.yy" // lalr1.cc:847
+#line 160 "src/sieve_parser.yy" // lalr1.cc:859
     {
             if (!driver.supports_module("include") && (yystack_[1].value.as< std::string > () == "return")) {
                 driver.error(yystack_[1].location, "Unrecognized command \"" + yystack_[1].value.as< std::string > () + "\".", "Hint: require include");
@@ -704,60 +711,60 @@ namespace yy {
                 YYABORT;
             }
         }
-#line 708 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 715 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 15:
-#line 209 "src/sieve_parser.yy" // lalr1.cc:847
+#line 209 "src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<std::string> > () = yystack_[0].value.as< std::vector<std::string> > (); }
-#line 714 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 721 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 16:
-#line 210 "src/sieve_parser.yy" // lalr1.cc:847
+#line 210 "src/sieve_parser.yy" // lalr1.cc:859
     { yystack_[1].value.as< std::vector<std::string> > ().insert(yystack_[1].value.as< std::vector<std::string> > ().end(), yystack_[0].value.as< std::vector<std::string> > ().begin(), yystack_[0].value.as< std::vector<std::string> > ().end()); yylhs.value.as< std::vector<std::string> > () = yystack_[1].value.as< std::vector<std::string> > (); }
-#line 720 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 727 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 17:
-#line 211 "src/sieve_parser.yy" // lalr1.cc:847
+#line 211 "src/sieve_parser.yy" // lalr1.cc:859
     { yystack_[1].value.as< std::vector<std::string> > ().insert(yystack_[1].value.as< std::vector<std::string> > ().end(), yystack_[0].value.as< std::vector<std::string> > ().begin(), yystack_[0].value.as< std::vector<std::string> > ().end()); yylhs.value.as< std::vector<std::string> > () = yystack_[1].value.as< std::vector<std::string> > (); }
-#line 726 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 733 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 18:
-#line 212 "src/sieve_parser.yy" // lalr1.cc:847
+#line 212 "src/sieve_parser.yy" // lalr1.cc:859
     { yystack_[1].value.as< std::vector<std::string> > ().insert(yystack_[1].value.as< std::vector<std::string> > ().end(), yystack_[0].value.as< std::vector<std::string> > ().begin(), yystack_[0].value.as< std::vector<std::string> > ().end()); yylhs.value.as< std::vector<std::string> > () = yystack_[1].value.as< std::vector<std::string> > (); }
-#line 732 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 739 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 19:
-#line 213 "src/sieve_parser.yy" // lalr1.cc:847
+#line 213 "src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<std::string> > () = yystack_[0].value.as< std::vector<std::string> > (); }
-#line 738 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 745 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 20:
-#line 214 "src/sieve_parser.yy" // lalr1.cc:847
+#line 214 "src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<std::string> > () = yystack_[0].value.as< std::vector<std::string> > (); }
-#line 744 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 751 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 21:
-#line 217 "src/sieve_parser.yy" // lalr1.cc:847
+#line 217 "src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<std::string> > () = yystack_[0].value.as< std::vector<std::string> > (); }
-#line 750 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 757 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 22:
-#line 218 "src/sieve_parser.yy" // lalr1.cc:847
+#line 218 "src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<std::string> > () = std::vector<std::string>( 1, std::to_string(yystack_[0].value.as< int > ()) ); }
-#line 756 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 763 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 23:
-#line 220 "src/sieve_parser.yy" // lalr1.cc:847
-    { 
+#line 220 "src/sieve_parser.yy" // lalr1.cc:859
+    {
             if ( !driver.supports_module("index") && yystack_[0].value.as< std::string > () == ":index" ) {
                 driver.error(yystack_[0].location, "Unrecognized tag \"" + yystack_[0].value.as< std::string > () + "\".", "Hint: require index");
                 YYABORT;
@@ -768,108 +775,113 @@ namespace yy {
                 YYABORT;
             }
 
-            yylhs.value.as< std::vector<std::string> > () = std::vector<std::string>(1, yystack_[0].value.as< std::string > ()); 
+            yylhs.value.as< std::vector<std::string> > () = std::vector<std::string>(1, yystack_[0].value.as< std::string > ());
         }
-#line 774 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 781 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 24:
-#line 235 "src/sieve_parser.yy" // lalr1.cc:847
+#line 235 "src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<std::string> > () = yystack_[1].value.as< std::vector<std::string> > (); }
-#line 780 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 787 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 25:
-#line 238 "src/sieve_parser.yy" // lalr1.cc:847
+#line 238 "src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<std::string> > () = yystack_[0].value.as< std::vector<std::string> > (); }
-#line 786 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 793 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 26:
-#line 239 "src/sieve_parser.yy" // lalr1.cc:847
+#line 239 "src/sieve_parser.yy" // lalr1.cc:859
     { yystack_[2].value.as< std::vector<std::string> > ().insert(yystack_[2].value.as< std::vector<std::string> > ().end(), yystack_[0].value.as< std::vector<std::string> > ().begin(), yystack_[0].value.as< std::vector<std::string> > ().end()); yylhs.value.as< std::vector<std::string> > () = yystack_[2].value.as< std::vector<std::string> > (); }
-#line 792 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 799 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 27:
-#line 243 "src/sieve_parser.yy" // lalr1.cc:847
+#line 243 "src/sieve_parser.yy" // lalr1.cc:859
     {
         std::transform(yystack_[1].value.as< std::string > ().begin(), yystack_[1].value.as< std::string > ().end(), yystack_[1].value.as< std::string > ().begin(), ::tolower);
         if (!driver.valid_test(yystack_[1].value.as< std::string > ())) {
             driver.error(yystack_[1].location, "Unknown test \"" + yystack_[1].value.as< std::string > () + "\".");
             YYABORT;
         }
-         
+
         if ( !driver.supports_module("imap4flags") && yystack_[1].value.as< std::string > () == "hasflag" ) {
             driver.error(yystack_[1].location, "Unrecognized test \"" + yystack_[1].value.as< std::string > () + "\".", "Hint: require imap4flags");
             YYABORT;
         }
-         
+
         if ( !driver.supports_module("variables") && yystack_[1].value.as< std::string > () == "string" ) {
             driver.error(yystack_[1].location, "Unrecognized test \"" + yystack_[1].value.as< std::string > () + "\".", "Hint: require variables");
             YYABORT;
         }
-        
+
         if ( !driver.supports_module("date") && (yystack_[1].value.as< std::string > () == "date" || yystack_[1].value.as< std::string > () == "currentdate") ) {
             driver.error(yystack_[1].location, "Unrecognized test \"" + yystack_[1].value.as< std::string > () + "\".", "Hint: require date");
             YYABORT;
         }
 
+        if ( !driver.supports_module("body") && (yystack_[1].value.as< std::string > () == "body") ) {
+            driver.error(yystack_[1].location, "Unrecognized test \"" + yystack_[1].value.as< std::string > () + "\".", "Hint: require body");
+            YYABORT;
+        }
+
          yystack_[0].value.as< std::vector<std::string> > ().push_back(yystack_[1].value.as< std::string > ());
      }
-#line 821 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 833 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 28:
-#line 267 "src/sieve_parser.yy" // lalr1.cc:847
+#line 272 "src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<std::string> > () = std::vector<std::string>(1, "true"); }
-#line 827 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 839 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 29:
-#line 268 "src/sieve_parser.yy" // lalr1.cc:847
+#line 273 "src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<std::string> > () = std::vector<std::string>(1, "false"); }
-#line 833 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 845 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 30:
-#line 271 "src/sieve_parser.yy" // lalr1.cc:847
+#line 276 "src/sieve_parser.yy" // lalr1.cc:859
     {yylhs.value.as< std::vector<std::string> > () = std::vector<std::string>(1, yystack_[0].value.as< std::string > ()); }
-#line 839 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 851 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 31:
-#line 272 "src/sieve_parser.yy" // lalr1.cc:847
+#line 277 "src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<std::string> > () = yystack_[1].value.as< std::vector<std::string> > (); }
-#line 845 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 857 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 32:
-#line 275 "src/sieve_parser.yy" // lalr1.cc:847
+#line 280 "src/sieve_parser.yy" // lalr1.cc:859
     {yylhs.value.as< std::vector<std::string> > () = std::vector<std::string>(1, yystack_[0].value.as< std::string > ()); }
-#line 851 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 863 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 33:
-#line 276 "src/sieve_parser.yy" // lalr1.cc:847
+#line 281 "src/sieve_parser.yy" // lalr1.cc:859
     { yystack_[2].value.as< std::vector<std::string> > ().push_back(yystack_[0].value.as< std::string > ()); yylhs.value.as< std::vector<std::string> > () = yystack_[2].value.as< std::vector<std::string> > (); }
-#line 857 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 869 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 34:
-#line 279 "src/sieve_parser.yy" // lalr1.cc:847
+#line 284 "src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< int > () = yystack_[0].value.as< int > (); }
-#line 863 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 875 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 35:
-#line 280 "src/sieve_parser.yy" // lalr1.cc:847
+#line 285 "src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< int > () = yystack_[1].value.as< int > (); }
-#line 869 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 881 "gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
 
-#line 873 "gen/sieve_parser.tab.cc" // lalr1.cc:847
+#line 885 "gen/sieve_parser.tab.cc" // lalr1.cc:859
             default:
               break;
             }
@@ -897,8 +909,7 @@ namespace yy {
     if (!yyerrstatus_)
       {
         ++yynerrs_;
-        error (yyla.location, yysyntax_error_ (yystack_[0].state,
-                                           yyempty ? yyempty_ : yyla.type_get ()));
+        error (yyla.location, yysyntax_error_ (yystack_[0].state, yyla));
       }
 
 
@@ -911,10 +922,10 @@ namespace yy {
         // Return failure if at end of input.
         if (yyla.type_get () == yyeof_)
           YYABORT;
-        else if (!yyempty)
+        else if (!yyla.empty ())
           {
             yy_destroy_ ("Error: discarding", yyla);
-            yyempty = true;
+            yyla.clear ();
           }
       }
 
@@ -990,7 +1001,7 @@ namespace yy {
     goto yyreturn;
 
   yyreturn:
-    if (!yyempty)
+    if (!yyla.empty ())
       yy_destroy_ ("Cleanup: discarding lookahead", yyla);
 
     /* Do not reclaim the symbols of the rule whose action triggered
@@ -1010,7 +1021,7 @@ namespace yy {
                  << std::endl;
         // Do not try to display the values of the reclaimed symbols,
         // as their printer might throw an exception.
-        if (!yyempty)
+        if (!yyla.empty ())
           yy_destroy_ (YY_NULLPTR, yyla);
 
         while (1 < yystack_.size ())
@@ -1030,9 +1041,8 @@ namespace yy {
 
   // Generate an error message.
   std::string
-  sieve_parser::yysyntax_error_ (state_type yystate, symbol_number_type yytoken) const
+  sieve_parser::yysyntax_error_ (state_type yystate, const symbol_type& yyla) const
   {
-    std::string yyres;
     // Number of reported tokens (one for the "unexpected", one per
     // "expected").
     size_t yycount = 0;
@@ -1046,7 +1056,7 @@ namespace yy {
          the only way this function was invoked is if the default action
          is an error action.  In that case, don't check for expected
          tokens because there are none.
-       - The only way there can be no lookahead present (in yytoken) is
+       - The only way there can be no lookahead present (in yyla) is
          if this state is a consistent state with a default action.
          Thus, detecting the absence of a lookahead is sufficient to
          determine that there is no unexpected or expected token to
@@ -1066,8 +1076,9 @@ namespace yy {
          token that will not be accepted due to an error action in a
          later state.
     */
-    if (yytoken != yyempty_)
+    if (!yyla.empty ())
       {
+        int yytoken = yyla.type_get ();
         yyarg[yycount++] = yytname_[yytoken];
         int yyn = yypact_[yystate];
         if (!yy_pact_value_is_default_ (yyn))
@@ -1110,6 +1121,7 @@ namespace yy {
 #undef YYCASE_
       }
 
+    std::string yyres;
     // Argument number.
     size_t yyi = 0;
     for (char const* yyp = yyformat; *yyp; ++yyp)
@@ -1243,8 +1255,8 @@ namespace yy {
   {
        0,    72,    72,    73,    74,    78,    82,   159,   196,   197,
      198,   201,   202,   205,   206,   209,   210,   211,   212,   213,
-     214,   217,   218,   219,   235,   238,   239,   243,   267,   268,
-     271,   272,   275,   276,   279,   280
+     214,   217,   218,   219,   235,   238,   239,   243,   272,   273,
+     276,   277,   280,   281,   284,   285
   };
 
   // Print the state stack on the debug stream.
@@ -1279,8 +1291,8 @@ namespace yy {
 
 
 } // yy
-#line 1283 "gen/sieve_parser.tab.cc" // lalr1.cc:1155
-#line 283 "src/sieve_parser.yy" // lalr1.cc:1156
+#line 1295 "gen/sieve_parser.tab.cc" // lalr1.cc:1167
+#line 288 "src/sieve_parser.yy" // lalr1.cc:1168
 
 
 void yy::sieve_parser::error( const location_type &l, const std::string &m ) {

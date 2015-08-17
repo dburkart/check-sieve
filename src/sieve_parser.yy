@@ -228,6 +228,11 @@ argument : string_list { $$ = $1; }
                 YYABORT;
             }
 
+            if ( !driver.supports_module("relational") && ($1 == ":count" || $1 == ":value") ) {
+                driver.error(@1, "Unrecognized tag \"" + $1 + "\".", "Hint: require relational");
+                YYABORT;
+            }
+
             $$ = std::vector<std::string>(1, $1);
         }
     ;

@@ -2,7 +2,7 @@ LEX = flex -I
 YACC = bison -d
 
 CXX ?= clang++ -DYYDEBUG=1
-CFLAGS = -Igen/ -Isrc/ -std=c++0x -fPIC
+CFLAGS = -Igen/ -Isrc/ -std=c++0x -fPIC -Wno-deprecated-register
 
 check-sieve: libchecksieve.a src/sieve.cc
 	$(CXX) $(CFLAGS) -c src/sieve.cc

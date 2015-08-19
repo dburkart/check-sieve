@@ -117,6 +117,11 @@ command :
                 YYABORT;
             }
 
+            if (!driver.supports_module("foreverypart") && ($1 == "break")) {
+                driver.error(@1, "Unrecognized command\"" + $1 + "\".", "Hint: require foreverypart");
+                YYABORT;
+            }
+
             if (!driver.supports_module("enclose") && ($1 == "enclose")) {
                 driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require enclose");
                 YYABORT;
@@ -151,6 +156,18 @@ command :
                 YYABORT;
             }
 
+            if ($1 == "break") {
+                if ($2.size() != 2) {
+                    driver.error(@2, "Incorrect arguments to \"break\" command.", "Syntax:   break [\":name\" string]");
+                    YYABORT;
+                }
+
+                if ($2[0] != ":name") {
+                    driver.error(@2, "Unrecognized tag.", "Syntax:    break [\":name\" string]");
+                    YYABORT;
+                }
+            }
+
             if ($1 == "keep") {
                 driver.error(@2, "Too many arguments passed to \"keep\" command.", "Syntax:   keep");
                 YYABORT;
@@ -163,11 +180,6 @@ command :
 
             if ($1 == "return") {
                 driver.error(@2, "Too many arguments passed to \"return\" command.", "Syntax:   return");
-                YYABORT;
-            }
-
-            if ($1 == "break") {
-                driver.error(@2, "Too many arguments passed to \"break\" command.", "Syntax:    break");
                 YYABORT;
             }
 
@@ -229,6 +241,11 @@ command :
         {
             if (!driver.supports_module("foreverypart")) {
                 driver.error(@1, "Unrecognized action \"foreverypart\".", "Hint: require foreverypart");
+                YYABORT;
+            }
+
+            if ($2 != ":name") {
+                driver.error(@2, "Unrecognized tag \"" + $2 + "\".", "Syntax:    foreverypart [\":name\" string] block");
                 YYABORT;
             }
         }

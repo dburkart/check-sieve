@@ -20,6 +20,26 @@ class TestActions(unittest.TestCase):
         '''
         self.assertTrue(checksieve.parse_string(sieve, True))
 
+    def test_foreverypart_with_name(self):
+        sieve = '''
+            require "foreverypart";
+
+            foreverypart :name "Cc" {
+
+            }
+        '''
+        self.assertFalse(checksieve.parse_string(sieve, False))
+
+    def test_foreverypart_invalid_tag(self):
+        sieve = '''
+            require ["foreverypart", "fileinto"];
+
+            foreverypart :foo "bar" {
+                fileinto "Nonsense";
+            }
+        '''
+        self.assertTrue(checksieve.parse_string(sieve, True))
+
     def test_break(self):
         sieve = '''
             require "foreverypart";
@@ -36,6 +56,26 @@ class TestActions(unittest.TestCase):
             foreverypart
             {
                 break;
+            }
+        '''
+        self.assertTrue(checksieve.parse_string(sieve, True))
+
+    def test_break_with_name(self):
+        sieve = '''
+            require "foreverypart";
+
+            foreverypart {
+                break :name "Subject";
+            }
+        '''
+        self.assertFalse(checksieve.parse_string(sieve, False))
+
+    def test_break_with_invalid_tag(self):
+        sieve = '''
+            require "foreverypart";
+
+            foreverypart {
+                break :foo "bar";
             }
         '''
         self.assertTrue(checksieve.parse_string(sieve, True))

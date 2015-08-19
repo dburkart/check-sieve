@@ -124,7 +124,7 @@ foreverypart
        "*.pif", "*.hta", "*.bat", "*.zip" ]
  {
    # these attachment types are executable
-   enclose :subject "Warning" :text
+   enclose :subject "Warning" text:
 WARNING! The enclosed message contains executable attachments.
 These attachment types may contain a computer virus program
 that can infect your computer and potentially damage your data.
@@ -152,7 +152,7 @@ foreverypart
        "*.pif", "*.hta", "*.bat", "*.zip" ]
  {
    # these attachment types are executable
-   enclose :subject "Warning" :text
+   enclose :subject "Warning" text:
 WARNING! The enclosed message contains executable attachments.
 These attachment types may contain a computer virus program
 that can infect your computer and potentially damage your data.
@@ -170,7 +170,7 @@ computer virus.
 
     def test_extracttext(self):
         sieve = '''
-           require ["mime", "variables", "extracttext"];
+           require ["mime", "variables", "extracttext", "foreverypart"];
 
            if header :contains "from" "boss@example.org"
            {
@@ -203,7 +203,7 @@ computer virus.
 
     def test_extracttext_no_require(self):
         sieve = '''
-           require ["mime", "variables"];
+           require ["mime", "variables", "foreverypart"];
 
            if header :contains "from" "boss@example.org"
            {

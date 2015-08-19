@@ -55,21 +55,22 @@ tag       :[a-zA-Z_][a-zA-Z0-9_]*
 <MULTILINE>[^\.][^\n]*[\n] { loc.lines(yyleng); loc.step(); multiline_buffer += yytext; }
 <MULTILINE>[\.][\n]        { loc.lines(yyleng); loc.step(); BEGIN(0); return yy::sieve_parser::make_STRING_LITERAL( multiline_buffer.c_str(), loc); }
 
-";"         return yy::sieve_parser::make_SEMICOLON( loc );
-"["         return yy::sieve_parser::make_LBRACKET( loc );
-"]"         return yy::sieve_parser::make_RBRACKET( loc );
-"("         return yy::sieve_parser::make_LPAREN( loc );
-")"         return yy::sieve_parser::make_RPAREN( loc );
-"{"         return yy::sieve_parser::make_LCURLY( loc );
-"}"         return yy::sieve_parser::make_RCURLY( loc );
-","         return yy::sieve_parser::make_COMMA( loc );
-"true"      return yy::sieve_parser::make_TRUE( loc );
-"false"     return yy::sieve_parser::make_FALSE( loc );
-"require"   return yy::sieve_parser::make_REQUIRE( loc );
+";"             return yy::sieve_parser::make_SEMICOLON( loc );
+"["             return yy::sieve_parser::make_LBRACKET( loc );
+"]"             return yy::sieve_parser::make_RBRACKET( loc );
+"("             return yy::sieve_parser::make_LPAREN( loc );
+")"             return yy::sieve_parser::make_RPAREN( loc );
+"{"             return yy::sieve_parser::make_LCURLY( loc );
+"}"             return yy::sieve_parser::make_RCURLY( loc );
+","             return yy::sieve_parser::make_COMMA( loc );
+"true"          return yy::sieve_parser::make_TRUE( loc );
+"false"         return yy::sieve_parser::make_FALSE( loc );
+"require"       return yy::sieve_parser::make_REQUIRE( loc );
+"foreverypart"  return yy::sieve_parser::make_FOREVERYPART( loc );
 
-"if"        return yy::sieve_parser::make_IF( loc );
-"elsif"     return yy::sieve_parser::make_ELSIF( loc );
-"else"      return yy::sieve_parser::make_ELSE( loc );
+"if"            return yy::sieve_parser::make_IF( loc );
+"elsif"         return yy::sieve_parser::make_ELSIF( loc );
+"else"          return yy::sieve_parser::make_ELSE( loc );
 
 [0-9]+/[KGM]?   {
                     errno = 0;
@@ -94,11 +95,11 @@ int yywrap(yyscan_t yyscanner)
 
 void sieve_driver::scan_begin() {
     struct yyguts_t * yyg;
-    
+
     yylex_init(&yyscanner);
     yyg = (struct yyguts_t*)yyscanner;
     loc = yy::location();
-    
+
     if (!(yyin = fopen(file.c_str(), "r"))) {
         error( "cannot open " + file + ": " + strerror(errno) );
         exit( EXIT_FAILURE );
@@ -107,11 +108,11 @@ void sieve_driver::scan_begin() {
 
 void sieve_driver::scan_begin(const std::string &sieve) {
     struct yyguts_t *yyg;
-    
+
     yylex_init(&yyscanner);
     yyg = (struct yyguts_t*)yyscanner;
     loc = yy::location();
-    
+
     yy_scan_string(sieve.c_str(), yyscanner);
 }
 

@@ -39,6 +39,7 @@ typedef void* yyscan_t;
     IF            "if"
     ELSIF         "elsif"
     ELSE          "else"
+    FOREVERYPART  "foreverypart"
     SEMICOLON     ";"
     LPAREN        "("
     RPAREN        ")"
@@ -116,6 +117,20 @@ command :
                 YYABORT;
             }
 
+            if (!driver.supports_module("enclose") && ($1 == "enclose")) {
+                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require enclose");
+                YYABORT;
+            }
+
+            if (!driver.supports_module("extracttext") && ($1 == "extracttext")) {
+                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require extracttext");
+                YYABORT;
+            }
+            if (!driver.supports_module("replace") && ($1 == "replace")) {
+                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require replace");
+                YYABORT;
+            }
+
             if ($1 == "reject" && $2.size() != 1) {
                 driver.error(@2, "Incorrect arguments to \"reject\" command.", "Syntax:   reject <reason: string>");
                 YYABORT;
@@ -151,6 +166,11 @@ command :
                 YYABORT;
             }
 
+            if ($1 == "break") {
+                driver.error(@2, "Too many arguments passed to \"break\" command.", "Syntax:    break");
+                YYABORT;
+            }
+
             if (!driver.valid_command($1)) {
                 driver.error(@1, "Unrecognized command \"" + $1 + "\".");
                 YYABORT;
@@ -160,6 +180,11 @@ command :
         {
             if (!driver.supports_module("include") && ($1 == "return")) {
                 driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require include");
+                YYABORT;
+            }
+
+            if (!driver.supports_module("foreverypart") && ($1 == "break")) {
+                driver.error(@1, "Unrecognized command\"" + $1 + "\".", "Hint: require foreverypart");
                 YYABORT;
             }
 
@@ -190,6 +215,20 @@ command :
 
             if (!driver.valid_command($1)) {
                 driver.error(@1, "Unrecognized command \"" + $1 + "\".");
+                YYABORT;
+            }
+        }
+    | FOREVERYPART block
+        {
+            if (!driver.supports_module("foreverypart")) {
+                driver.error(@1, "Unrecognized action \"foreverypart\".", "Hint: require foreverypart");
+                YYABORT;
+            }
+        }
+    | FOREVERYPART TAG STRING_LITERAL block
+        {
+            if (!driver.supports_module("foreverypart")) {
+                driver.error(@1, "Unrecognized action \"foreverypart\".", "Hint: require foreverypart");
                 YYABORT;
             }
         }

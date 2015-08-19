@@ -446,7 +446,7 @@ extern int yylex (yyscan_t yyscanner);
 #undef YY_DECL
 #endif
 
-#line 87 "src/sieve_scanner.l"
+#line 88 "src/sieve_scanner.l"
 
 
 #line 453 "gen/sieve_scanner.h"

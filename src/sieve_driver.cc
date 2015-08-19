@@ -35,15 +35,21 @@ void sieve_driver::init_maps() {
     // RFC 5229
     _command_map["set"] = 1;
 
-    // RFC 6609
-    _command_map["include"] = 1;
-    _command_map["return"] = 1;
-
     // RFC 5230
     _command_map["vacation"] = 1;
 
     // RFC 5429
     _command_map["ereject"] = 1;
+
+    // RFC 5703
+    _command_map["break"] = 1;
+    _command_map["extracttext"] = 1;
+    _command_map["replace"] = 1;
+    _command_map["enclose"] = 1;
+
+    // RFC 6609
+    _command_map["include"] = 1;
+    _command_map["return"] = 1;
 
     _test_map["allof"] = 1;
     _test_map["anyof"] = 1;

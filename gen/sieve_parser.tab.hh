@@ -318,21 +318,22 @@ namespace yy {
         TOK_IF = 260,
         TOK_ELSIF = 261,
         TOK_ELSE = 262,
-        TOK_SEMICOLON = 263,
-        TOK_LPAREN = 264,
-        TOK_RPAREN = 265,
-        TOK_LBRACKET = 266,
-        TOK_RBRACKET = 267,
-        TOK_LCURLY = 268,
-        TOK_RCURLY = 269,
-        TOK_COMMA = 270,
-        TOK_TRUE = 271,
-        TOK_FALSE = 272,
-        TOK_QUANTIFIER = 273,
-        TOK_IDENTIFIER = 274,
-        TOK_TAG = 275,
-        TOK_STRING_LITERAL = 276,
-        TOK_NUMBER = 277
+        TOK_FOREVERYPART = 263,
+        TOK_SEMICOLON = 264,
+        TOK_LPAREN = 265,
+        TOK_RPAREN = 266,
+        TOK_LBRACKET = 267,
+        TOK_RBRACKET = 268,
+        TOK_LCURLY = 269,
+        TOK_RCURLY = 270,
+        TOK_COMMA = 271,
+        TOK_TRUE = 272,
+        TOK_FALSE = 273,
+        TOK_QUANTIFIER = 274,
+        TOK_IDENTIFIER = 275,
+        TOK_TAG = 276,
+        TOK_STRING_LITERAL = 277,
+        TOK_NUMBER = 278
       };
     };
 
@@ -466,6 +467,10 @@ namespace yy {
     static inline
     symbol_type
     make_ELSE (const location_type& l);
+
+    static inline
+    symbol_type
+    make_FOREVERYPART (const location_type& l);
 
     static inline
     symbol_type
@@ -612,7 +617,7 @@ namespace yy {
   // number is the opposite.  If YYTABLE_NINF, syntax error.
   static const unsigned char yytable_[];
 
-  static const unsigned char yycheck_[];
+  static const signed char yycheck_[];
 
   // YYSTOS[STATE-NUM] -- The (internal number of the) accessing
   // symbol of state STATE-NUM.
@@ -732,12 +737,12 @@ namespace yy {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 81,     ///< Last index in yytable_.
+      yylast_ = 94,     ///< Last index in yytable_.
       yynnts_ = 13,  ///< Number of nonterminal symbols.
-      yyfinal_ = 26, ///< Termination state number.
+      yyfinal_ = 30, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 23  ///< Number of tokens.
+      yyntokens_ = 24  ///< Number of tokens.
     };
 
 
@@ -782,9 +787,9 @@ namespace yy {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,    18,    19,    20,    21,    22
+      15,    16,    17,    18,    19,    20,    21,    22,    23
     };
-    const unsigned int user_token_number_max_ = 277;
+    const unsigned int user_token_number_max_ = 278;
     const token_number_type undef_token_ = 2;
 
     if (static_cast<int>(t) <= yyeof_)
@@ -817,24 +822,24 @@ namespace yy {
   {
       switch (other.type_get ())
     {
-      case 22: // "number"
-      case 35: // numeric
+      case 23: // "number"
+      case 36: // numeric
         value.copy< int > (other.value);
         break;
 
-      case 19: // "identifier"
-      case 20: // ":tag"
-      case 21: // "string literal"
+      case 20: // "identifier"
+      case 21: // ":tag"
+      case 22: // "string literal"
         value.copy< std::string > (other.value);
         break;
 
-      case 28: // arguments
-      case 29: // argument
-      case 30: // test_list
-      case 31: // tests
-      case 32: // test
-      case 33: // string_list
-      case 34: // strings
+      case 29: // arguments
+      case 30: // argument
+      case 31: // test_list
+      case 32: // tests
+      case 33: // test
+      case 34: // string_list
+      case 35: // strings
         value.copy< std::vector<std::string> > (other.value);
         break;
 
@@ -855,24 +860,24 @@ namespace yy {
     (void) v;
       switch (this->type_get ())
     {
-      case 22: // "number"
-      case 35: // numeric
+      case 23: // "number"
+      case 36: // numeric
         value.copy< int > (v);
         break;
 
-      case 19: // "identifier"
-      case 20: // ":tag"
-      case 21: // "string literal"
+      case 20: // "identifier"
+      case 21: // ":tag"
+      case 22: // "string literal"
         value.copy< std::string > (v);
         break;
 
-      case 28: // arguments
-      case 29: // argument
-      case 30: // test_list
-      case 31: // tests
-      case 32: // test
-      case 33: // string_list
-      case 34: // strings
+      case 29: // arguments
+      case 30: // argument
+      case 31: // test_list
+      case 32: // tests
+      case 33: // test
+      case 34: // string_list
+      case 35: // strings
         value.copy< std::vector<std::string> > (v);
         break;
 
@@ -938,24 +943,24 @@ namespace yy {
     // Type destructor.
     switch (yytype)
     {
-      case 22: // "number"
-      case 35: // numeric
+      case 23: // "number"
+      case 36: // numeric
         value.template destroy< int > ();
         break;
 
-      case 19: // "identifier"
-      case 20: // ":tag"
-      case 21: // "string literal"
+      case 20: // "identifier"
+      case 21: // ":tag"
+      case 22: // "string literal"
         value.template destroy< std::string > ();
         break;
 
-      case 28: // arguments
-      case 29: // argument
-      case 30: // test_list
-      case 31: // tests
-      case 32: // test
-      case 33: // string_list
-      case 34: // strings
+      case 29: // arguments
+      case 30: // argument
+      case 31: // test_list
+      case 32: // tests
+      case 33: // test
+      case 34: // string_list
+      case 35: // strings
         value.template destroy< std::vector<std::string> > ();
         break;
 
@@ -982,24 +987,24 @@ namespace yy {
     super_type::move(s);
       switch (this->type_get ())
     {
-      case 22: // "number"
-      case 35: // numeric
+      case 23: // "number"
+      case 36: // numeric
         value.move< int > (s.value);
         break;
 
-      case 19: // "identifier"
-      case 20: // ":tag"
-      case 21: // "string literal"
+      case 20: // "identifier"
+      case 21: // ":tag"
+      case 22: // "string literal"
         value.move< std::string > (s.value);
         break;
 
-      case 28: // arguments
-      case 29: // argument
-      case 30: // test_list
-      case 31: // tests
-      case 32: // test
-      case 33: // string_list
-      case 34: // strings
+      case 29: // arguments
+      case 30: // argument
+      case 31: // test_list
+      case 32: // tests
+      case 33: // test
+      case 34: // string_list
+      case 35: // strings
         value.move< std::vector<std::string> > (s.value);
         break;
 
@@ -1060,7 +1065,7 @@ namespace yy {
     {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
-     275,   276,   277
+     275,   276,   277,   278
     };
     return static_cast<token_type> (yytoken_number_[type]);
   }
@@ -1099,6 +1104,12 @@ namespace yy {
   sieve_parser::make_ELSE (const location_type& l)
   {
     return symbol_type (token::TOK_ELSE, l);
+  }
+
+  sieve_parser::symbol_type
+  sieve_parser::make_FOREVERYPART (const location_type& l)
+  {
+    return symbol_type (token::TOK_FOREVERYPART, l);
   }
 
   sieve_parser::symbol_type
@@ -1194,7 +1205,7 @@ namespace yy {
 
 
 } // yy
-#line 1198 "gen/sieve_parser.tab.hh" // lalr1.cc:392
+#line 1209 "gen/sieve_parser.tab.hh" // lalr1.cc:392
 
 
 

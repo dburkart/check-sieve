@@ -8,12 +8,12 @@
 #include "sieve_parser.tab.hh"
 
 sieve_driver::sieve_driver()
-    : trace_scanning( false ), trace_parsing( false ), _modules(), _module_map(), _command_map(), _test_map(), _suppress_output(false) {
+    : trace_scanning( false ), trace_parsing( false ), _modules(), _command_map(), _test_map(), _suppress_output(false) {
     init_maps();
 }
 
 sieve_driver::sieve_driver( bool quiet )
-    : trace_scanning( false ), trace_parsing( false ), _module_map(), _command_map(), _test_map(), _suppress_output(false) {
+    : trace_scanning( false ), trace_parsing( false ), _modules(), _command_map(), _test_map(), _suppress_output(false) {
     init_maps();
     _suppress_output = quiet;
 }

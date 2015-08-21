@@ -1,6 +1,8 @@
 #ifndef __CHECKSIEVE_H__
 #define __CHECKSIEVE_H__
 
+#define LIBCHECKSIEVE_VERSION "0.3-dev"
+
 #include <string>
 #include "location.hh"
 

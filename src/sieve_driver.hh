@@ -10,9 +10,11 @@
 #include "checksieve.h"
 
 #define YY_DECL \
-    yy::sieve_parser::symbol_type yylex( yyscan_t yyscanner, sieve_driver &driver )
-
+    yy::sieve_parser::symbol_type yylex( yyscan_t yyscanner, sieve::sieve_driver &driver )
 YY_DECL;
+
+namespace sieve
+{
 
 class sieve_driver {
 public:
@@ -54,5 +56,7 @@ private:
     yyscan_t yyscanner;
     bool _suppress_output;
 };
+
+} // namespace sieve
 
 #endif

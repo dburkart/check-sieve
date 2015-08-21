@@ -7,6 +7,15 @@
 #include "sieve_driver.hh"
 #include "sieve_parser.tab.hh"
 
+namespace sieve
+{
+
+#define LIBCHECKSIEVE_VERSION "0.3-dev"
+
+const char *version() {
+    return LIBCHECKSIEVE_VERSION;
+}
+
 sieve_driver::sieve_driver()
     : trace_scanning( false ), trace_parsing( false ), _modules(), _command_map(), _test_map(), _suppress_output(false) {
     init_maps();
@@ -163,3 +172,5 @@ struct parse_result sieve_parse_string( const char *sieve ) {
     driver.parse_string(sieve);
     return driver.result;
 }
+
+} // namespace sieve

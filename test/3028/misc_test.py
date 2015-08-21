@@ -38,6 +38,19 @@ class TestMiscellany(unittest.TestCase):
 ;'''
         self.assertFalse(checksieve.parse_string(sieve, False))
 
+    def test_multiple_requires(self):
+        sieve = '''
+        require "fileinto";
+        require "copy";
+        
+        if header :matches "Subject" "*" {
+            fileinto :copy "All Mail";
+        }
+        
+        keep;
+        stop;
+        '''
+        self.assertFalse(checksieve.parse_string(sieve, False))
 
 if __name__ == '__main__':
     unittest.main()

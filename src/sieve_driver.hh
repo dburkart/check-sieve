@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <map>
+#include <vector>
 #include "sieve_parser.tab.hh"
 #include "checksieve.h"
 
@@ -32,7 +33,7 @@ public:
     
     struct parse_result result;
     
-    void set_required_modules(std::vector<std::string> &modules);
+    void add_required_modules(std::vector<std::string> &modules);
     bool supports_module(const std::string &mod);
     
     void init_maps();
@@ -47,6 +48,8 @@ private:
     std::map<std::string, bool> _command_map;
     std::map<std::string, bool> _module_map;
     std::map<std::string, bool> _test_map;
+    
+    std::vector<std::string> _modules;
     
     std::istringstream _input_stream;
     yyscan_t yyscanner;

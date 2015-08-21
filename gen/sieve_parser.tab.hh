@@ -46,10 +46,14 @@
 #include <string>
 #include <sstream>
 #include <vector>
-class sieve_driver;
+
+namespace sieve {
+    class sieve_driver;
+}
+
 typedef void* yyscan_t;
 
-#line 53 "gen/sieve_parser.tab.hh" // lalr1.cc:387
+#line 57 "gen/sieve_parser.tab.hh" // lalr1.cc:387
 
 
 # include <vector>
@@ -125,7 +129,7 @@ typedef void* yyscan_t;
 
 
 namespace yy {
-#line 129 "gen/sieve_parser.tab.hh" // lalr1.cc:387
+#line 133 "gen/sieve_parser.tab.hh" // lalr1.cc:387
 
 
 
@@ -521,7 +525,7 @@ namespace yy {
 
 
     /// Build a parser object.
-    sieve_parser (yyscan_t scanner_yyarg, sieve_driver &driver_yyarg);
+    sieve_parser (yyscan_t scanner_yyarg, sieve::sieve_driver &driver_yyarg);
     virtual ~sieve_parser ();
 
     /// Parse.
@@ -731,7 +735,7 @@ namespace yy {
 
     // User arguments.
     yyscan_t scanner;
-    sieve_driver &driver;
+    sieve::sieve_driver &driver;
   };
 
   // Symbol number corresponding to token number t.
@@ -1162,7 +1166,7 @@ namespace yy {
 
 
 } // yy
-#line 1166 "gen/sieve_parser.tab.hh" // lalr1.cc:387
+#line 1170 "gen/sieve_parser.tab.hh" // lalr1.cc:387
 
 
 

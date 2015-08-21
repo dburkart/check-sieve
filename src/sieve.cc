@@ -13,7 +13,7 @@ const char *usage_string  =
 "  --version                Print out version information                       \n";
 
 void print_version() {
-    std::cout << "check-sieve, version " << LIBCHECKSIEVE_VERSION << " (" << PLATFORM << ")" << std::endl;
+    std::cout << "check-sieve, version " << sieve::version() << " (" << PLATFORM << ")" << std::endl;
 }
 
 void print_help() {
@@ -33,7 +33,7 @@ int main( int argc, char *argv[] ) {
         return 1;
     }
 
-    sieve_driver driver;
+    sieve::sieve_driver driver;
     for (int i = 1; i < argc; ++i) {
         // Long argument
         if (argv[i][0] == '-' && argv[i][1] == '-') {

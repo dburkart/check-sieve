@@ -1,10 +1,11 @@
 #ifndef __CHECKSIEVE_H__
 #define __CHECKSIEVE_H__
 
-#define LIBCHECKSIEVE_VERSION "0.3-dev"
-
 #include <string>
 #include "location.hh"
+
+namespace sieve 
+{
 
 struct parse_result {
     int status;
@@ -18,5 +19,9 @@ struct parse_result {
 
 struct parse_result sieve_parse_file( const char *filename );
 struct parse_result sieve_parse_string( const char *sieve );
+
+const char *version();
+
+} // namespace sieve
 
 #endif

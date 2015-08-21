@@ -6,15 +6,19 @@
 %define api.token.constructor
 %define api.value.type variant
 
-%lex-param {yyscan_t scanner} {sieve_driver &driver}
-%parse-param {yyscan_t scanner} {sieve_driver &driver}
+%lex-param {yyscan_t scanner} {sieve::sieve_driver &driver}
+%parse-param {yyscan_t scanner} {sieve::sieve_driver &driver}
 
 %code requires {
 #include <algorithm>
 #include <string>
 #include <sstream>
 #include <vector>
-class sieve_driver;
+
+namespace sieve {
+    class sieve_driver;
+}
+
 typedef void* yyscan_t;
 }
 

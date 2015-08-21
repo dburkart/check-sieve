@@ -8,7 +8,7 @@ class TestRelational(unittest.TestCase):
 
     def test_count(self):
         sieve = '''
-          require ["relational", "fileinto"];
+          require ["relational", "fileinto", "comparator-i;ascii-numeric"];
           if address :count "gt" :comparator "i;ascii-numeric"
                      ["to"] ["5"]
           {
@@ -34,7 +34,7 @@ class TestRelational(unittest.TestCase):
 
     def test_value(self):
         sieve = '''
-           require ["relational", "fileinto"];
+           require ["relational", "fileinto", "comparator-i;ascii-casemap"];
            if address :value "gt" :all :comparator "i;ascii-casemap"
                  ["from"] ["M"]
           {
@@ -46,6 +46,17 @@ class TestRelational(unittest.TestCase):
     def test_value_no_require(self):
         sieve = '''
            require ["fileinto"];
+           if address :value "gt" :all :comparator "i;ascii-casemap"
+                 ["from"] ["M"]
+          {
+             fileinto "From N-Z";
+          }
+        '''
+        self.assertTrue(checksieve.parse_string(sieve, True))
+    
+    def test_value_no_comparator_require(self):
+        sieve = '''
+           require ["fileinto", "relational"];
            if address :value "gt" :all :comparator "i;ascii-casemap"
                  ["from"] ["M"]
           {

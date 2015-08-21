@@ -137,7 +137,7 @@ void sieve_driver::add_required_modules(std::vector<std::string> &modules) {
 
 bool sieve_driver::supports_module(const std::string &mod) {
     for (std::vector<std::string>::iterator it = _modules.begin(); it != _modules.end(); ++it) {
-        if (std::regex_match(mod, std::regex(*it)))
+        if (std::regex_match(*it, std::regex(mod)))
             return true;
     }
 

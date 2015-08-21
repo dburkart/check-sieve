@@ -288,6 +288,11 @@ argument : string_list { $$ = $1; }
                 driver.error(@1, "Unrecognized tag \"" + $1 + "\".", "Hint: require relational");
                 YYABORT;
             }
+            
+            if ( !driver.supports_module("comparator-.*") && ($1 == ":comparator") ) {
+                driver.error(@1, "Unrecognized tag \"" + $1 + "\".", "Hint: require comparator-*");
+                YYABORT;
+            }
 
             $$ = std::vector<std::string>(1, $1);
         }

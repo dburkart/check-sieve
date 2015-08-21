@@ -32,7 +32,7 @@ typedef void* yyscan_t;
 
 %code {
 #include "sieve_driver.hh"
-#include "sieve_scanner.h"
+#include "sieve_scanner.hh"
 }
 
 %define api.token.prefix {TOK_}

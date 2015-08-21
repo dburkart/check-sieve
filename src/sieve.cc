@@ -1,6 +1,7 @@
 #include <string.h>
 #include <iostream>
 #include <fstream>
+#include "checksieve.h"
 #include "sieve_driver.hh"
 
 const char *usage_string  =

@@ -52,7 +52,7 @@
 #line 33 "src/sieve_parser.yy" // lalr1.cc:408
 
 #include "sieve_driver.hh"
-#include "sieve_scanner.h"
+#include "sieve_scanner.hh"
 
 #line 58 "gen/sieve_parser.tab.cc" // lalr1.cc:408
 

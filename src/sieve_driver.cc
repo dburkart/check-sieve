@@ -10,12 +10,6 @@
 namespace sieve
 {
 
-#define LIBCHECKSIEVE_VERSION "0.3-dev"
-
-const char *version() {
-    return LIBCHECKSIEVE_VERSION;
-}
-
 driver::driver()
     : trace_scanning( false ), trace_parsing( false ), _modules(), _command_map(), _test_map(), _suppress_output(false) {
     init_maps();
@@ -159,18 +153,6 @@ bool driver::valid_command(const std::string &command) {
 
 bool driver::valid_test(const std::string &test) {
     return _test_map[test];
-}
-
-struct parse_result sieve_parse_file( const char *filename ) {
-    driver driver;
-    driver.parse_file(filename);
-    return driver.result;
-}
-
-struct parse_result sieve_parse_string( const char *sieve ) {
-    driver driver;
-    driver.parse_string(sieve);
-    return driver.result;
 }
 
 } // namespace sieve

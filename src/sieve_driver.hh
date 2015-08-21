@@ -46,7 +46,6 @@ public:
 
 private:
     std::map<std::string, bool> _command_map;
-    std::map<std::string, bool> _module_map;
     std::map<std::string, bool> _test_map;
     
     std::vector<std::string> _modules;

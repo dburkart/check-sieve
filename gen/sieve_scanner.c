@@ -2533,7 +2533,7 @@ int yywrap(yyscan_t yyscanner)
 }
 
 
-void sieve::sieve_driver::scan_begin() {
+void sieve::driver::scan_begin() {
     struct yyguts_t * yyg;
 
     yylex_init(&yyscanner);
@@ -2546,7 +2546,7 @@ void sieve::sieve_driver::scan_begin() {
     }
 }
 
-void sieve::sieve_driver::scan_begin(const std::string &sieve) {
+void sieve::driver::scan_begin(const std::string &sieve) {
     struct yyguts_t *yyg;
 
     yylex_init(&yyscanner);
@@ -2556,7 +2556,7 @@ void sieve::sieve_driver::scan_begin(const std::string &sieve) {
     yy_scan_string(sieve.c_str(),yyscanner);
 }
 
-void sieve::sieve_driver::scan_end() {
+void sieve::driver::scan_end() {
     yylex_destroy(yyscanner);
 }
 

@@ -48,7 +48,7 @@
 #include <vector>
 
 namespace sieve {
-    class sieve_driver;
+    class driver;
 }
 
 typedef void* yyscan_t;
@@ -525,7 +525,7 @@ namespace yy {
 
 
     /// Build a parser object.
-    sieve_parser (yyscan_t scanner_yyarg, sieve::sieve_driver &driver_yyarg);
+    sieve_parser (yyscan_t scanner_yyarg, sieve::driver &driver_yyarg);
     virtual ~sieve_parser ();
 
     /// Parse.
@@ -735,7 +735,7 @@ namespace yy {
 
     // User arguments.
     yyscan_t scanner;
-    sieve::sieve_driver &driver;
+    sieve::driver &driver;
   };
 
   // Symbol number corresponding to token number t.

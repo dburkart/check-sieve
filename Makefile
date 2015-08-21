@@ -1,8 +1,11 @@
+PLATFORM ?= $(shell uname -s)
+ARCH ?= $(shell uname -m)
+
 LEX = flex -I
 YACC = bison -d
 
 CXX ?= clang++ -DYYDEBUG=1
-CFLAGS = -Igen/ -Isrc/ -std=c++0x -fPIC -Wno-deprecated-register
+CFLAGS = -Igen/ -Isrc/ -std=c++0x -fPIC -Wno-deprecated-register -DPLATFORM=\"$(ARCH)-$(PLATFORM)\"
 
 check-sieve: libchecksieve.a src/sieve.cc
 	$(CXX) $(CFLAGS) -c src/sieve.cc

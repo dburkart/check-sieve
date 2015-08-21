@@ -4,12 +4,21 @@
 #include "sieve_driver.hh"
 
 const char *usage_string  =
-"USAGE: check-sieve [options] file1 [file2 ...]                                 \n"
+"Usage: check-sieve [options] file1 [file2 ...]                                 \n"
 "                                                                               \n"
-"OPTIONS:                                                                       \n"
+"Options:                                                                       \n"
 "  --help                   Show this message                                   \n"
 "  --trace-parser           Trace the operation of the parser                   \n"
-"  --trace-scanner          Trace the operation of the scanner                  \n";
+"  --trace-scanner          Trace the operation of the scanner                  \n"
+"  --version                Print out version information                       \n";
+
+void print_version() {
+    std::cout << "check-sieve, version " << LIBCHECKSIEVE_VERSION << " (" << PLATFORM << ")" << std::endl;
+}
+
+void print_help() {
+    std::cout << usage_string << std::endl;
+}
 
 bool file_exists(const char *filename) {
     std::ifstream file(filename);
@@ -20,7 +29,7 @@ int main( int argc, char *argv[] ) {
     int result = 0;
 
     if (argc == 1) {
-        std::cout << usage_string << std::endl;
+        print_help();
         return 1;
     }
 
@@ -39,7 +48,12 @@ int main( int argc, char *argv[] ) {
             }
 
             if (strcmp(argv[i], "--help") == 0) {
-                std::cout << usage_string << std::endl;
+                print_help();
+                return 0;
+            }
+
+            if (strcmp(argv[i], "--version") == 0) {
+                print_version();
                 return 0;
             }
 

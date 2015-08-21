@@ -78,7 +78,7 @@ commands : END
 command :
       REQUIRE string_list ";"
         {
-            driver.set_required_modules( $2 );
+            driver.add_required_modules( $2 );
         }
     | IDENTIFIER arguments ";"
         {

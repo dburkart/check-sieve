@@ -2,12 +2,13 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <regex>
 
 #include "sieve_driver.hh"
 #include "sieve_parser.tab.hh"
 
 sieve_driver::sieve_driver()
-    : trace_scanning( false ), trace_parsing( false ), _module_map(), _command_map(), _test_map(), _suppress_output(false) {
+    : trace_scanning( false ), trace_parsing( false ), _modules(), _module_map(), _command_map(), _test_map(), _suppress_output(false) {
     init_maps();
 }
 
@@ -130,15 +131,17 @@ void sieve_driver::error( const std::string &m ) {
     std::cerr << m << std::endl;
 }
 
-void sieve_driver::set_required_modules(std::vector<std::string> &modules) {
-    for (std::vector<std::string>::const_iterator i = modules.begin(); i < modules.end(); ++i) {
-        std::string str = *i;
-        _module_map.insert(std::pair<std::string, bool>(str, true));
-    }
+void sieve_driver::add_required_modules(std::vector<std::string> &modules) {
+    _modules.insert(_modules.end(), modules.begin(), modules.end());
 }
 
 bool sieve_driver::supports_module(const std::string &mod) {
-    return _module_map[mod];
+    for (std::vector<std::string>::iterator it = _modules.begin(); it != _modules.end(); ++it) {
+        if (std::regex_match(mod, std::regex(*it)))
+            return true;
+    }
+
+    return false;
 }
 
 bool sieve_driver::valid_command(const std::string &command) {

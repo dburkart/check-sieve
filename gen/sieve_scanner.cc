@@ -1,6 +1,6 @@
-#line 2 "gen/sieve_scanner.c"
+#line 2 "gen/sieve_scanner.cc"
 
-#line 4 "gen/sieve_scanner.c"
+#line 4 "gen/sieve_scanner.cc"
 
 #define  YY_INT_ALIGNED short int
 
@@ -640,7 +640,7 @@ std::string multiline_buffer;
 #line 25 "src/sieve_scanner.l"
 #define YY_USER_ACTION  loc.columns (yyleng);
 
-#line 644 "gen/sieve_scanner.c"
+#line 644 "gen/sieve_scanner.cc"
 
 #define INITIAL 0
 #define COMMENT 1
@@ -944,7 +944,7 @@ YY_DECL
     loc.step();
 
 
-#line 948 "gen/sieve_scanner.c"
+#line 948 "gen/sieve_scanner.cc"
 
 	if ( !yyg->yy_init )
 		{
@@ -1301,7 +1301,7 @@ YY_RULE_SETUP
 #line 88 "src/sieve_scanner.l"
 ECHO;
 	YY_BREAK
-#line 1305 "gen/sieve_scanner.c"
+#line 1305 "gen/sieve_scanner.cc"
 
 	case YY_END_OF_BUFFER:
 		{

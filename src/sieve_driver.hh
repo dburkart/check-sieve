@@ -10,17 +10,17 @@
 #include "checksieve.h"
 
 #define YY_DECL \
-    yy::sieve_parser::symbol_type yylex( yyscan_t yyscanner, sieve::sieve_driver &driver )
+    yy::sieve_parser::symbol_type yylex( yyscan_t yyscanner, sieve::driver &driver )
 YY_DECL;
 
 namespace sieve
 {
 
-class sieve_driver {
+class driver {
 public:
-    sieve_driver();
-    sieve_driver(bool quiet);
-    virtual ~sieve_driver();
+    driver();
+    driver(bool quiet);
+    virtual ~driver();
     
     void scan_begin();
     void scan_begin( const std::string &sieve);

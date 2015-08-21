@@ -181,7 +181,7 @@ namespace yy {
 
 
   /// Build a parser object.
-  sieve_parser::sieve_parser (yyscan_t scanner_yyarg, sieve::sieve_driver &driver_yyarg)
+  sieve_parser::sieve_parser (yyscan_t scanner_yyarg, sieve::driver &driver_yyarg)
     :
 #if YYDEBUG
       yydebug_ (false),

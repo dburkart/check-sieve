@@ -33,7 +33,7 @@ int main( int argc, char *argv[] ) {
         return 1;
     }
 
-    sieve::sieve_driver driver;
+    sieve::driver driver;
     for (int i = 1; i < argc; ++i) {
         // Long argument
         if (argv[i][0] == '-' && argv[i][1] == '-') {

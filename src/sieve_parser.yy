@@ -151,7 +151,7 @@ command :
             }
 
             if ($1 == "fileinto" && ($2.size() > 2 || $2.size() < 1)) {
-                driver.error(@2, "Incorrect arguments to \"fileinto\" command.", "Syntax:   fileinto [\":copy\"] <folder: string>");
+                driver.error(@2, "Incorrect arguments to \"fileinto\" command.", "Syntax:   fileinto [\":flags\"][\":copy\"] <folder: string>");
                 YYABORT;
             }
 
@@ -170,11 +170,6 @@ command :
                     driver.error(@2, "Unrecognized tag.", "Syntax:    break [\":name\" string]");
                     YYABORT;
                 }
-            }
-
-            if ($1 == "keep") {
-                driver.error(@2, "Too many arguments passed to \"keep\" command.", "Syntax:   keep");
-                YYABORT;
             }
 
             if ($1 == "discard") {

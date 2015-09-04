@@ -9,7 +9,7 @@ CFLAGS = -Igen/ -Isrc/ -std=c++0x -fPIC -Wno-deprecated-register -DPLATFORM=\"$(
 
 check-sieve: libchecksieve.a src/sieve.cc
 	$(CXX) $(CFLAGS) -c src/sieve.cc
-	$(CXX) $(CFLAGS) libchecksieve.a sieve.o -o check-sieve
+	$(CXX) $(CFLAGS) -o check-sieve sieve.o libchecksieve.a
 
 all: codegen check-sieve test
 

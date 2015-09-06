@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/dburkart/mail-sieve-verifier.svg?branch=master)](https://travis-ci.org/dburkart/mail-sieve-verifier)
+[![Build Status](https://travis-ci.org/dburkart/check-sieve.svg?branch=master)](https://travis-ci.org/dburkart/check-sieve)
 
 ### check-sieve
 

@@ -1,3 +1,16 @@
+Version 0.3:
+ * Renamed the project to check-sieve, for better consistency.
+ * Fix linking issue on some flavors of linux.
+ * Update the README.md file with a list of supported RFCs.
+ * Fix command "keep" validation.
+ * Refactored much of the library.
+ * Add version information to the library and binary.
+ * Switch to using regexes to implement required module matching.
+ * Add usage to check-sieve, as well as a couple of debugging options.
+ * Implement "MIME Part Tests, Iteration, Extraction, Replacement, and Enclosure" (RFC 5703).
+ * Implement the relational extension (RFC 5231)
+ * Implement Body Extension (RFC 5173)
+
 Version 0.2:
  * Fix a handful of RFC conformance bugs.
  * Fix Travis-CI builds.

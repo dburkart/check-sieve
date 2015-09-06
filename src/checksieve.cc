@@ -1,10 +1,10 @@
 #include "checksieve.h"
 #include "sieve_driver.hh"
 
-namespace sieve 
+namespace sieve
 {
-    
-#define LIBCHECKSIEVE_VERSION "0.3-dev"
+
+#define LIBCHECKSIEVE_VERSION "0.3"
 
 extern const char *version() {
     return LIBCHECKSIEVE_VERSION;

@@ -150,9 +150,29 @@ command :
                 YYABORT;
             }
 
-            if ($1 == "fileinto" && ($2.size() > 2 || $2.size() < 1)) {
-                driver.error(@2, "Incorrect arguments to \"fileinto\" command.", "Syntax:   fileinto [\":flags\"][\":copy\"] <folder: string>");
-                YYABORT;
+            if ($1 == "fileinto") {
+                std::string suggestion = "Syntax:   fileinto [\":flags\" <list-of-flags: string-list>][\":copy\"] <folder: string>";
+
+                if ($2.size() < 1) {
+                    driver.error(@2, "Incorrect arguments to \"fileinto\" command.", suggestion);
+                    YYABORT;
+                }
+
+                int minArguments = 1;
+
+                if (std::find($2.begin(), $2.end(), ":flags") != $2.end()) {
+                    minArguments += 2;
+                }
+
+                if (std::find($2.begin(), $2.end(), ":copy") != $2.end()) {
+                    minArguments++;
+                }
+
+                // verify minimum number of arguments
+                if ($2.size() < minArguments) {
+                    driver.error(@2, "Incorrect number of arguments to \"fileinto\" command.", suggestion);
+                    YYABORT;
+                }
             }
 
             if ($1 == "redirect" && ($2.size() > 2 || $2.size() < 1)) {

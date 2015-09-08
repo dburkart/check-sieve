@@ -39,7 +39,7 @@ Currently, the supported RFCs are:
 * Body Extension ([RFC 5173](https://tools.ietf.org/html/rfc5173))
 * Relational Extension ([RFC 5231](https://tools.ietf.org/html/rfc5231))
 * MIME Part Tests, Iteration, Extraction, Replacement, and Enclosure ([RFC 5703](https://tools.ietf.org/html/rfc5703))
-* Imap4flags Extension ([RFC 5231](https://tools.ietf.org/html/rfc5232))
+* Imap4flags Extension ([RFC 5232](https://tools.ietf.org/html/rfc5232))
 
 If you find any discrepancies with these RFCs, or have reduced test-cases that should work but don't, please file an
 issue on the issues tab. If an RFC is missing which isn't supported, that you would like supported, also file an issue!

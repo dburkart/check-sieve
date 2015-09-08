@@ -9,7 +9,7 @@ This project aims to make checking mail sieve syntax easy and painless. Because 
 `check-sieve` minimally depends on having a modern C++ compiler, however there are some requirements
 for developing on the project:
 
-* bison >= v3.0.2
+* bison >= v3.0.4
 * flex >= v2.5.35
 * python development headers (for testing)
 

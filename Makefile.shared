@@ -1,0 +1,14 @@
+ifndef $(PROJECT)
+
+PROJECT = check-sieve
+
+PLATFORM ?= $(shell uname -s)
+ARCH ?= $(shell uname -m)
+
+LEX = flex -I
+YACC = bison -d
+
+CXX ?= clang++ -DYYDEBUG=1
+CFLAGS = -I$(BASE)/gen/ -I$(BASE)/src/ -std=c++0x -fPIC -Wno-deprecated-register -DPLATFORM=\"$(ARCH)-$(PLATFORM)\"
+
+endif

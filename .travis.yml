@@ -11,7 +11,9 @@ before_install:
 script: make test
 
 branches:
-    only: master
+    only: 
+        - master
+        - AST
 
 notifications:
     email: false

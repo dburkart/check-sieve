@@ -43,7 +43,7 @@ void ASTTraceVisitor::visit( ASTSieve* node ) {
 
 void ASTTraceVisitor::visit( ASTString* node ) {
     std::string slice = node->value().substr(0, 10);
-    if (slice.length() == 10)
+    if (slice != node->value())
         slice += "...";
     std::cout << "String (\"" << slice <<  "\")" << std::endl;
 }

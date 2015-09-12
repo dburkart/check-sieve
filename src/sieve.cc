@@ -30,7 +30,7 @@ bool file_exists(const char *filename) {
 
 void traverse_syntax_tree(sieve::ASTNode *node, sieve::ASTTraceVisitor &visitor, int indent_level) {
     for (int i = 0; i < indent_level; i++) {
-        std::cout << '\t';
+        std::cout << "    ";
     }
     
     node->accept(visitor);

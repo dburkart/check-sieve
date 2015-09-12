@@ -1,6 +1,13 @@
 import os
 import subprocess
+import unittest
 from tempfile import NamedTemporaryFile
+
+
+class DiffTestCase(unittest.TestCase):
+    def assertNoDiff(self, diff):
+        self.assertFalse(diff, msg='\n{}'.format(diff))
+
 
 def run_mock(filename):
     current_dir = os.path.dirname(os.path.realpath(__file__))

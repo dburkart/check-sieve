@@ -1,10 +1,29 @@
 #include <iostream>
+#include <vector>
 
 #include "ASTTraceVisitor.hh"
 
 namespace sieve
 {
     
+void ASTTraceVisitor::walk( ASTSieve *root ) {
+    this->_traverse_tree( root, 0 );
+}
+
+void ASTTraceVisitor::_traverse_tree( sieve::ASTNode *node, int indent_level ) {
+    for (int i = 0; i < indent_level; i++) {
+        std::cout << "    ";
+    }
+
+    node->accept(*this);
+
+    std::vector<sieve::ASTNode *> children = node->children();
+    for (std::vector<sieve::ASTNode *>::iterator it = children.begin(); it != children.end(); ++it) {
+        sieve::ASTNode *child = *it;
+        _traverse_tree(child, indent_level + 1);
+    }
+}
+
 void ASTTraceVisitor::visit( ASTBlock* node ) {
     std::cout << "Block" << std::endl;
 }

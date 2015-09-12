@@ -28,20 +28,6 @@ bool file_exists(const char *filename) {
     return (bool)file;
 }
 
-void traverse_syntax_tree(sieve::ASTNode *node, sieve::ASTTraceVisitor &visitor, int indent_level) {
-    for (int i = 0; i < indent_level; i++) {
-        std::cout << "    ";
-    }
-    
-    node->accept(visitor);
-    
-    std::vector<sieve::ASTNode *> children = node->children();
-    for (std::vector<sieve::ASTNode *>::iterator it = children.begin(); it != children.end(); ++it) {
-        sieve::ASTNode *child = *it;
-        traverse_syntax_tree(child, visitor, indent_level + 1);
-    }
-}
-
 int main( int argc, char *argv[] ) {
     int result = 0;
 
@@ -93,8 +79,7 @@ int main( int argc, char *argv[] ) {
             if ( !driver.parse_file(argv[i]) ) {
                 if (driver.trace_tree) {
                     sieve::ASTTraceVisitor visitor = sieve::ASTTraceVisitor();
-                    sieve::ASTSieve *sieve = driver.syntax_tree();
-                    traverse_syntax_tree(sieve, visitor, 0);
+                    visitor.walk(driver.syntax_tree());
                 } else {
                     std::cout << "No errors found!" << std::endl;
                 }

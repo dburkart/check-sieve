@@ -18,6 +18,8 @@ namespace sieve
 
 class ASTVisitor {
 public:
+    virtual void walk( ASTSieve *root ) =0;
+
     virtual void visit( ASTBlock* ) =0;
     virtual void visit( ASTBoolean* ) =0;
     virtual void visit( ASTBranch* ) =0;

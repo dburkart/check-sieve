@@ -1,20 +1,20 @@
-#ifndef __ASTTAG_HH__
-#define __ASTTAG_HH__
+#ifndef __ASTTEST_HH__
+#define __ASTTEST_HH__
 
 #include <string>
 
-#include "ASTNode.hh"
+#include "ASTCommand.hh"
 
 namespace sieve
 {
 
 class ASTVisitor;
 
-class ASTTag : public ASTNode {
+class ASTTest : public ASTCommand {
 public:
-    ASTTag() : ASTNode() {}    
-    ASTTag(yy::location location);
-    ASTTag(yy::location location, std::string name);
+    ASTTest() : ASTCommand() {}    
+    ASTTest(yy::location location);
+    ASTTest(yy::location location, std::string name);
     
     void accept(ASTVisitor &visitor);
     

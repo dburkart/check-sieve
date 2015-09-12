@@ -5,8 +5,8 @@ namespace sieve
 {
 
 ASTSieve::ASTSieve( yy::location location ) 
-    : ASTNode( location ) {
-    this->_description = "Mail Sieve";
+    : ASTNode( location ) 
+{ 
 }
 
 

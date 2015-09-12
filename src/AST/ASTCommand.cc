@@ -5,14 +5,14 @@ namespace sieve
 {
 
 ASTCommand::ASTCommand( yy::location location ) 
-    : ASTNode( location ) {
-    this->_description = "Command";
+    : ASTNode( location ) 
+{ 
 }
 
 ASTCommand::ASTCommand( yy::location location, std::string name)
     : ASTNode( location )
-    , _name( name ) {
-    this->_description = "Command";
+    , _name( name )
+{
 }
 
 void ASTCommand::accept( ASTVisitor &visitor ) {

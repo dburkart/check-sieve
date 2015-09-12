@@ -11,12 +11,12 @@ namespace sieve
 {
 
 driver::driver()
-    : trace_scanning( false ), trace_parsing( false ), _modules(), _command_map(), _test_map(), _suppress_output(false) {
+    : trace_scanning( false ), trace_parsing( false ), trace_tree( false ), _modules(), _command_map(), _test_map(), _suppress_output(false) {
     init_maps();
 }
 
 driver::driver( bool quiet )
-    : trace_scanning( false ), trace_parsing( false ), _modules(), _command_map(), _test_map(), _suppress_output(false) {
+    : trace_scanning( false ), trace_parsing( false ), trace_tree( false ), _modules(), _command_map(), _test_map(), _suppress_output(false) {
     init_maps();
     _suppress_output = quiet;
 }

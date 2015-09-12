@@ -5,14 +5,14 @@ namespace sieve
 {
 
 ASTString::ASTString( yy::location location ) 
-    : ASTNode( location ) {
-    this->_description = "String constant";
+    : ASTNode( location ) 
+{ 
 }
 
 ASTString::ASTString( yy::location location, std::string str)
     : ASTNode( location )
-    , _str( str ) {
-    this->_description = "String constant";
+    , _str( str )
+{
 }
 
 void ASTString::accept( ASTVisitor &visitor ) {

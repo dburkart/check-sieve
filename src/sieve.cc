@@ -3,6 +3,7 @@
 #include <fstream>
 #include "checksieve.h"
 #include "sieve_driver.hh"
+#include "AST.hh"
 
 const char *usage_string  =
 "Usage: check-sieve [options] file1 [file2 ...]                                 \n"
@@ -11,6 +12,7 @@ const char *usage_string  =
 "  --help                   Show this message                                   \n"
 "  --trace-parser           Trace the operation of the parser                   \n"
 "  --trace-scanner          Trace the operation of the scanner                  \n"
+"  --trace-tree             Trace the abstract-syntax-tree                      \n"
 "  --version                Print out version information                       \n";
 
 void print_version() {
@@ -24,6 +26,20 @@ void print_help() {
 bool file_exists(const char *filename) {
     std::ifstream file(filename);
     return (bool)file;
+}
+
+void traverse_syntax_tree(sieve::ASTNode *node, sieve::ASTTraceVisitor &visitor, int indent_level) {
+    for (int i = 0; i < indent_level; i++) {
+        std::cout << '\t';
+    }
+    
+    node->accept(visitor);
+    
+    std::vector<sieve::ASTNode *> children = node->children();
+    for (std::vector<sieve::ASTNode *>::iterator it = children.begin(); it != children.end(); ++it) {
+        sieve::ASTNode *child = *it;
+        traverse_syntax_tree(child, visitor, indent_level + 1);
+    }
 }
 
 int main( int argc, char *argv[] ) {
@@ -45,6 +61,11 @@ int main( int argc, char *argv[] ) {
 
             if (strcmp(argv[i], "--trace-parser") == 0) {
                 driver.trace_parsing = true;
+                continue;
+            }
+            
+            if (strcmp(argv[i], "--trace-tree") == 0) {
+                driver.trace_tree = true;
                 continue;
             }
 
@@ -70,7 +91,13 @@ int main( int argc, char *argv[] ) {
             }
 
             if ( !driver.parse_file(argv[i]) ) {
-                std::cout << "No errors found!" << std::endl;
+                if (driver.trace_tree) {
+                    sieve::ASTTraceVisitor visitor = sieve::ASTTraceVisitor();
+                    sieve::ASTSieve *sieve = driver.syntax_tree();
+                    traverse_syntax_tree(sieve, visitor, 0);
+                } else {
+                    std::cout << "No errors found!" << std::endl;
+                }
             } else {
                 result = 1;
             }

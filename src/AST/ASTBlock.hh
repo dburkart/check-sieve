@@ -1,5 +1,5 @@
-#ifndef __ASTCONDITION_HH__
-#define __ASTCONDITION_HH__
+#ifndef __ASTBLOCK_HH__
+#define __ASTBLOCK_HH__
 
 #include <string>
 
@@ -10,10 +10,10 @@ namespace sieve
 
 class ASTVisitor;
 
-class ASTCondition : public ASTNode {
+class ASTBlock : public ASTNode {
 public:
-    ASTCondition() : ASTNode() {}    
-    ASTCondition(yy::location location);
+    ASTBlock() : ASTNode() {}    
+    ASTBlock(yy::location location);
     
     void accept(ASTVisitor &visitor);
     

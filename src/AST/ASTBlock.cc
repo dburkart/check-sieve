@@ -1,16 +1,16 @@
-#include "ASTBranch.hh"
+#include "ASTBlock.hh"
 #include "ASTVisitor.hh"
 
 namespace sieve
 {
 
-ASTBranch::ASTBranch( yy::location location ) 
+ASTBlock::ASTBlock( yy::location location ) 
     : ASTNode( location ) 
 { 
 }
 
 
-void ASTBranch::accept( ASTVisitor &visitor ) {
+void ASTBlock::accept( ASTVisitor &visitor ) {
     visitor.visit(this);
 }
 

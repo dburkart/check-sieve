@@ -281,23 +281,29 @@ namespace yy {
     {
       // "true"
       // "false"
-      char dummy1[sizeof(sieve::ASTBoolean)];
-
-      // command
-      char dummy2[sizeof(sieve::ASTNode *)];
+      char dummy1[sizeof(bool)];
 
       // "number"
-      // numeric
-      char dummy3[sizeof(sieve::ASTNumeric)];
+      char dummy2[sizeof(int)];
 
-      // STRING_LITERAL
-      char dummy4[sizeof(sieve::ASTString)];
+      // command
+      // block
+      // if_flow
+      char dummy3[sizeof(sieve::ASTNode *)];
+
+      // numeric
+      char dummy4[sizeof(sieve::ASTNumeric)];
+
+      // sieve
+      char dummy5[sizeof(sieve::ASTSieve *)];
 
       // "identifier"
       // "foreverypart"
       // ":tag"
-      char dummy5[sizeof(std::string)];
+      // STRING_LITERAL
+      char dummy6[sizeof(std::string)];
 
+      // command_list
       // arguments
       // argument
       // test_list
@@ -305,7 +311,7 @@ namespace yy {
       // test
       // string_list
       // strings
-      char dummy6[sizeof(std::vector<sieve::ASTNode *>)];
+      char dummy7[sizeof(std::vector<sieve::ASTNode *>)];
 };
 
     /// Symbol semantic values.
@@ -346,8 +352,8 @@ namespace yy {
         TOK_IDENTIFIER = 272,
         TOK_FOREVERYPART = 273,
         TOK_TAG = 274,
-        TOK_NUMBER = 275,
-        TOK_STRING_LITERAL = 276,
+        TOK_STRING_LITERAL = 275,
+        TOK_NUMBER = 276,
         TOK_TRUE = 277,
         TOK_FALSE = 278
       };
@@ -387,13 +393,15 @@ namespace yy {
 
   basic_symbol (typename Base::kind_type t, const location_type& l);
 
-  basic_symbol (typename Base::kind_type t, const sieve::ASTBoolean v, const location_type& l);
+  basic_symbol (typename Base::kind_type t, const bool v, const location_type& l);
+
+  basic_symbol (typename Base::kind_type t, const int v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const sieve::ASTNode * v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const sieve::ASTNumeric v, const location_type& l);
 
-  basic_symbol (typename Base::kind_type t, const sieve::ASTString v, const location_type& l);
+  basic_symbol (typename Base::kind_type t, const sieve::ASTSieve * v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const std::string v, const location_type& l);
 
@@ -540,19 +548,19 @@ namespace yy {
 
     static inline
     symbol_type
-    make_NUMBER (const sieve::ASTNumeric& v, const location_type& l);
+    make_STRING_LITERAL (const std::string& v, const location_type& l);
 
     static inline
     symbol_type
-    make_STRING_LITERAL (const sieve::ASTString& v, const location_type& l);
+    make_NUMBER (const int& v, const location_type& l);
 
     static inline
     symbol_type
-    make_TRUE (const sieve::ASTBoolean& v, const location_type& l);
+    make_TRUE (const bool& v, const location_type& l);
 
     static inline
     symbol_type
-    make_FALSE (const sieve::ASTBoolean& v, const location_type& l);
+    make_FALSE (const bool& v, const location_type& l);
 
 
     /// Build a parser object.
@@ -759,8 +767,8 @@ namespace yy {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 99,     ///< Last index in yytable_.
-      yynnts_ = 13,  ///< Number of nonterminal symbols.
+      yylast_ = 95,     ///< Last index in yytable_.
+      yynnts_ = 14,  ///< Number of nonterminal symbols.
       yyfinal_ = 30, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
@@ -846,35 +854,42 @@ namespace yy {
     {
       case 22: // "true"
       case 23: // "false"
-        value.copy< sieve::ASTBoolean > (other.value);
+        value.copy< bool > (other.value);
         break;
 
-      case 26: // command
+      case 21: // "number"
+        value.copy< int > (other.value);
+        break;
+
+      case 27: // command
+      case 28: // block
+      case 29: // if_flow
         value.copy< sieve::ASTNode * > (other.value);
         break;
 
-      case 20: // "number"
-      case 36: // numeric
+      case 37: // numeric
         value.copy< sieve::ASTNumeric > (other.value);
         break;
 
-      case 21: // STRING_LITERAL
-        value.copy< sieve::ASTString > (other.value);
+      case 25: // sieve
+        value.copy< sieve::ASTSieve * > (other.value);
         break;
 
       case 17: // "identifier"
       case 18: // "foreverypart"
       case 19: // ":tag"
+      case 20: // STRING_LITERAL
         value.copy< std::string > (other.value);
         break;
 
-      case 29: // arguments
-      case 30: // argument
-      case 31: // test_list
-      case 32: // tests
-      case 33: // test
-      case 34: // string_list
-      case 35: // strings
+      case 26: // command_list
+      case 30: // arguments
+      case 31: // argument
+      case 32: // test_list
+      case 33: // tests
+      case 34: // test
+      case 35: // string_list
+      case 36: // strings
         value.copy< std::vector<sieve::ASTNode *> > (other.value);
         break;
 
@@ -897,35 +912,42 @@ namespace yy {
     {
       case 22: // "true"
       case 23: // "false"
-        value.copy< sieve::ASTBoolean > (v);
+        value.copy< bool > (v);
         break;
 
-      case 26: // command
+      case 21: // "number"
+        value.copy< int > (v);
+        break;
+
+      case 27: // command
+      case 28: // block
+      case 29: // if_flow
         value.copy< sieve::ASTNode * > (v);
         break;
 
-      case 20: // "number"
-      case 36: // numeric
+      case 37: // numeric
         value.copy< sieve::ASTNumeric > (v);
         break;
 
-      case 21: // STRING_LITERAL
-        value.copy< sieve::ASTString > (v);
+      case 25: // sieve
+        value.copy< sieve::ASTSieve * > (v);
         break;
 
       case 17: // "identifier"
       case 18: // "foreverypart"
       case 19: // ":tag"
+      case 20: // STRING_LITERAL
         value.copy< std::string > (v);
         break;
 
-      case 29: // arguments
-      case 30: // argument
-      case 31: // test_list
-      case 32: // tests
-      case 33: // test
-      case 34: // string_list
-      case 35: // strings
+      case 26: // command_list
+      case 30: // arguments
+      case 31: // argument
+      case 32: // test_list
+      case 33: // tests
+      case 34: // test
+      case 35: // string_list
+      case 36: // strings
         value.copy< std::vector<sieve::ASTNode *> > (v);
         break;
 
@@ -945,7 +967,14 @@ namespace yy {
   {}
 
   template <typename Base>
-  sieve_parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const sieve::ASTBoolean v, const location_type& l)
+  sieve_parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const bool v, const location_type& l)
+    : Base (t)
+    , value (v)
+    , location (l)
+  {}
+
+  template <typename Base>
+  sieve_parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const int v, const location_type& l)
     : Base (t)
     , value (v)
     , location (l)
@@ -966,7 +995,7 @@ namespace yy {
   {}
 
   template <typename Base>
-  sieve_parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const sieve::ASTString v, const location_type& l)
+  sieve_parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const sieve::ASTSieve * v, const location_type& l)
     : Base (t)
     , value (v)
     , location (l)
@@ -1014,35 +1043,42 @@ namespace yy {
     {
       case 22: // "true"
       case 23: // "false"
-        value.template destroy< sieve::ASTBoolean > ();
+        value.template destroy< bool > ();
         break;
 
-      case 26: // command
+      case 21: // "number"
+        value.template destroy< int > ();
+        break;
+
+      case 27: // command
+      case 28: // block
+      case 29: // if_flow
         value.template destroy< sieve::ASTNode * > ();
         break;
 
-      case 20: // "number"
-      case 36: // numeric
+      case 37: // numeric
         value.template destroy< sieve::ASTNumeric > ();
         break;
 
-      case 21: // STRING_LITERAL
-        value.template destroy< sieve::ASTString > ();
+      case 25: // sieve
+        value.template destroy< sieve::ASTSieve * > ();
         break;
 
       case 17: // "identifier"
       case 18: // "foreverypart"
       case 19: // ":tag"
+      case 20: // STRING_LITERAL
         value.template destroy< std::string > ();
         break;
 
-      case 29: // arguments
-      case 30: // argument
-      case 31: // test_list
-      case 32: // tests
-      case 33: // test
-      case 34: // string_list
-      case 35: // strings
+      case 26: // command_list
+      case 30: // arguments
+      case 31: // argument
+      case 32: // test_list
+      case 33: // tests
+      case 34: // test
+      case 35: // string_list
+      case 36: // strings
         value.template destroy< std::vector<sieve::ASTNode *> > ();
         break;
 
@@ -1071,35 +1107,42 @@ namespace yy {
     {
       case 22: // "true"
       case 23: // "false"
-        value.move< sieve::ASTBoolean > (s.value);
+        value.move< bool > (s.value);
         break;
 
-      case 26: // command
+      case 21: // "number"
+        value.move< int > (s.value);
+        break;
+
+      case 27: // command
+      case 28: // block
+      case 29: // if_flow
         value.move< sieve::ASTNode * > (s.value);
         break;
 
-      case 20: // "number"
-      case 36: // numeric
+      case 37: // numeric
         value.move< sieve::ASTNumeric > (s.value);
         break;
 
-      case 21: // STRING_LITERAL
-        value.move< sieve::ASTString > (s.value);
+      case 25: // sieve
+        value.move< sieve::ASTSieve * > (s.value);
         break;
 
       case 17: // "identifier"
       case 18: // "foreverypart"
       case 19: // ":tag"
+      case 20: // STRING_LITERAL
         value.move< std::string > (s.value);
         break;
 
-      case 29: // arguments
-      case 30: // argument
-      case 31: // test_list
-      case 32: // tests
-      case 33: // test
-      case 34: // string_list
-      case 35: // strings
+      case 26: // command_list
+      case 30: // arguments
+      case 31: // argument
+      case 32: // test_list
+      case 33: // tests
+      case 34: // test
+      case 35: // string_list
+      case 36: // strings
         value.move< std::vector<sieve::ASTNode *> > (s.value);
         break;
 
@@ -1274,25 +1317,25 @@ namespace yy {
   }
 
   sieve_parser::symbol_type
-  sieve_parser::make_NUMBER (const sieve::ASTNumeric& v, const location_type& l)
-  {
-    return symbol_type (token::TOK_NUMBER, v, l);
-  }
-
-  sieve_parser::symbol_type
-  sieve_parser::make_STRING_LITERAL (const sieve::ASTString& v, const location_type& l)
+  sieve_parser::make_STRING_LITERAL (const std::string& v, const location_type& l)
   {
     return symbol_type (token::TOK_STRING_LITERAL, v, l);
   }
 
   sieve_parser::symbol_type
-  sieve_parser::make_TRUE (const sieve::ASTBoolean& v, const location_type& l)
+  sieve_parser::make_NUMBER (const int& v, const location_type& l)
+  {
+    return symbol_type (token::TOK_NUMBER, v, l);
+  }
+
+  sieve_parser::symbol_type
+  sieve_parser::make_TRUE (const bool& v, const location_type& l)
   {
     return symbol_type (token::TOK_TRUE, v, l);
   }
 
   sieve_parser::symbol_type
-  sieve_parser::make_FALSE (const sieve::ASTBoolean& v, const location_type& l)
+  sieve_parser::make_FALSE (const bool& v, const location_type& l)
   {
     return symbol_type (token::TOK_FALSE, v, l);
   }
@@ -1300,7 +1343,7 @@ namespace yy {
 
 
 } // yy
-#line 1304 "../gen/sieve_parser.tab.hh" // lalr1.cc:392
+#line 1347 "../gen/sieve_parser.tab.hh" // lalr1.cc:392
 
 
 

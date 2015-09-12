@@ -1146,7 +1146,7 @@ YY_RULE_SETUP
 case 11:
 YY_RULE_SETUP
 #line 49 "../src/sieve_scanner.l"
-{ loc.step(); BEGIN(0); return yy::sieve_parser::make_STRING_LITERAL( sieve::ASTString(loc, multiline_buffer), loc); }
+{ loc.step(); BEGIN(0); return yy::sieve_parser::make_STRING_LITERAL( multiline_buffer, loc); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
@@ -1181,7 +1181,7 @@ case 17:
 /* rule 17 can match eol */
 YY_RULE_SETUP
 #line 56 "../src/sieve_scanner.l"
-{ loc.lines(yyleng); loc.step(); BEGIN(0); return yy::sieve_parser::make_STRING_LITERAL( sieve::ASTString(loc, multiline_buffer), loc); }
+{ loc.lines(yyleng); loc.step(); BEGIN(0); return yy::sieve_parser::make_STRING_LITERAL( multiline_buffer, loc); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
@@ -1226,12 +1226,12 @@ return yy::sieve_parser::make_COMMA( loc );
 case 26:
 YY_RULE_SETUP
 #line 66 "../src/sieve_scanner.l"
-return yy::sieve_parser::make_TRUE( sieve::ASTBoolean(loc, true), loc );
+return yy::sieve_parser::make_TRUE( true, loc );
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 67 "../src/sieve_scanner.l"
-return yy::sieve_parser::make_FALSE( sieve::ASTBoolean(loc, false), loc );
+return yy::sieve_parser::make_FALSE( false, loc );
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
@@ -1266,7 +1266,7 @@ YY_RULE_SETUP
                     long n = strtol( yytext, NULL, 10 );
                     if (! (INT_MIN <= n && n <= INT_MAX && errno != ERANGE))
                         driver.error (loc, "integer is out of range");
-                    return yy::sieve_parser::make_NUMBER( sieve::ASTNumeric(loc, n), loc );
+                    return yy::sieve_parser::make_NUMBER( n, loc );
                 }
 	YY_BREAK
 case 34:

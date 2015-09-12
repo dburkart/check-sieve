@@ -5,8 +5,8 @@ namespace sieve
 {
 
 ASTRequire::ASTRequire( yy::location location ) 
-    : ASTCommand( location ) {
-    this->_description = "Require statement";
+    : ASTCommand( location ) 
+{ 
 }
 
 

@@ -5,8 +5,8 @@ namespace sieve
 {
 
 ASTCondition::ASTCondition( yy::location location ) 
-    : ASTNode( location ) {
-    this->_description = "Control flow tests";
+    : ASTNode( location ) 
+{ 
 }
 
 

@@ -14,13 +14,14 @@ class ASTVisitor;
 class ASTNode {
 public:
     ASTNode() {}
-    ASTNode(yy::location location) {
+    ASTNode(yy::location location) 
+        : _children() {
         this->_location = location;
         this->_parent = NULL;
     }
 
     virtual void accept(ASTVisitor& visitor) =0;
-
+    
     ASTNode *parent() { return this->_parent; }
     ASTNode *parent( ASTNode *parent ) { this->_parent = parent; return this->_parent; }
     

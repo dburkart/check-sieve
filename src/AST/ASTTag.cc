@@ -5,10 +5,15 @@ namespace sieve
 {
 
 ASTTag::ASTTag( yy::location location ) 
-    : ASTNode( location ) {
-    this->_description = "Tag constant";
+    : ASTNode( location ) 
+{ 
 }
 
+ASTTag::ASTTag( yy::location location, std::string name)
+    : ASTNode( location )
+    , _name( name )
+{
+}
 
 void ASTTag::accept( ASTVisitor &visitor ) {
     visitor.visit(this);

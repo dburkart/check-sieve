@@ -33,6 +33,7 @@ public:
     std::string file;
     std::string sieve_string;
     bool trace_parsing;
+    bool trace_tree;
     
     struct parse_result result;
     
@@ -45,7 +46,10 @@ public:
     
     void error( const yy::location &l, const std::string &message, const std::string &suggestion);
     void error( const yy::location &l, const std::string &message );
-    void error( const std::string &m ); 
+    void error( const std::string &m );
+    
+    ASTSieve *syntax_tree() { return _sieve; }
+    ASTSieve *syntax_tree(ASTSieve *sieve) { _sieve = sieve; return _sieve; }
 
 private:
     std::map<std::string, bool> _command_map;
@@ -56,6 +60,8 @@ private:
     std::istringstream _input_stream;
     yyscan_t yyscanner;
     bool _suppress_output;
+    
+    ASTSieve *_sieve;
 };
 
 } // namespace sieve

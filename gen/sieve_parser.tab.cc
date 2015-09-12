@@ -255,35 +255,42 @@ namespace yy {
     {
       case 22: // "true"
       case 23: // "false"
-        value.move< sieve::ASTBoolean > (that.value);
+        value.move< bool > (that.value);
         break;
 
-      case 26: // command
+      case 21: // "number"
+        value.move< int > (that.value);
+        break;
+
+      case 27: // command
+      case 28: // block
+      case 29: // if_flow
         value.move< sieve::ASTNode * > (that.value);
         break;
 
-      case 20: // "number"
-      case 36: // numeric
+      case 37: // numeric
         value.move< sieve::ASTNumeric > (that.value);
         break;
 
-      case 21: // STRING_LITERAL
-        value.move< sieve::ASTString > (that.value);
+      case 25: // sieve
+        value.move< sieve::ASTSieve * > (that.value);
         break;
 
       case 17: // "identifier"
       case 18: // "foreverypart"
       case 19: // ":tag"
+      case 20: // STRING_LITERAL
         value.move< std::string > (that.value);
         break;
 
-      case 29: // arguments
-      case 30: // argument
-      case 31: // test_list
-      case 32: // tests
-      case 33: // test
-      case 34: // string_list
-      case 35: // strings
+      case 26: // command_list
+      case 30: // arguments
+      case 31: // argument
+      case 32: // test_list
+      case 33: // tests
+      case 34: // test
+      case 35: // string_list
+      case 36: // strings
         value.move< std::vector<sieve::ASTNode *> > (that.value);
         break;
 
@@ -304,35 +311,42 @@ namespace yy {
     {
       case 22: // "true"
       case 23: // "false"
-        value.copy< sieve::ASTBoolean > (that.value);
+        value.copy< bool > (that.value);
         break;
 
-      case 26: // command
+      case 21: // "number"
+        value.copy< int > (that.value);
+        break;
+
+      case 27: // command
+      case 28: // block
+      case 29: // if_flow
         value.copy< sieve::ASTNode * > (that.value);
         break;
 
-      case 20: // "number"
-      case 36: // numeric
+      case 37: // numeric
         value.copy< sieve::ASTNumeric > (that.value);
         break;
 
-      case 21: // STRING_LITERAL
-        value.copy< sieve::ASTString > (that.value);
+      case 25: // sieve
+        value.copy< sieve::ASTSieve * > (that.value);
         break;
 
       case 17: // "identifier"
       case 18: // "foreverypart"
       case 19: // ":tag"
+      case 20: // STRING_LITERAL
         value.copy< std::string > (that.value);
         break;
 
-      case 29: // arguments
-      case 30: // argument
-      case 31: // test_list
-      case 32: // tests
-      case 33: // test
-      case 34: // string_list
-      case 35: // strings
+      case 26: // command_list
+      case 30: // arguments
+      case 31: // argument
+      case 32: // test_list
+      case 33: // tests
+      case 34: // test
+      case 35: // string_list
+      case 36: // strings
         value.copy< std::vector<sieve::ASTNode *> > (that.value);
         break;
 
@@ -482,7 +496,7 @@ namespace yy {
     yyla.location.begin.filename = yyla.location.end.filename = &driver.file;
 }
 
-#line 486 "../gen/sieve_parser.tab.cc" // lalr1.cc:745
+#line 500 "../gen/sieve_parser.tab.cc" // lalr1.cc:745
 
     /* Initialize the stack.  The initial state will be set in
        yynewstate, since the latter expects the semantical and the
@@ -574,35 +588,42 @@ namespace yy {
     {
       case 22: // "true"
       case 23: // "false"
-        yylhs.value.build< sieve::ASTBoolean > ();
+        yylhs.value.build< bool > ();
         break;
 
-      case 26: // command
+      case 21: // "number"
+        yylhs.value.build< int > ();
+        break;
+
+      case 27: // command
+      case 28: // block
+      case 29: // if_flow
         yylhs.value.build< sieve::ASTNode * > ();
         break;
 
-      case 20: // "number"
-      case 36: // numeric
+      case 37: // numeric
         yylhs.value.build< sieve::ASTNumeric > ();
         break;
 
-      case 21: // STRING_LITERAL
-        yylhs.value.build< sieve::ASTString > ();
+      case 25: // sieve
+        yylhs.value.build< sieve::ASTSieve * > ();
         break;
 
       case 17: // "identifier"
       case 18: // "foreverypart"
       case 19: // ":tag"
+      case 20: // STRING_LITERAL
         yylhs.value.build< std::string > ();
         break;
 
-      case 29: // arguments
-      case 30: // argument
-      case 31: // test_list
-      case 32: // tests
-      case 33: // test
-      case 34: // string_list
-      case 35: // strings
+      case 26: // command_list
+      case 30: // arguments
+      case 31: // argument
+      case 32: // test_list
+      case 33: // tests
+      case 34: // test
+      case 35: // string_list
+      case 36: // strings
         yylhs.value.build< std::vector<sieve::ASTNode *> > ();
         break;
 
@@ -623,211 +644,280 @@ namespace yy {
         {
           switch (yyn)
             {
+  case 2:
+#line 89 "../src/sieve_parser.yy" // lalr1.cc:859
+    {
+            sieve::ASTSieve *sieve = new sieve::ASTSieve(yystack_[1].location);
+            sieve->push(yystack_[1].value.as< std::vector<sieve::ASTNode *> > ());
+            driver.syntax_tree(sieve);
+            yylhs.value.as< sieve::ASTSieve * > () = sieve;
+        }
+#line 656 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+    break;
+
+  case 3:
+#line 97 "../src/sieve_parser.yy" // lalr1.cc:859
+    { yylhs.value.as< std::vector<sieve::ASTNode *> > () = std::vector<sieve::ASTNode *>(1, yystack_[0].value.as< sieve::ASTNode * > ()); }
+#line 662 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+    break;
+
+  case 4:
+#line 98 "../src/sieve_parser.yy" // lalr1.cc:859
+    { yystack_[1].value.as< std::vector<sieve::ASTNode *> > ().push_back(yystack_[0].value.as< sieve::ASTNode * > ()); yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[1].value.as< std::vector<sieve::ASTNode *> > (); }
+#line 668 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+    break;
+
   case 5:
-#line 90 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 103 "../src/sieve_parser.yy" // lalr1.cc:859
     {
             sieve::ASTRequire *require = new sieve::ASTRequire(yystack_[2].location);
             require->push(yystack_[1].value.as< std::vector<sieve::ASTNode *> > ());
             yylhs.value.as< sieve::ASTNode * > () = dynamic_cast<sieve::ASTNode *>(require);
         }
-#line 634 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 678 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 6:
-#line 96 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 109 "../src/sieve_parser.yy" // lalr1.cc:859
     {
             sieve::ASTCommand *command = new sieve::ASTCommand(yystack_[2].location, yystack_[2].value.as< std::string > ());
             command->push(yystack_[1].value.as< std::vector<sieve::ASTNode *> > ());
             yylhs.value.as< sieve::ASTNode * > () = dynamic_cast<sieve::ASTNode *>(command);
         }
-#line 644 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 688 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 7:
-#line 102 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 115 "../src/sieve_parser.yy" // lalr1.cc:859
     {
             sieve::ASTCommand *command = new sieve::ASTCommand(yystack_[1].location, yystack_[1].value.as< std::string > ());
             yylhs.value.as< sieve::ASTNode * > () = dynamic_cast<sieve::ASTNode *>(command);
-        }
-#line 653 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
-    break;
-
-  case 8:
-#line 107 "../src/sieve_parser.yy" // lalr1.cc:859
-    {
-            sieve::ASTCommand *command = new sieve::ASTCommand(yystack_[1].location, yystack_[1].value.as< std::string > ());
-            yylhs.value.as< sieve::ASTNode * > () = dynamic_cast<sieve::ASTNode *>(command);
-        }
-#line 662 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
-    break;
-
-  case 9:
-#line 112 "../src/sieve_parser.yy" // lalr1.cc:859
-    {
-            sieve::ASTCommand *command = new sieve::ASTCommand(yystack_[3].location, yystack_[3].value.as< std::string > ());
-            yylhs.value.as< sieve::ASTNode * > () = dynamic_cast<sieve::ASTNode *>(command);
-        }
-#line 671 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
-    break;
-
-  case 10:
-#line 117 "../src/sieve_parser.yy" // lalr1.cc:859
-    {
-            sieve::ASTBranch *branch = new sieve::ASTBranch(yystack_[0].location);
-            yylhs.value.as< sieve::ASTNode * > () = dynamic_cast<sieve::ASTNode *>(branch);
-        }
-#line 680 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
-    break;
-
-  case 11:
-#line 122 "../src/sieve_parser.yy" // lalr1.cc:859
-    {
-            sieve::ASTBranch *branch = new sieve::ASTBranch(yystack_[2].location);
-            yylhs.value.as< sieve::ASTNode * > () = dynamic_cast<sieve::ASTNode *>(branch);
-        }
-#line 689 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
-    break;
-
-  case 12:
-#line 127 "../src/sieve_parser.yy" // lalr1.cc:859
-    {
-            
         }
 #line 697 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
-  case 17:
-#line 140 "../src/sieve_parser.yy" // lalr1.cc:859
-    { yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[0].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 703 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+  case 8:
+#line 120 "../src/sieve_parser.yy" // lalr1.cc:859
+    {
+            sieve::ASTCommand *command = new sieve::ASTCommand(yystack_[1].location, yystack_[1].value.as< std::string > ());
+            yylhs.value.as< sieve::ASTNode * > () = dynamic_cast<sieve::ASTNode *>(command);
+        }
+#line 706 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
-  case 18:
-#line 141 "../src/sieve_parser.yy" // lalr1.cc:859
-    { yystack_[1].value.as< std::vector<sieve::ASTNode *> > ().insert(yystack_[1].value.as< std::vector<sieve::ASTNode *> > ().end(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().begin(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().end()); yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[1].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 709 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
-    break;
-
-  case 19:
-#line 142 "../src/sieve_parser.yy" // lalr1.cc:859
-    { yystack_[1].value.as< std::vector<sieve::ASTNode *> > ().insert(yystack_[1].value.as< std::vector<sieve::ASTNode *> > ().end(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().begin(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().end()); yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[1].value.as< std::vector<sieve::ASTNode *> > (); }
+  case 9:
+#line 125 "../src/sieve_parser.yy" // lalr1.cc:859
+    {
+            sieve::ASTCommand *command = new sieve::ASTCommand(yystack_[3].location, yystack_[3].value.as< std::string > ());
+            yylhs.value.as< sieve::ASTNode * > () = dynamic_cast<sieve::ASTNode *>(command);
+        }
 #line 715 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
-  case 20:
-#line 143 "../src/sieve_parser.yy" // lalr1.cc:859
-    { yystack_[1].value.as< std::vector<sieve::ASTNode *> > ().insert(yystack_[1].value.as< std::vector<sieve::ASTNode *> > ().end(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().begin(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().end()); yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[1].value.as< std::vector<sieve::ASTNode *> > (); }
+  case 10:
+#line 129 "../src/sieve_parser.yy" // lalr1.cc:859
+    { yylhs.value.as< sieve::ASTNode * > () = yystack_[0].value.as< sieve::ASTNode * > (); }
 #line 721 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
-  case 21:
-#line 144 "../src/sieve_parser.yy" // lalr1.cc:859
+  case 11:
+#line 131 "../src/sieve_parser.yy" // lalr1.cc:859
+    {
+            yystack_[2].value.as< sieve::ASTNode * > ()->push(yystack_[0].value.as< sieve::ASTNode * > ());
+            yylhs.value.as< sieve::ASTNode * > () = yystack_[2].value.as< sieve::ASTNode * > ();
+        }
+#line 730 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+    break;
+
+  case 12:
+#line 136 "../src/sieve_parser.yy" // lalr1.cc:859
+    {
+            
+        }
+#line 738 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+    break;
+
+  case 13:
+#line 142 "../src/sieve_parser.yy" // lalr1.cc:859
+    {
+            sieve::ASTBlock *block = new sieve::ASTBlock( yystack_[2].location );
+            block->push(yystack_[1].value.as< std::vector<sieve::ASTNode *> > ());
+            yylhs.value.as< sieve::ASTNode * > () = dynamic_cast<sieve::ASTNode *>( block );
+        }
+#line 748 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+    break;
+
+  case 14:
+#line 148 "../src/sieve_parser.yy" // lalr1.cc:859
+    { 
+        }
+#line 755 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+    break;
+
+  case 15:
+#line 153 "../src/sieve_parser.yy" // lalr1.cc:859
+    {
+            sieve::ASTBranch *branch = new sieve::ASTBranch( yystack_[2].location );
+            sieve::ASTCondition *condition = new sieve::ASTCondition( yystack_[1].location );
+            condition->push(yystack_[1].value.as< std::vector<sieve::ASTNode *> > ());
+            branch->push(condition);
+            branch->push(yystack_[0].value.as< sieve::ASTNode * > ());
+            yylhs.value.as< sieve::ASTNode * > () = dynamic_cast<sieve::ASTNode *>(branch);
+            
+        }
+#line 769 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+    break;
+
+  case 16:
+#line 163 "../src/sieve_parser.yy" // lalr1.cc:859
+    {
+            sieve::ASTCondition *condition = new sieve::ASTCondition( yystack_[1].location );
+            condition->push(yystack_[1].value.as< std::vector<sieve::ASTNode *> > ());
+            yystack_[3].value.as< sieve::ASTNode * > ()->push(condition);
+            yystack_[3].value.as< sieve::ASTNode * > ()->push(yystack_[0].value.as< sieve::ASTNode * > ());
+            yylhs.value.as< sieve::ASTNode * > () = yystack_[3].value.as< sieve::ASTNode * > ();
+        }
+#line 781 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+    break;
+
+  case 17:
+#line 172 "../src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[0].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 727 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 787 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+    break;
+
+  case 18:
+#line 173 "../src/sieve_parser.yy" // lalr1.cc:859
+    { yystack_[1].value.as< std::vector<sieve::ASTNode *> > ().insert(yystack_[1].value.as< std::vector<sieve::ASTNode *> > ().end(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().begin(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().end()); yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[1].value.as< std::vector<sieve::ASTNode *> > (); }
+#line 793 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+    break;
+
+  case 19:
+#line 174 "../src/sieve_parser.yy" // lalr1.cc:859
+    { yystack_[1].value.as< std::vector<sieve::ASTNode *> > ().insert(yystack_[1].value.as< std::vector<sieve::ASTNode *> > ().end(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().begin(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().end()); yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[1].value.as< std::vector<sieve::ASTNode *> > (); }
+#line 799 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+    break;
+
+  case 20:
+#line 175 "../src/sieve_parser.yy" // lalr1.cc:859
+    { yystack_[1].value.as< std::vector<sieve::ASTNode *> > ().insert(yystack_[1].value.as< std::vector<sieve::ASTNode *> > ().end(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().begin(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().end()); yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[1].value.as< std::vector<sieve::ASTNode *> > (); }
+#line 805 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+    break;
+
+  case 21:
+#line 176 "../src/sieve_parser.yy" // lalr1.cc:859
+    { yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[0].value.as< std::vector<sieve::ASTNode *> > (); }
+#line 811 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 22:
-#line 145 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 177 "../src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[0].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 733 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 817 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 23:
-#line 148 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 180 "../src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[0].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 739 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 823 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 24:
-#line 149 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 181 "../src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<sieve::ASTNode *> > () = std::vector<sieve::ASTNode *>( 1, dynamic_cast<sieve::ASTNode *>(&yystack_[0].value.as< sieve::ASTNumeric > ())); }
-#line 745 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 829 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 25:
-#line 151 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 183 "../src/sieve_parser.yy" // lalr1.cc:859
     {
-            // FIXME: fill in
+            sieve::ASTTag *tag = new sieve::ASTTag(yystack_[0].location, yystack_[0].value.as< std::string > ());
+            yylhs.value.as< std::vector<sieve::ASTNode *> > () = std::vector<sieve::ASTNode *>( 1, dynamic_cast<sieve::ASTNode *>(tag));
         }
-#line 753 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 838 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 26:
-#line 156 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 189 "../src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[1].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 759 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 844 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 27:
-#line 159 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 192 "../src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[0].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 765 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 850 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 28:
-#line 160 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 193 "../src/sieve_parser.yy" // lalr1.cc:859
     { yystack_[2].value.as< std::vector<sieve::ASTNode *> > ().insert(yystack_[2].value.as< std::vector<sieve::ASTNode *> > ().end(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().begin(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().end()); yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[2].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 771 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 856 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 29:
-#line 165 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 198 "../src/sieve_parser.yy" // lalr1.cc:859
     {
-            // FIXME: fill in
+            sieve::ASTTest *test = new sieve::ASTTest(yystack_[1].location, yystack_[1].value.as< std::string > ());
+            test->push(yystack_[0].value.as< std::vector<sieve::ASTNode *> > ());
+            yylhs.value.as< std::vector<sieve::ASTNode *> > () = std::vector<sieve::ASTNode *>(1, test);
         }
-#line 779 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 866 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 30:
-#line 168 "../src/sieve_parser.yy" // lalr1.cc:859
-    { yylhs.value.as< std::vector<sieve::ASTNode *> > () = std::vector<sieve::ASTNode *>(1, dynamic_cast<sieve::ASTNode *>(&yystack_[0].value.as< sieve::ASTBoolean > ())); }
-#line 785 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 203 "../src/sieve_parser.yy" // lalr1.cc:859
+    { yylhs.value.as< std::vector<sieve::ASTNode *> > () = std::vector<sieve::ASTNode *>(1, new sieve::ASTBoolean(yystack_[0].location, yystack_[0].value.as< bool > ())); }
+#line 872 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 31:
-#line 169 "../src/sieve_parser.yy" // lalr1.cc:859
-    { yylhs.value.as< std::vector<sieve::ASTNode *> > () = std::vector<sieve::ASTNode *>(1, dynamic_cast<sieve::ASTNode *>(&yystack_[0].value.as< sieve::ASTBoolean > ())); }
-#line 791 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 204 "../src/sieve_parser.yy" // lalr1.cc:859
+    { yylhs.value.as< std::vector<sieve::ASTNode *> > () = std::vector<sieve::ASTNode *>(1, new sieve::ASTBoolean(yystack_[0].location, yystack_[0].value.as< bool > ())); }
+#line 878 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 32:
-#line 172 "../src/sieve_parser.yy" // lalr1.cc:859
-    {yylhs.value.as< std::vector<sieve::ASTNode *> > () = std::vector<sieve::ASTNode *>(1, dynamic_cast<sieve::ASTNode *>(&yystack_[0].value.as< sieve::ASTString > ())); }
-#line 797 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 207 "../src/sieve_parser.yy" // lalr1.cc:859
+    {yylhs.value.as< std::vector<sieve::ASTNode *> > () = std::vector<sieve::ASTNode *>(1,  new sieve::ASTString(yystack_[0].location, yystack_[0].value.as< std::string > ())); }
+#line 884 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 33:
-#line 173 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 208 "../src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[1].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 803 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 890 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 34:
-#line 176 "../src/sieve_parser.yy" // lalr1.cc:859
-    {yylhs.value.as< std::vector<sieve::ASTNode *> > () = std::vector<sieve::ASTNode *>(1, dynamic_cast<sieve::ASTNode *>(&yystack_[0].value.as< sieve::ASTString > ())); }
-#line 809 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 211 "../src/sieve_parser.yy" // lalr1.cc:859
+    {yylhs.value.as< std::vector<sieve::ASTNode *> > () = std::vector<sieve::ASTNode *>(1, new sieve::ASTString(yystack_[0].location, yystack_[0].value.as< std::string > ())); }
+#line 896 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 35:
-#line 177 "../src/sieve_parser.yy" // lalr1.cc:859
-    { yystack_[2].value.as< std::vector<sieve::ASTNode *> > ().push_back(&yystack_[0].value.as< sieve::ASTString > ()); yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[2].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 815 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 212 "../src/sieve_parser.yy" // lalr1.cc:859
+    { yystack_[2].value.as< std::vector<sieve::ASTNode *> > ().push_back( new sieve::ASTString(yystack_[0].location, yystack_[0].value.as< std::string > ())); yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[2].value.as< std::vector<sieve::ASTNode *> > (); }
+#line 902 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 36:
-#line 180 "../src/sieve_parser.yy" // lalr1.cc:859
-    { yylhs.value.as< sieve::ASTNumeric > () = yystack_[0].value.as< sieve::ASTNumeric > (); }
-#line 821 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 215 "../src/sieve_parser.yy" // lalr1.cc:859
+    { yylhs.value.as< sieve::ASTNumeric > () = sieve::ASTNumeric(yystack_[0].location, yystack_[0].value.as< int > ()); }
+#line 908 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 37:
-#line 181 "../src/sieve_parser.yy" // lalr1.cc:859
-    { yylhs.value.as< sieve::ASTNumeric > () = yystack_[1].value.as< sieve::ASTNumeric > (); }
-#line 827 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 217 "../src/sieve_parser.yy" // lalr1.cc:859
+    {
+            // TODO: Somehow incorporate the quantifier in here
+            yylhs.value.as< sieve::ASTNumeric > () = sieve::ASTNumeric(yystack_[1].location, yystack_[1].value.as< int > ());; 
+        }
+#line 917 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
 
-#line 831 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 921 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
             default:
               break;
             }
@@ -1089,93 +1179,96 @@ namespace yy {
   const signed char
   sieve_parser::yypact_[] =
   {
-       8,   -20,     6,    21,   -20,    39,    15,    37,   -20,    46,
-     -19,   -20,    -2,    62,   -20,   -20,    11,   -20,    21,   -20,
-      23,    78,    71,   -20,   -20,   -20,   -20,     4,    36,   -20,
-     -20,   -20,    21,    11,   -20,    34,   -20,    12,   -20,    -5,
-     -20,   -20,   -20,   -20,   -20,   -20,   -20,    60,    11,    11,
-     -20,   -20,    43,   -20,    21,   -20,   -20,   -20,   -20,   -20
+       9,    -5,    66,   -20,    24,    15,    11,     5,   -20,    84,
+     -11,   -20,    10,    57,   -20,   -20,    12,   -20,    66,   -20,
+      32,    74,    64,   -20,   -20,   -20,   -20,    46,    30,   -20,
+     -20,   -20,   -20,    66,    12,   -20,    -8,   -20,    19,   -20,
+      14,   -20,   -20,   -20,   -20,   -20,   -20,   -20,    53,    12,
+      12,   -20,   -20,    35,   -20,    66,   -20,   -20,   -20,   -20,
+     -20
   };
 
   const unsigned char
   sieve_parser::yydefact_[] =
   {
-       0,     2,     0,     0,    12,     0,     0,     0,     3,    10,
+       0,     0,     0,    12,     0,     0,     0,     0,     3,    10,
        0,    32,     0,     0,    30,    31,     0,     7,     0,    25,
       36,     0,    17,    22,    21,    23,    24,     0,     0,     8,
-       1,     4,     0,     0,    34,     0,     5,    29,    15,     0,
-      27,    37,     6,    20,    19,    18,    14,     0,     0,     0,
-      11,    33,     0,    26,     0,    13,     9,    16,    35,    28
+       1,     2,     4,     0,     0,    34,     0,     5,    29,    15,
+       0,    27,    37,     6,    20,    19,    18,    14,     0,     0,
+       0,    11,    33,     0,    26,     0,    13,     9,    16,    35,
+      28
   };
 
   const signed char
   sieve_parser::yypgoto_[] =
   {
-     -20,    40,    -6,   -13,   -20,    53,    -7,    47,   -20,    -3,
-      68,   -20,   -20
+     -20,   -20,    25,    -6,   -13,   -20,    44,   -19,    37,   -20,
+      -2,    61,   -20,   -20
   };
 
   const signed char
   sieve_parser::yydefgoto_[] =
   {
-      -1,     7,     8,    29,     9,    21,    22,    23,    39,    24,
-      25,    35,    26
+      -1,     6,     7,     8,    29,     9,    21,    22,    23,    40,
+      24,    25,    36,    26
   };
 
   const unsigned char
   sieve_parser::yytable_[] =
   {
-      16,    31,    34,    38,     1,    53,    36,     2,     1,     3,
-      54,     2,     4,     3,    43,    40,     4,    10,    46,    45,
-      50,     5,     6,    10,    27,     5,     6,    11,    27,    49,
-      43,    19,    20,    11,    28,    56,    57,    30,    13,    41,
-       2,    31,     3,    14,    15,     4,    51,    17,    18,    52,
-      10,    59,    32,    33,     5,     6,    13,    48,    19,    20,
-      11,    14,    15,     2,    58,     3,    37,    47,     4,    44,
-      12,    18,     0,    10,    55,     0,     0,     5,     6,    13,
-      18,    19,    20,    11,    14,    15,    42,     0,    13,    10,
-       0,     0,     0,    14,    15,     0,     0,    19,    20,    11
+      16,    32,    44,    39,    52,    31,    10,    53,     1,    35,
+       2,    30,     1,     3,     2,    11,    41,     3,    37,    44,
+      46,    51,     4,     5,    54,    27,     4,     5,    27,    55,
+      10,    50,    17,    18,    28,    10,    57,    58,    19,    11,
+      20,    13,    32,    19,    11,    20,    14,    15,    42,     1,
+      49,     2,    48,    60,     3,    59,     1,    38,     2,    45,
+      47,     3,    12,     4,     5,     0,    18,    56,    10,     0,
+       4,     5,     0,    18,    13,     0,    19,    11,    20,    14,
+      15,    13,    43,    13,     0,    10,    14,    15,    14,    15,
+      33,    34,     0,    19,    11,    20
   };
 
   const signed char
   sieve_parser::yycheck_[] =
   {
-       3,     7,    21,    16,     0,    10,     8,     3,     0,     5,
-      15,     3,     8,     5,    21,    18,     8,    11,    14,    22,
-      33,    17,    18,    11,    13,    17,    18,    21,    13,    32,
-      37,    19,    20,    21,    19,    48,    49,     0,    17,    16,
-       3,    47,     5,    22,    23,     8,    12,     8,     9,    15,
-      11,    54,     6,     7,    17,    18,    17,    21,    19,    20,
-      21,    22,    23,     3,    21,     5,    13,    27,     8,    22,
-       2,     9,    -1,    11,    14,    -1,    -1,    17,    18,    17,
-       9,    19,    20,    21,    22,    23,     8,    -1,    17,    11,
-      -1,    -1,    -1,    22,    23,    -1,    -1,    19,    20,    21
+       2,     7,    21,    16,    12,     0,    11,    15,     3,    20,
+       5,     0,     3,     8,     5,    20,    18,     8,     8,    38,
+      22,    34,    17,    18,    10,    13,    17,    18,    13,    15,
+      11,    33,     8,     9,    19,    11,    49,    50,    19,    20,
+      21,    17,    48,    19,    20,    21,    22,    23,    16,     3,
+      20,     5,    27,    55,     8,    20,     3,    13,     5,    22,
+      14,     8,     1,    17,    18,    -1,     9,    14,    11,    -1,
+      17,    18,    -1,     9,    17,    -1,    19,    20,    21,    22,
+      23,    17,     8,    17,    -1,    11,    22,    23,    22,    23,
+       6,     7,    -1,    19,    20,    21
   };
 
   const unsigned char
   sieve_parser::yystos_[] =
   {
-       0,     0,     3,     5,     8,    17,    18,    25,    26,    28,
-      11,    21,    34,    17,    22,    23,    33,     8,     9,    19,
-      20,    29,    30,    31,    33,    34,    36,    13,    19,    27,
-       0,    26,     6,     7,    21,    35,     8,    29,    27,    32,
-      33,    16,     8,    30,    31,    33,    14,    25,    21,    33,
-      27,    12,    15,    10,    15,    14,    27,    27,    21,    33
+       0,     3,     5,     8,    17,    18,    25,    26,    27,    29,
+      11,    20,    35,    17,    22,    23,    34,     8,     9,    19,
+      21,    30,    31,    32,    34,    35,    37,    13,    19,    28,
+       0,     0,    27,     6,     7,    20,    36,     8,    30,    28,
+      33,    34,    16,     8,    31,    32,    34,    14,    26,    20,
+      34,    28,    12,    15,    10,    15,    14,    28,    28,    20,
+      34
   };
 
   const unsigned char
   sieve_parser::yyr1_[] =
   {
-       0,    24,    25,    25,    25,    26,    26,    26,    26,    26,
-      26,    26,    26,    27,    27,    28,    28,    29,    29,    29,
-      29,    29,    29,    30,    30,    30,    31,    32,    32,    33,
-      33,    33,    34,    34,    35,    35,    36,    36
+       0,    24,    25,    26,    26,    27,    27,    27,    27,    27,
+      27,    27,    27,    28,    28,    29,    29,    30,    30,    30,
+      30,    30,    30,    31,    31,    31,    32,    33,    33,    34,
+      34,    34,    35,    35,    36,    36,    37,    37
   };
 
   const unsigned char
   sieve_parser::yyr2_[] =
   {
-       0,     2,     1,     1,     2,     3,     3,     2,     2,     4,
+       0,     2,     2,     1,     2,     3,     3,     2,     2,     4,
        1,     3,     1,     3,     2,     3,     4,     1,     2,     2,
        2,     1,     1,     1,     1,     1,     3,     1,     3,     2,
        1,     1,     1,     3,     1,     3,     1,     2
@@ -1191,20 +1284,20 @@ namespace yy {
   "\"end of file\"", "error", "$undefined", "\"require\"", "\"string\"",
   "\"if\"", "\"elsif\"", "\"else\"", "\";\"", "\"(\"", "\")\"", "\"[\"",
   "\"]\"", "\"{\"", "\"}\"", "\",\"", "\"quantifier\"", "\"identifier\"",
-  "\"foreverypart\"", "\":tag\"", "\"number\"", "STRING_LITERAL",
-  "\"true\"", "\"false\"", "$accept", "commands", "command", "block",
-  "if_flow", "arguments", "argument", "test_list", "tests", "test",
-  "string_list", "strings", "numeric", YY_NULLPTR
+  "\"foreverypart\"", "\":tag\"", "STRING_LITERAL", "\"number\"",
+  "\"true\"", "\"false\"", "$accept", "sieve", "command_list", "command",
+  "block", "if_flow", "arguments", "argument", "test_list", "tests",
+  "test", "string_list", "strings", "numeric", YY_NULLPTR
   };
 
 #if YYDEBUG
   const unsigned char
   sieve_parser::yyrline_[] =
   {
-       0,    83,    83,    84,    85,    89,    95,   101,   106,   111,
-     116,   121,   126,   132,   133,   136,   137,   140,   141,   142,
-     143,   144,   145,   148,   149,   150,   156,   159,   160,   164,
-     168,   169,   172,   173,   176,   177,   180,   181
+       0,    88,    88,    97,    98,   102,   108,   114,   119,   124,
+     129,   130,   135,   141,   147,   152,   162,   172,   173,   174,
+     175,   176,   177,   180,   181,   182,   189,   192,   193,   197,
+     203,   204,   207,   208,   211,   212,   215,   216
   };
 
   // Print the state stack on the debug stream.
@@ -1239,8 +1332,8 @@ namespace yy {
 
 
 } // yy
-#line 1243 "../gen/sieve_parser.tab.cc" // lalr1.cc:1167
-#line 184 "../src/sieve_parser.yy" // lalr1.cc:1168
+#line 1336 "../gen/sieve_parser.tab.cc" // lalr1.cc:1167
+#line 223 "../src/sieve_parser.yy" // lalr1.cc:1168
 
 
 void yy::sieve_parser::error( const location_type &l, const std::string &m ) {

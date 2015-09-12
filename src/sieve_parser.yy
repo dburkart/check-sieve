@@ -60,10 +60,10 @@ typedef void* yyscan_t;
 %token <std::string> IDENTIFIER "identifier"
 %token <std::string> FOREVERYPART "foreverypart"
 %token <std::string> TAG ":tag"
-%token <sieve::ASTNumeric> NUMBER "number"
-%token <sieve::ASTString> STRING_LITERAL
-%token <sieve::ASTBoolean> TRUE "true"
-%token <sieve::ASTBoolean> FALSE "false"
+%token <std::string> STRING_LITERAL
+%token <int> NUMBER "number"
+%token <bool> TRUE "true"
+%token <bool> FALSE "false"
 
 %type <sieve::ASTNumeric> numeric
 %type <std::vector<sieve::ASTNode *>> argument
@@ -76,13 +76,26 @@ typedef void* yyscan_t;
 %type <std::vector<sieve::ASTNode *>> string_list
 
 %type <sieve::ASTNode *> command
+%type <std::vector<sieve::ASTNode *>> command_list
+%type <sieve::ASTNode *> block
+%type <sieve::ASTNode *> if_flow
+
+%type <sieve::ASTSieve *> sieve
 
 %%
-%start commands;
+%start sieve;
 
-commands : END
-    | command
-    | commands command
+sieve : command_list END
+        {
+            sieve::ASTSieve *sieve = new sieve::ASTSieve(@1);
+            sieve->push($1);
+            driver.syntax_tree(sieve);
+            $$ = sieve;
+        }
+    ;
+
+command_list : command { $$ = std::vector<sieve::ASTNode *>(1, $1); }
+    | command_list command { $1.push_back($2); $$ = $1; }
     ;
 
 command :
@@ -113,15 +126,11 @@ command :
             sieve::ASTCommand *command = new sieve::ASTCommand(@1, $1);
             $$ = dynamic_cast<sieve::ASTNode *>(command);
         }
-    | if_flow
-        {
-            sieve::ASTBranch *branch = new sieve::ASTBranch(@1);
-            $$ = dynamic_cast<sieve::ASTNode *>(branch);
-        }
+    | if_flow { $$ = $1; }
     | if_flow ELSE block
         {
-            sieve::ASTBranch *branch = new sieve::ASTBranch(@1);
-            $$ = dynamic_cast<sieve::ASTNode *>(branch);
+            $1->push($3);
+            $$ = $1;
         }
     | ";"
         {
@@ -129,12 +138,35 @@ command :
         }
     ;
 
-block : "{" commands "}"
-    | "{" "}"
+block : "{" command_list "}"
+        {
+            sieve::ASTBlock *block = new sieve::ASTBlock( @1 );
+            block->push($2);
+            $$ = dynamic_cast<sieve::ASTNode *>( block );
+        }
+    | "{" "}" 
+        { 
+        }
     ;
 
 if_flow : IF test block
+        {
+            sieve::ASTBranch *branch = new sieve::ASTBranch( @1 );
+            sieve::ASTCondition *condition = new sieve::ASTCondition( @2 );
+            condition->push($2);
+            branch->push(condition);
+            branch->push($3);
+            $$ = dynamic_cast<sieve::ASTNode *>(branch);
+            
+        }
     | if_flow ELSIF test block
+        {
+            sieve::ASTCondition *condition = new sieve::ASTCondition( @3 );
+            condition->push($3);
+            $1->push(condition);
+            $1->push($4);
+            $$ = $1;
+        }
     ;
 
 arguments : argument { $$ = $1; }
@@ -149,7 +181,8 @@ argument : string_list { $$ = $1; }
     | numeric { $$ = std::vector<sieve::ASTNode *>( 1, dynamic_cast<sieve::ASTNode *>(&$1)); }
     | TAG
         {
-            // FIXME: fill in
+            sieve::ASTTag *tag = new sieve::ASTTag(@1, $1);
+            $$ = std::vector<sieve::ASTNode *>( 1, dynamic_cast<sieve::ASTNode *>(tag));
         }
     ;
 
@@ -163,22 +196,28 @@ tests : test { $$ = $1; }
 test :
     IDENTIFIER arguments 
         {
-            // FIXME: fill in
+            sieve::ASTTest *test = new sieve::ASTTest(@1, $1);
+            test->push($2);
+            $$ = std::vector<sieve::ASTNode *>(1, test);
         }
-    | TRUE { $$ = std::vector<sieve::ASTNode *>(1, dynamic_cast<sieve::ASTNode *>(&$1)); }
-    | FALSE { $$ = std::vector<sieve::ASTNode *>(1, dynamic_cast<sieve::ASTNode *>(&$1)); }
+    | TRUE { $$ = std::vector<sieve::ASTNode *>(1, new sieve::ASTBoolean(@1, $1)); }
+    | FALSE { $$ = std::vector<sieve::ASTNode *>(1, new sieve::ASTBoolean(@1, $1)); }
     ;
 
-string_list : STRING_LITERAL {$$ = std::vector<sieve::ASTNode *>(1, dynamic_cast<sieve::ASTNode *>(&$1)); }
+string_list : STRING_LITERAL {$$ = std::vector<sieve::ASTNode *>(1,  new sieve::ASTString(@1, $1)); }
     | "[" strings "]" { $$ = $2; }
     ;
 
-strings : STRING_LITERAL {$$ = std::vector<sieve::ASTNode *>(1, dynamic_cast<sieve::ASTNode *>(&$1)); }
-    | strings "," STRING_LITERAL { $1.push_back(&$3); $$ = $1; }
+strings : STRING_LITERAL {$$ = std::vector<sieve::ASTNode *>(1, new sieve::ASTString(@1, $1)); }
+    | strings "," STRING_LITERAL { $1.push_back( new sieve::ASTString(@3, $3)); $$ = $1; }
     ;
 
-numeric : NUMBER { $$ = $1; }
-    | NUMBER QUANTIFIER { $$ = $1; }
+numeric : NUMBER { $$ = sieve::ASTNumeric(@1, $1); }
+    | NUMBER QUANTIFIER 
+        {
+            // TODO: Somehow incorporate the quantifier in here
+            $$ = sieve::ASTNumeric(@1, $1);; 
+        }
     ;
 
 %%

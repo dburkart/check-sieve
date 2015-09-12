@@ -3,28 +3,24 @@
 
 #include <string>
 
-#include "ASTNode.hh"
+#include "ASTTest.hh"
 
 namespace sieve
 {
 
 class ASTVisitor;
 
-class ASTBoolean : public ASTNode {
+class ASTBoolean : public ASTTest {
 public:
-    ASTBoolean() : ASTNode() {}    
+    ASTBoolean() : ASTTest() {}    
     ASTBoolean(yy::location location);
     ASTBoolean(yy::location location, bool val);
     
     void accept(ASTVisitor &visitor);
     
-    std::string description() { return this->_description; }
-    std::string description( std::string description) { this->_description = description; return this->_description; }
-    
     bool value() { return this->_val; }
-
+    
 private:
-    std::string _description;
     bool _val;
 };
 

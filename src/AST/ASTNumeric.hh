@@ -18,13 +18,9 @@ public:
     
     void accept(ASTVisitor &visitor);
     
-    std::string description() { return this->_description; }
-    std::string description( std::string description) { this->_description = description; return this->_description; }
-    
     int value() { return this->_number; }
-
+    
 private:
-    std::string _description;
     int _number;
 };
 

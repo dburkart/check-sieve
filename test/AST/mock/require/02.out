@@ -1,0 +1,4 @@
+Mail Sieve
+    Require
+        String ("fileinto")
+        String ("imap4flags")

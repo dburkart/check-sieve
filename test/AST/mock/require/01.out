@@ -1,0 +1,3 @@
+Mail Sieve
+    Require
+        String ("fileinto")

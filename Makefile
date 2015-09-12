@@ -22,7 +22,7 @@ libchecksieve.a: $(GENERATED_SRC) $(LIBCHECKSIEVE_SRC) $(AST_SRC)
 checksieve.so: $(BASE)/src/python.cc libchecksieve.a
 	python $(BASE)/test/setup.py build_ext -i
 
-test: libchecksieve.a checksieve.so
+test: libchecksieve.a checksieve.so check-sieve
 	python -m unittest discover -s test -p '*_test.py'
 
 clean:

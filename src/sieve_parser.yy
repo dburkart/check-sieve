@@ -85,7 +85,13 @@ typedef void* yyscan_t;
 %%
 %start sieve;
 
-sieve : command_list END
+sieve : END 
+        {
+            sieve::ASTSieve *sieve = new sieve::ASTSieve(@1);
+            driver.syntax_tree(sieve);
+            $$ = sieve;
+        }
+    | command_list
         {
             sieve::ASTSieve *sieve = new sieve::ASTSieve(@1);
             sieve->push($1);

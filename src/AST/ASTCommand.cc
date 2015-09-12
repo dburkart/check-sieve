@@ -9,8 +9,14 @@ ASTCommand::ASTCommand( yy::location location )
     this->_description = "Command";
 }
 
+ASTCommand::ASTCommand( yy::location location, std::string name)
+    : ASTNode( location )
+    , _name( name ) {
+    this->_description = "Command";
+}
+
 void ASTCommand::accept( ASTVisitor &visitor ) {
     visitor.visit(this);
 }
 
-}
+} // namespace sieve

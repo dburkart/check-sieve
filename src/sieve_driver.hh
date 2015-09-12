@@ -8,6 +8,7 @@
 #include <vector>
 #include "sieve_parser.tab.hh"
 #include "checksieve.h"
+#include "AST.hh"
 
 #define YY_DECL \
     yy::sieve_parser::symbol_type yylex( yyscan_t yyscanner, sieve::driver &driver )

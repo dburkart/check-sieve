@@ -1,19 +1,19 @@
-#ifndef __ASTBRANCH_HH__
-#define __ASTBRANCH_HH__
+#ifndef __ASTREQUIRE_HH__
+#define __ASTREQUIRE_HH__
 
 #include <string>
 
-#include "ASTNode.hh"
+#include "ASTCommand.hh"
 
 namespace sieve
 {
 
 class ASTVisitor;
 
-class ASTBranch : public ASTNode {
+class ASTRequire : public ASTCommand {
 public:
-    ASTBranch() : ASTNode() {}    
-    ASTBranch(yy::location location);
+    ASTRequire() : ASTCommand() {}    
+    ASTRequire(yy::location location);
     
     void accept(ASTVisitor &visitor);
     

@@ -9,8 +9,14 @@ ASTNumeric::ASTNumeric( yy::location location )
     this->_description = "Numeric constant";
 }
 
+ASTNumeric::ASTNumeric( yy::location location, int number)
+    : ASTNode( location )
+    , _number( number ) {
+    this->_description = "Numeric constant";
+}
+
 void ASTNumeric::accept( ASTVisitor &visitor ) {
     visitor.visit(this);
 }
 
-}
+} // namespace sieve

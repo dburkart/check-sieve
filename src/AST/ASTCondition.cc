@@ -9,8 +9,9 @@ ASTCondition::ASTCondition( yy::location location )
     this->_description = "Control flow tests";
 }
 
+
 void ASTCondition::accept( ASTVisitor &visitor ) {
     visitor.visit(this);
 }
 
-}
+} // namespace sieve

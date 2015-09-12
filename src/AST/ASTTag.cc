@@ -9,8 +9,9 @@ ASTTag::ASTTag( yy::location location )
     this->_description = "Tag constant";
 }
 
+
 void ASTTag::accept( ASTVisitor &visitor ) {
     visitor.visit(this);
 }
 
-}
+} // namespace sieve

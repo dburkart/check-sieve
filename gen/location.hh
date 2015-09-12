@@ -31,7 +31,7 @@
 // version 2.2 of Bison.
 
 /**
- ** \file gen/location.hh
+ ** \file ../gen/location.hh
  ** Define the yy::location class.
  */
 
@@ -42,7 +42,7 @@
 
 
 namespace yy {
-#line 46 "gen/location.hh" // location.cc:337
+#line 46 "../gen/location.hh" // location.cc:337
   /// Abstract a location.
   class location
   {
@@ -188,5 +188,5 @@ namespace yy {
 
 
 } // yy
-#line 192 "gen/location.hh" // location.cc:337
+#line 192 "../gen/location.hh" // location.cc:337
 #endif // !YY_YY_GEN_LOCATION_HH_INCLUDED

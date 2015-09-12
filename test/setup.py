@@ -3,7 +3,7 @@ from distutils.sysconfig import get_python_inc
 
 module = Extension('checksieve',
                     sources = ['src/python.cc'],
-                    include_dirs = ['src', 'gen', get_python_inc(), get_python_inc(plat_specific=True)],
+                    include_dirs = ['src', 'src/AST', 'gen', get_python_inc(), get_python_inc(plat_specific=True)],
                     libraries = ['checksieve'],
                     library_dirs = ['./'] );
 

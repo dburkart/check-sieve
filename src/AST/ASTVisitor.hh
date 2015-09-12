@@ -6,6 +6,8 @@
 #include "ASTCommand.hh"
 #include "ASTCondition.hh"
 #include "ASTNumeric.hh"
+#include "ASTRequire.hh"
+#include "ASTSieve.hh"
 #include "ASTString.hh"
 #include "ASTTag.hh"
 
@@ -19,6 +21,8 @@ public:
     virtual void visit( ASTCommand* ) =0;
     virtual void visit( ASTCondition* ) =0;
     virtual void visit( ASTNumeric* ) =0;
+    virtual void visit( ASTRequire* ) =0;
+    virtual void visit( ASTSieve* ) =0;
     virtual void visit( ASTString* ) =0;
     virtual void visit( ASTTag* ) =0;
 };

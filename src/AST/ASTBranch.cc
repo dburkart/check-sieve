@@ -9,8 +9,9 @@ ASTBranch::ASTBranch( yy::location location )
     this->_description = "Control flow branch";
 }
 
+
 void ASTBranch::accept( ASTVisitor &visitor ) {
     visitor.visit(this);
 }
 
-}
+} // namespace sieve

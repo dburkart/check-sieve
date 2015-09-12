@@ -6,7 +6,7 @@ namespace sieve
 {
     
 void ASTTraceVisitor::visit( ASTBlock* node ) {
-    std::cout << "Block of commands" << std::endl;
+    std::cout << "Block" << std::endl;
 }
 
 void ASTTraceVisitor::visit( ASTBoolean* node ) {

@@ -59,7 +59,95 @@ void ASTVerificationVisitor::visit( ASTNumeric* node ) {
 }
 
 void ASTVerificationVisitor::visit( ASTRequire* node ) {
+    std::vector<sieve::ASTNode *> children = node->children();
+    for (std::vector<sieve::ASTNode *>::iterator it = children.begin(); it != children.end(); ++it) {
+        sieve::ASTString *child = static_cast<ASTString *>(*it);
 
+        // "body"
+        // RFC 5173
+        if (child->value() == "body") {
+            _test_map["body"] = 1;
+        }
+
+        // "fileinto"
+        // RFC 5228
+        if (child->value() == "fileinto") {
+            _command_map["fileinto"] = 1;
+        }
+
+        // "reject"
+        // RFC 5228
+        if (child->value() == "reject") {
+            _command_map["reject"] = 1;
+        }
+
+        // "variables"
+        // RFC 5229
+        if (child->value() == "variables") {
+            _command_map["set"] = 1;
+            _test_map["string"] = 1;
+        }
+
+        // "vacation"
+        // RFC 5230
+        if (child->value() == "vacation") {
+            _command_map["vacation"] = 1;
+        }
+
+        // "imap4flags"
+        // RFC 5232
+        if (child->value() == "imap4flags") {
+            _command_map["setflag"] = 1;
+            _command_map["addflag"] = 1;
+            _command_map["removeflag"] = 1;
+            _test_map["hasflag"] = 1;
+        }
+
+        // "date"
+        // RFC 5260
+        if (child->value() == "date") {
+            _test_map["date"] = 1;
+            _test_map["currentdate"] = 1;
+        }
+
+        // "ereject"
+        // RFC 5429
+        if (child->value() == "ereject") {
+            _command_map["ereject"] = 1;
+        }
+
+        // "foreverypart"
+        // RFC 5703
+        if (child->value() == "foreverypart") {
+            _command_map["foreverypart"] = 1;
+            _command_map["break"] = 1;
+        }
+
+        // "extracttext"
+        // RFC 5703
+        if (child->value() == "extracttext") {
+            _command_map["extracttext"] = 1;
+        }
+
+        // "replace"
+        // RFC 5703
+        if (child->value() == "replace") {
+            _command_map["replace"] = 1;
+        }
+
+        // "enclose"
+        // RFC 5703
+        if (child->value() == "enclose") {
+            _command_map["enclose"] = 1;
+        }
+
+        // "include"
+        // RFC 6609
+        if (child->value() == "include") {
+            _command_map["include"] = 1;
+            _command_map["return"] = 1;
+        }
+    }
 }
 
 void ASTVerificationVisitor::visit( ASTSieve* node ) {
@@ -85,34 +173,7 @@ void ASTVerificationVisitor::_init() {
     _command_map["keep"] = 1;
     _command_map["discard"] = 1;
     _command_map["redirect"] = 1;
-    _command_map["reject"] = 1;
-    _command_map["fileinto"] = 1;
     _command_map["stop"] = 1;
-
-    // RFC 5232
-    _command_map["setflag"] = 1;
-    _command_map["addflag"] = 1;
-    _command_map["removeflag"] = 1;
-
-    // RFC 5229
-    _command_map["set"] = 1;
-
-    // RFC 5230
-    _command_map["vacation"] = 1;
-
-    // RFC 5429
-    _command_map["ereject"] = 1;
-
-    // RFC 5703
-    _command_map["foreverypart"] = 1;
-    _command_map["break"] = 1;
-    _command_map["extracttext"] = 1;
-    _command_map["replace"] = 1;
-    _command_map["enclose"] = 1;
-
-    // RFC 6609
-    _command_map["include"] = 1;
-    _command_map["return"] = 1;
 
     _test_map["allof"] = 1;
     _test_map["anyof"] = 1;
@@ -122,19 +183,6 @@ void ASTVerificationVisitor::_init() {
     _test_map["size"] = 1;
     _test_map["not"] = 1;
     _test_map["exists"] = 1;
-
-    // RFC 5173
-    _test_map["body"] = 1;
-
-    // RFC 5232
-    _test_map["hasflag"] = 1;
-
-    // RFC 5229
-    _test_map["string"] = 1;
-
-    // RFC 5260
-    _test_map["date"] = 1;
-    _test_map["currentdate"] = 1;
 }
 
 } // namespace sieve

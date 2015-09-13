@@ -12,72 +12,18 @@ namespace sieve
 {
 
 driver::driver()
-    : trace_scanning( false ), trace_parsing( false ), trace_tree( false ), _modules(), _command_map(), _test_map(), _suppress_output(false) {
-    init_maps();
-}
+    : trace_scanning( false )
+    , trace_parsing( false )
+    , trace_tree( false )
+    , _suppress_output(false) {}
 
 driver::driver( bool quiet )
-    : trace_scanning( false ), trace_parsing( false ), trace_tree( false ), _modules(), _command_map(), _test_map(), _suppress_output(false) {
-    init_maps();
-    _suppress_output = quiet;
-}
+    : trace_scanning( false )
+    , trace_parsing( false )
+    , trace_tree( false )
+    , _suppress_output( quiet ) {}
 
 driver::~driver() {}
-
-void driver::init_maps() {
-    _command_map["keep"] = 1;
-    _command_map["discard"] = 1;
-    _command_map["redirect"] = 1;
-    _command_map["reject"] = 1;
-    _command_map["fileinto"] = 1;
-    _command_map["stop"] = 1;
-
-    // RFC 5232
-    _command_map["setflag"] = 1;
-    _command_map["addflag"] = 1;
-    _command_map["removeflag"] = 1;
-
-    // RFC 5229
-    _command_map["set"] = 1;
-
-    // RFC 5230
-    _command_map["vacation"] = 1;
-
-    // RFC 5429
-    _command_map["ereject"] = 1;
-
-    // RFC 5703
-    _command_map["break"] = 1;
-    _command_map["extracttext"] = 1;
-    _command_map["replace"] = 1;
-    _command_map["enclose"] = 1;
-
-    // RFC 6609
-    _command_map["include"] = 1;
-    _command_map["return"] = 1;
-
-    _test_map["allof"] = 1;
-    _test_map["anyof"] = 1;
-    _test_map["address"] = 1;
-    _test_map["envelope"] = 1;
-    _test_map["header"] = 1;
-    _test_map["size"] = 1;
-    _test_map["not"] = 1;
-    _test_map["exists"] = 1;
-
-    // RFC 5173
-    _test_map["body"] = 1;
-
-    // RFC 5232
-    _test_map["hasflag"] = 1;
-
-    // RFC 5229
-    _test_map["string"] = 1;
-
-    // RFC 5260
-    _test_map["date"] = 1;
-    _test_map["currentdate"] = 1;
-}
 
 int driver::parse_file( const std::string &f ) {
     file = f;
@@ -149,27 +95,6 @@ void driver::error( const std::string &m ) {
 
 void driver::error( const parse_result result ) {
     error( result.location, result.error );
-}
-
-void driver::add_required_modules(std::vector<std::string> &modules) {
-    _modules.insert(_modules.end(), modules.begin(), modules.end());
-}
-
-bool driver::supports_module(const std::string &mod) {
-    for (std::vector<std::string>::iterator it = _modules.begin(); it != _modules.end(); ++it) {
-        if (std::regex_match(*it, std::regex(mod)))
-            return true;
-    }
-
-    return false;
-}
-
-bool driver::valid_command(const std::string &command) {
-    return _command_map[command];
-}
-
-bool driver::valid_test(const std::string &test) {
-    return _test_map[test];
 }
 
 } // namespace sieve

@@ -42,7 +42,7 @@ void ASTVerificationVisitor::visit( ASTBranch* node ) {
 
 void ASTVerificationVisitor::visit( ASTCommand* node ) {
     if (!_command_map[node->value()]) {
-        _verification_result.set_error(node->location(), "Unrecognized command \"" + node->value() + "\"");
+        _verification_result.set_error(node->location(), "Unrecognized command \"" + node->value() + "\".");
     }
 }
 
@@ -75,7 +75,9 @@ void ASTVerificationVisitor::visit( ASTTag* node ) {
 }
 
 void ASTVerificationVisitor::visit( ASTTest* node ) {
-
+    if (!_test_map[node->value()]) {
+        _verification_result.set_error(node->location(), "Unrecognized test \"" + node->value() + "\".");
+    }
 }
 
 //-- Private methods

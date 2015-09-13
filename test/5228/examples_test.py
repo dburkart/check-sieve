@@ -34,7 +34,7 @@ class TestExamples(unittest.TestCase):
     # Try and catch unsolicited email.  If a message is not to me,
     # or it contains a subject known to be spam, file it away.
     #
-    elsif anyof (NOT address :all :contains
+    elsif anyof (not address :all :contains
                    ["To", "Cc", "Bcc"] "me@example.com",
                  header :matches "subject"
                    ["*make*money*fast*", "*university*dipl*mas*"])

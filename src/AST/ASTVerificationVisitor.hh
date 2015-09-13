@@ -38,6 +38,7 @@ private:
 
     std::map<std::string, bool> _command_map;
     std::map<std::string, bool> _test_map;
+    std::map<std::string, bool> _tag_map;
 };
 
 } // namespace sieve

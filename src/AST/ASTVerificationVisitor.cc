@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <vector>
 
@@ -41,7 +42,10 @@ void ASTVerificationVisitor::visit( ASTBranch* node ) {
 }
 
 void ASTVerificationVisitor::visit( ASTCommand* node ) {
-    if (!_command_map[node->value()]) {
+    std::string value_lower = node->value();
+    std::transform(value_lower.begin(), value_lower.end(), value_lower.begin(), ::tolower);
+
+    if (!_command_map[value_lower]) {
         _verification_result = {1, node->location(), "Unrecognized command \"" + node->value() + "\"."};
     }
 }
@@ -63,10 +67,19 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
     for (std::vector<sieve::ASTNode *>::iterator it = children.begin(); it != children.end(); ++it) {
         sieve::ASTString *child = static_cast<ASTString *>(*it);
 
+        // "copy"
+        // RFC 3894
+        if (child->value() == "copy") {
+            _tag_map[":copy"] = 1;
+        }
+
         // "body"
         // RFC 5173
         if (child->value() == "body") {
             _test_map["body"] = 1;
+            _tag_map[":raw"] = 1;
+            _tag_map[":content"] = 1;
+            _tag_map[":text"] = 1;
         }
 
         // "fileinto"
@@ -86,12 +99,31 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
         if (child->value() == "variables") {
             _command_map["set"] = 1;
             _test_map["string"] = 1;
+            _tag_map[":lower"] = 1;
+            _tag_map[":upper"] = 1;
+            _tag_map[":lowerfirst"] = 1;
+            _tag_map[":upperfirst"] = 1;
+            _tag_map[":quotewildcard"] = 1;
+            _tag_map[":length"] = 1;
         }
 
         // "vacation"
         // RFC 5230
         if (child->value() == "vacation") {
             _command_map["vacation"] = 1;
+            _tag_map[":days"] = 1;
+            _tag_map[":from"] = 1;
+            _tag_map[":subject"] = 1;
+            _tag_map[":addresses"] = 1;
+            _tag_map[":mime"] = 1;
+            _tag_map[":handle"] = 1;
+        }
+        
+        // "relational"
+        // RFC 5231
+        if (child->value() == "relational") {
+            _tag_map[":count"] = 1;
+            _tag_map[":value"] = 1;
         }
 
         // "imap4flags"
@@ -101,6 +133,7 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
             _command_map["addflag"] = 1;
             _command_map["removeflag"] = 1;
             _test_map["hasflag"] = 1;
+            _tag_map[":flags"] = 1;
         }
 
         // "date"
@@ -108,6 +141,15 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
         if (child->value() == "date") {
             _test_map["date"] = 1;
             _test_map["currentdate"] = 1;
+            _tag_map[":zone"] = 1;
+            _tag_map[":originalzone"] = 1;
+        }
+        
+        // "index"
+        // RFC 5260
+        if (child->value() == "index") {
+            _tag_map[":index"] = 1;
+            _tag_map[":last"] = 1;
         }
 
         // "ereject"
@@ -121,6 +163,17 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
         if (child->value() == "foreverypart") {
             _command_map["foreverypart"] = 1;
             _command_map["break"] = 1;
+        }
+        
+        // "mime"
+        // RFC 5703
+        if (child->value() == "mime") {
+            _tag_map[":mime"] = 1;
+            _tag_map[":type"] = 1;
+            _tag_map[":subtype"] = 1;
+            _tag_map[":contenttype"] = 1;
+            _tag_map[":param"] = 1;
+            _tag_map[":anychild"] = 1;
         }
 
         // "extracttext"
@@ -146,6 +199,10 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
         if (child->value() == "include") {
             _command_map["include"] = 1;
             _command_map["return"] = 1;
+            _tag_map[":once"] = 1;
+            _tag_map[":optional"] = 1;
+            _tag_map[":personal"] = 1;
+            _tag_map[":global"] = 1;
         }
     }
 }
@@ -159,11 +216,19 @@ void ASTVerificationVisitor::visit( ASTString* node ) {
 }
 
 void ASTVerificationVisitor::visit( ASTTag* node ) {
-
+    std::string value_lower = node->value();
+    std::transform(value_lower.begin(), value_lower.end(), value_lower.begin(), ::tolower);
+    
+    if (!_tag_map[value_lower]) {
+        _verification_result = {1, node->location(), "Unrecognized tag \"" + node->value() + "\"."};
+    }
 }
 
 void ASTVerificationVisitor::visit( ASTTest* node ) {
-    if (!_test_map[node->value()]) {
+    std::string value_lower = node->value();
+    std::transform(value_lower.begin(), value_lower.end(), value_lower.begin(), ::tolower);
+
+    if (!_test_map[value_lower]) {
         _verification_result = {1, node->location(), "Unrecognized test \"" + node->value() + "\"."};
     }
 }
@@ -183,6 +248,19 @@ void ASTVerificationVisitor::_init() {
     _test_map["size"] = 1;
     _test_map["not"] = 1;
     _test_map["exists"] = 1;
+
+    _tag_map[":is"] = 1;
+    _tag_map[":contains"] = 1;
+    _tag_map[":matches"] = 1;
+    _tag_map[":localpart"] = 1;
+    _tag_map[":domain"] = 1;
+    _tag_map[":all"] = 1;
+    _tag_map[":over"] = 1;
+    _tag_map[":under"] = 1;
+    
+    // TODO: "Comparators other than "i;octet" and "i;ascii-casemap" must be
+    // declared with require, as they are extensions"
+    _tag_map[":comparator"] = 1;
 }
 
 } // namespace sieve

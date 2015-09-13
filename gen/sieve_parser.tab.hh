@@ -292,7 +292,7 @@ namespace yy {
       char dummy3[sizeof(sieve::ASTNode *)];
 
       // numeric
-      char dummy4[sizeof(sieve::ASTNumeric)];
+      char dummy4[sizeof(sieve::ASTNumeric *)];
 
       // sieve
       char dummy5[sizeof(sieve::ASTSieve *)];
@@ -399,7 +399,7 @@ namespace yy {
 
   basic_symbol (typename Base::kind_type t, const sieve::ASTNode * v, const location_type& l);
 
-  basic_symbol (typename Base::kind_type t, const sieve::ASTNumeric v, const location_type& l);
+  basic_symbol (typename Base::kind_type t, const sieve::ASTNumeric * v, const location_type& l);
 
   basic_symbol (typename Base::kind_type t, const sieve::ASTSieve * v, const location_type& l);
 
@@ -868,7 +868,7 @@ namespace yy {
         break;
 
       case 37: // numeric
-        value.copy< sieve::ASTNumeric > (other.value);
+        value.copy< sieve::ASTNumeric * > (other.value);
         break;
 
       case 25: // sieve
@@ -926,7 +926,7 @@ namespace yy {
         break;
 
       case 37: // numeric
-        value.copy< sieve::ASTNumeric > (v);
+        value.copy< sieve::ASTNumeric * > (v);
         break;
 
       case 25: // sieve
@@ -988,7 +988,7 @@ namespace yy {
   {}
 
   template <typename Base>
-  sieve_parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const sieve::ASTNumeric v, const location_type& l)
+  sieve_parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const sieve::ASTNumeric * v, const location_type& l)
     : Base (t)
     , value (v)
     , location (l)
@@ -1057,7 +1057,7 @@ namespace yy {
         break;
 
       case 37: // numeric
-        value.template destroy< sieve::ASTNumeric > ();
+        value.template destroy< sieve::ASTNumeric * > ();
         break;
 
       case 25: // sieve
@@ -1121,7 +1121,7 @@ namespace yy {
         break;
 
       case 37: // numeric
-        value.move< sieve::ASTNumeric > (s.value);
+        value.move< sieve::ASTNumeric * > (s.value);
         break;
 
       case 25: // sieve

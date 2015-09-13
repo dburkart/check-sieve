@@ -13,17 +13,12 @@ class ASTVisitor;
 
 class ASTNode {
 public:
-    ASTNode() {}
-    ASTNode(yy::location location) 
-        : _children() {
-        this->_location = location;
-        this->_parent = NULL;
-    }
+    ASTNode() : _children() {}
+    ASTNode(const yy::location &location)
+        : _children()
+        , _location(location.begin, location.end) {}
 
     virtual void accept(ASTVisitor& visitor) =0;
-    
-    ASTNode *parent() { return this->_parent; }
-    ASTNode *parent( ASTNode *parent ) { this->_parent = parent; return this->_parent; }
     
     std::vector<ASTNode *> children() { return this->_children; }
     
@@ -32,10 +27,11 @@ public:
         this->_children.insert(this->_children.end(), children.begin(), children.end());
     }
 
+    yy::location location() { return this->_location; }
+
 private:
     std::vector<ASTNode *> _children;
     yy::location _location;
-    ASTNode *_parent;
 };
 
 } // namespace sieve

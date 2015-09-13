@@ -6,6 +6,7 @@
 
 #include "sieve_driver.hh"
 #include "sieve_parser.tab.hh"
+#include "AST.hh"
 
 namespace sieve
 {
@@ -99,6 +100,18 @@ int driver::parse_string( const std::string &sieve ) {
     parser.set_debug_level( trace_parsing );
     result.status = parser.parse();
     scan_end();
+
+    if (!result.status) {
+        ASTVerificationVisitor visitor = ASTVerificationVisitor();
+        visitor.walk(syntax_tree());
+        parse_result res = visitor.result();
+
+        if (res.status)
+            error(res.location, res.error);
+
+        result.status = res.status;
+    }
+
     return result.status;
 }
 
@@ -132,6 +145,10 @@ void driver::error( const yy::location &l, const std::string &message ) {
 
 void driver::error( const std::string &m ) {
     std::cerr << m << std::endl;
+}
+
+void driver::error( const parse_result result ) {
+    error( result.location, result.error );
 }
 
 void driver::add_required_modules(std::vector<std::string> &modules) {

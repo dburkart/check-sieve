@@ -65,7 +65,7 @@ typedef void* yyscan_t;
 %token <bool> TRUE "true"
 %token <bool> FALSE "false"
 
-%type <sieve::ASTNumeric> numeric
+%type <sieve::ASTNumeric *> numeric
 %type <std::vector<sieve::ASTNode *>> argument
 %type <std::vector<sieve::ASTNode *>> arguments
 %type <std::vector<sieve::ASTNode *>> test
@@ -140,7 +140,8 @@ command :
         }
     | ";"
         {
-            
+            sieve::ASTNoOp *noop = new sieve::ASTNoOp(@1);
+            $$ = noop;
         }
     ;
 
@@ -151,7 +152,9 @@ block : "{" command_list "}"
             $$ = dynamic_cast<sieve::ASTNode *>( block );
         }
     | "{" "}" 
-        { 
+        {
+            sieve::ASTNoOp *noop = new sieve::ASTNoOp( @1 );
+            $$ = noop;
         }
     ;
 
@@ -184,7 +187,10 @@ arguments : argument { $$ = $1; }
     ;
 
 argument : string_list { $$ = $1; }
-    | numeric { $$ = std::vector<sieve::ASTNode *>( 1, dynamic_cast<sieve::ASTNode *>(&$1)); }
+    | numeric
+        {
+            $$ = std::vector<sieve::ASTNode *>( 1, dynamic_cast<sieve::ASTNode *>($1));
+        }
     | TAG
         {
             sieve::ASTTag *tag = new sieve::ASTTag(@1, $1);
@@ -218,11 +224,15 @@ strings : STRING_LITERAL {$$ = std::vector<sieve::ASTNode *>(1, new sieve::ASTSt
     | strings "," STRING_LITERAL { $1.push_back( new sieve::ASTString(@3, $3)); $$ = $1; }
     ;
 
-numeric : NUMBER { $$ = sieve::ASTNumeric(@1, $1); }
+numeric :
+    NUMBER
+        {
+            $$ = new sieve::ASTNumeric(@1, $1);
+        }
     | NUMBER QUANTIFIER 
         {
             // TODO: Somehow incorporate the quantifier in here
-            $$ = sieve::ASTNumeric(@1, $1);; 
+            $$ = new sieve::ASTNumeric(@1, $1);
         }
     ;
 

@@ -15,6 +15,7 @@ public:
     void visit( ASTBranch* );
     void visit( ASTCommand* );
     void visit( ASTCondition* );
+    void visit( ASTNoOp* );
     void visit( ASTNumeric* );
     void visit( ASTRequire* );
     void visit( ASTSieve* );

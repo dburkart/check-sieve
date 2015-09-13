@@ -48,6 +48,10 @@ void ASTTraceVisitor::visit( ASTCondition* node ) {
     std::cout << "Condition" << std::endl;
 }
 
+void ASTTraceVisitor::visit( ASTNoOp* ) {
+    // No Op
+}
+
 void ASTTraceVisitor::visit( ASTNumeric* node ) {
     std::cout << "Numeric (" << node->value() << ")" << std::endl;
 }

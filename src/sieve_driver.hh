@@ -47,6 +47,7 @@ public:
     void error( const yy::location &l, const std::string &message, const std::string &suggestion);
     void error( const yy::location &l, const std::string &message );
     void error( const std::string &m );
+    void error( const parse_result );
     
     ASTSieve *syntax_tree() { return _sieve; }
     ASTSieve *syntax_tree(ASTSieve *sieve) { _sieve = sieve; return _sieve; }

@@ -15,6 +15,12 @@ struct parse_result {
     parse_result() {
         status = 0;
     }
+
+    void set_error(yy::location loc, std::string err) {
+        status = 1;
+        loc = location;
+        error = err;
+    }
 };
 
 struct parse_result sieve_parse_file( const char *filename );

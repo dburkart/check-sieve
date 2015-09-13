@@ -6,6 +6,7 @@
 #include "ASTBranch.hh"
 #include "ASTCommand.hh"
 #include "ASTCondition.hh"
+#include "ASTNoOp.hh"
 #include "ASTNumeric.hh"
 #include "ASTRequire.hh"
 #include "ASTSieve.hh"
@@ -25,6 +26,7 @@ public:
     virtual void visit( ASTBranch* ) =0;
     virtual void visit( ASTCommand* ) =0;
     virtual void visit( ASTCondition* ) =0;
+    virtual void visit( ASTNoOp* ) =0;
     virtual void visit( ASTNumeric* ) =0;
     virtual void visit( ASTRequire* ) =0;
     virtual void visit( ASTSieve* ) =0;

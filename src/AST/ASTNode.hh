@@ -20,7 +20,7 @@ public:
 
     virtual void accept(ASTVisitor& visitor) =0;
     
-    std::vector<ASTNode *> children() { return this->_children; }
+    std::vector<ASTNode *> children() const { return this->_children; }
     
     void push(ASTNode *child) { this->_children.push_back(child); } 
     void push(std::vector<ASTNode *> children) { 

@@ -6,6 +6,7 @@
 
 #include "checksieve.h"
 #include "ASTVisitor.hh"
+#include "Validation/Command.hh"
 
 namespace sieve
 {
@@ -39,6 +40,8 @@ private:
     std::map<std::string, bool> _command_map;
     std::map<std::string, bool> _test_map;
     std::map<std::string, bool> _tag_map;
+    
+    Command _command;
 };
 
 } // namespace sieve

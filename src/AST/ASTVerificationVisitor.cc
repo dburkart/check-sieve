@@ -8,7 +8,8 @@ namespace sieve
 {
 
 ASTVerificationVisitor::ASTVerificationVisitor()
-    : _verification_result() {
+    : _verification_result()
+    , _command() {
     _init();
 }
 
@@ -47,6 +48,10 @@ void ASTVerificationVisitor::visit( ASTCommand* node ) {
 
     if (!_command_map[value_lower]) {
         _verification_result = {1, node->location(), "Unrecognized command \"" + node->value() + "\"."};
+    }
+    
+    if (!_command.validate(node)) {
+        _verification_result = {1, node->location(), "Incorrect syntax for command \"" + node->value() + "\"."};
     }
 }
 

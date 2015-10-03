@@ -18,7 +18,7 @@ public:
     
     void accept(ASTVisitor &visitor);
     
-    std::string value() { return this->_str; }
+    std::string value() const { return this->_str; }
     
 private:
     std::string _str;

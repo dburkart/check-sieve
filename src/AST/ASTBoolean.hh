@@ -18,7 +18,7 @@ public:
     
     void accept(ASTVisitor &visitor);
     
-    bool value() { return this->_val; }
+    bool value() const { return this->_val; }
     
 private:
     bool _val;

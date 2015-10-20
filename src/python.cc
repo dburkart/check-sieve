@@ -10,6 +10,37 @@
 #include "checksieve.h"
 #include "sieve_driver.hh"
 
+static PyObject *parse_string(PyObject *, PyObject *);
+
+static PyMethodDef checksieve_methods[] = {
+    {"parse_string", parse_string, METH_VARARGS, "guhhh"},
+    {NULL, NULL}
+};
+
+#define PY_MODNAME "checksieve"
+#define PY_MODDESC "syntax-check a mail sieve"
+
+#if PY_MAJOR_VERSION >= 3
+#define PY_MODINIT(name) PyMODINIT_FUNC PyInit_##name(void)
+
+static struct PyModuleDef moduledef = {
+    PyModuleDef_HEAD_INIT,
+    PY_MODNAME,
+    PY_MODDESC,
+    -1,
+    checksieve_methods,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+};
+
+#define PY_MODCREATE() PyModule_Create(&moduledef)
+#else
+#define PY_MODINIT(name) PyMODINIT_FUNC init##name(void)
+#define PY_MODCREATE() Py_InitModule3( PY_MODNAME, checksieve_methods, PY_MODDESC )
+#endif // PY_MAJOR_VERSION >= 3
+
 static PyObject *parse_string(PyObject *self, PyObject *args) {
     const char *sieve;
     PyObject *quiet;
@@ -21,11 +52,6 @@ static PyObject *parse_string(PyObject *self, PyObject *args) {
     return Py_BuildValue("i", driver.parse_string(sieve));
 }
 
-static PyMethodDef checksieve_methods[] = {
-    {"parse_string", parse_string, METH_VARARGS, "guhhh"},
-    {NULL, NULL}
-};
-
-PyMODINIT_FUNC initchecksieve(void) {
-    Py_InitModule3( "checksieve", checksieve_methods, "syntax-check a sieve");
+PY_MODINIT(checksieve) {
+    PY_MODCREATE();
 }

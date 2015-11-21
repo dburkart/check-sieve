@@ -71,6 +71,10 @@ void ASTTraceVisitor::visit( ASTString* node ) {
     std::cout << "String (\"" << slice <<  "\")" << std::endl;
 }
 
+void ASTTraceVisitor::visit( ASTStringList* node ) {
+    std::cout << "String List" << std::endl;
+}
+
 void ASTTraceVisitor::visit( ASTTag* node ) {
     std::cout << "Tag (" << node->value() << ")" << std::endl;
 }

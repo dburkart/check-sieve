@@ -1,7 +1,6 @@
 #ifndef __ASTTEST_HH__
 #define __ASTTEST_HH__
 
-#include <string>
 
 #include "ASTCommand.hh"
 
@@ -14,6 +13,7 @@ class ASTTest : public ASTCommand {
 public:
     ASTTest() : ASTCommand() {}    
     ASTTest(yy::location location);
+    ASTTest(std::string name);
     ASTTest(yy::location location, std::string name);
     
     void accept(ASTVisitor &visitor);

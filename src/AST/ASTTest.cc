@@ -9,6 +9,10 @@ ASTTest::ASTTest( yy::location location )
 { 
 }
 
+ASTTest::ASTTest( std::string name)
+    : _name( name )
+{
+}
 ASTTest::ASTTest( yy::location location, std::string name)
     : ASTCommand( location )
     , _name( name )

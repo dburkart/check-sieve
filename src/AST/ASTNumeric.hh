@@ -1,7 +1,6 @@
 #ifndef __ASTNUMERIC_HH__
 #define __ASTNUMERIC_HH__
 
-#include <string>
 
 #include "ASTNode.hh"
 
@@ -14,6 +13,7 @@ class ASTNumeric : public ASTNode {
 public:
     ASTNumeric() : ASTNode() {}    
     ASTNumeric(yy::location location);
+    ASTNumeric(int number);
     ASTNumeric(yy::location location, int number);
     
     void accept(ASTVisitor &visitor);

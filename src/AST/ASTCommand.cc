@@ -9,6 +9,10 @@ ASTCommand::ASTCommand( yy::location location )
 { 
 }
 
+ASTCommand::ASTCommand( std::string name)
+    : _name( name )
+{
+}
 ASTCommand::ASTCommand( yy::location location, std::string name)
     : ASTNode( location )
     , _name( name )

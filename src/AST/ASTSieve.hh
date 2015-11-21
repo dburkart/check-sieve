@@ -1,7 +1,6 @@
 #ifndef __ASTSIEVE_HH__
 #define __ASTSIEVE_HH__
 
-#include <string>
 
 #include "ASTNode.hh"
 
@@ -17,6 +16,7 @@ public:
     
     void accept(ASTVisitor &visitor);
     
+    std::string value() const { return "ASTSieve"; }
     
 private:
 };

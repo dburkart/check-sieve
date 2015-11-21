@@ -26,6 +26,7 @@ public:
     void visit( ASTRequire* );
     void visit( ASTSieve* );
     void visit( ASTString* );
+    void visit( ASTStringList* );
     void visit( ASTTag* );
     void visit( ASTTest* );
 

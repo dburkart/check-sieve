@@ -9,6 +9,10 @@ ASTNumeric::ASTNumeric( yy::location location )
 { 
 }
 
+ASTNumeric::ASTNumeric( int number)
+    : _number( number )
+{
+}
 ASTNumeric::ASTNumeric( yy::location location, int number)
     : ASTNode( location )
     , _number( number )

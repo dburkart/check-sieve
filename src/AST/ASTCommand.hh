@@ -1,7 +1,6 @@
 #ifndef __ASTCOMMAND_HH__
 #define __ASTCOMMAND_HH__
 
-#include <string>
 
 #include "ASTNode.hh"
 
@@ -14,6 +13,7 @@ class ASTCommand : public ASTNode {
 public:
     ASTCommand() : ASTNode() {}    
     ASTCommand(yy::location location);
+    ASTCommand(std::string name);
     ASTCommand(yy::location location, std::string name);
     
     void accept(ASTVisitor &visitor);

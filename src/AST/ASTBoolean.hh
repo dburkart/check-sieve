@@ -1,7 +1,6 @@
 #ifndef __ASTBOOLEAN_HH__
 #define __ASTBOOLEAN_HH__
 
-#include <string>
 
 #include "ASTTest.hh"
 
@@ -14,6 +13,7 @@ class ASTBoolean : public ASTTest {
 public:
     ASTBoolean() : ASTTest() {}    
     ASTBoolean(yy::location location);
+    ASTBoolean(bool val);
     ASTBoolean(yy::location location, bool val);
     
     void accept(ASTVisitor &visitor);

@@ -1,7 +1,6 @@
 #ifndef __ASTTAG_HH__
 #define __ASTTAG_HH__
 
-#include <string>
 
 #include "ASTNode.hh"
 
@@ -14,6 +13,7 @@ class ASTTag : public ASTNode {
 public:
     ASTTag() : ASTNode() {}    
     ASTTag(yy::location location);
+    ASTTag(std::string name);
     ASTTag(yy::location location, std::string name);
     
     void accept(ASTVisitor &visitor);

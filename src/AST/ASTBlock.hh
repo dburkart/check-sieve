@@ -1,7 +1,6 @@
 #ifndef __ASTBLOCK_HH__
 #define __ASTBLOCK_HH__
 
-#include <string>
 
 #include "ASTNode.hh"
 
@@ -17,6 +16,7 @@ public:
     
     void accept(ASTVisitor &visitor);
     
+    std::string value() const { return "ASTBlock"; }
     
 private:
 };

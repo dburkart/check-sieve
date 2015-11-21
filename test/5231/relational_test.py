@@ -57,7 +57,7 @@ class TestRelational(unittest.TestCase):
     def test_value_no_comparator_require(self):
         sieve = '''
            require ["fileinto", "relational"];
-           if address :value "gt" :all :comparator "i;ascii-casemap"
+           if address :value "gt" :all :comparator "i;ascii-numeric"
                  ["from"] ["M"]
           {
              fileinto "From N-Z";

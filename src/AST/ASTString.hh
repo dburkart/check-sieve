@@ -14,6 +14,7 @@ class ASTString : public ASTNode {
 public:
     ASTString() : ASTNode() {}    
     ASTString(yy::location location);
+    ASTString(std::string str);
     ASTString(yy::location location, std::string str);
     
     void accept(ASTVisitor &visitor);

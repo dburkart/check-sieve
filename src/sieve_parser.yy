@@ -108,7 +108,13 @@ command :
       REQUIRE string_list ";"
         {
             sieve::ASTRequire *require = new sieve::ASTRequire(@1);
-            require->push($2);
+            if ($2.size() > 1) {
+                sieve::ASTStringList *stringList = new sieve::ASTStringList(@2);
+                stringList->push($2);
+                require->push(stringList);
+            } else {
+                require->push($2);
+            }
             $$ = dynamic_cast<sieve::ASTNode *>(require);
         }
     | IDENTIFIER arguments ";"
@@ -186,7 +192,16 @@ arguments : argument { $$ = $1; }
     | test_list { $$ = $1; }
     ;
 
-argument : string_list { $$ = $1; }
+argument : string_list 
+        {
+            if ($1.size() > 1) {
+                sieve::ASTStringList *stringList = new sieve::ASTStringList(@1);
+                stringList->push($1);
+                $$ = std::vector<sieve::ASTNode *>( 1, dynamic_cast<sieve::ASTNode *>(stringList));
+            } else {
+                $$ = $1;
+            }
+        }
     | numeric
         {
             $$ = std::vector<sieve::ASTNode *>( 1, dynamic_cast<sieve::ASTNode *>($1));

@@ -14,10 +14,23 @@ bool validateIncludeCommand(const ASTCommand *command) {
         return false;
 }
 
+bool validateIMAP4FlagsAction(const ASTCommand *command) {
+    size_t size = command->children().size();
+
+    if (size > 0 && size < 3)
+        return true;
+    else
+        return false;
+}
+
 Command::Command() {
     _usage_map["include"] = "include [:global / :personal] [\":once\"] [\":optional\"] <value: string>";
+    _usage_map["setflag"] = "setflag [<variablename: string>] <list-of-flags: string-list>";
+    _usage_map["addflag"] = "addflag [<variablename: string>] <list-of-flags: string-list>";
 
     _validation_fn_map["include"] = &validateIncludeCommand;
+    _validation_fn_map["setflag"] = &validateIMAP4FlagsAction;
+    _validation_fn_map["addflag"] = &validateIMAP4FlagsAction;
 }
 
 bool Command::validate(const ASTCommand *command) {

@@ -1,7 +1,6 @@
 #ifndef __ASTCONDITION_HH__
 #define __ASTCONDITION_HH__
 
-#include <string>
 
 #include "ASTNode.hh"
 
@@ -17,6 +16,7 @@ public:
     
     void accept(ASTVisitor &visitor);
     
+    std::string value() const { return "ASTCondition"; }
     
 private:
 };

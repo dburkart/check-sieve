@@ -69,6 +69,11 @@ void ASTVerificationVisitor::visit( ASTNumeric* node ) {
 
 void ASTVerificationVisitor::visit( ASTRequire* node ) {
     std::vector<sieve::ASTNode *> children = node->children();
+
+    // If we are requiring multiple modules, we need our grandchildren
+    if (dynamic_cast<ASTStringList *>(children[0]) != NULL)
+        children = children[0]->children();
+
     for (std::vector<sieve::ASTNode *>::iterator it = children.begin(); it != children.end(); ++it) {
         sieve::ASTString *child = static_cast<ASTString *>(*it);
 
@@ -217,6 +222,10 @@ void ASTVerificationVisitor::visit( ASTSieve* node ) {
 }
 
 void ASTVerificationVisitor::visit( ASTString* node ) {
+
+}
+
+void ASTVerificationVisitor::visit( ASTStringList* node ) {
 
 }
 

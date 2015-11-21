@@ -9,6 +9,10 @@ ASTString::ASTString( yy::location location )
 { 
 }
 
+ASTString::ASTString( std::string str)
+    : _str( str )
+{
+}
 ASTString::ASTString( yy::location location, std::string str)
     : ASTNode( location )
     , _str( str )

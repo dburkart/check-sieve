@@ -11,6 +11,7 @@
 #include "ASTRequire.hh"
 #include "ASTSieve.hh"
 #include "ASTString.hh"
+#include "ASTStringList.hh"
 #include "ASTTag.hh"
 #include "ASTTest.hh"
 
@@ -31,6 +32,7 @@ public:
     virtual void visit( ASTRequire* ) =0;
     virtual void visit( ASTSieve* ) =0;
     virtual void visit( ASTString* ) =0;
+    virtual void visit( ASTStringList* ) =0;
     virtual void visit( ASTTag* ) =0;
     virtual void visit( ASTTest* ) =0;
 };

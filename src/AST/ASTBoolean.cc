@@ -9,6 +9,10 @@ ASTBoolean::ASTBoolean( yy::location location )
 { 
 }
 
+ASTBoolean::ASTBoolean( bool val)
+    : _val( val )
+{
+}
 ASTBoolean::ASTBoolean( yy::location location, bool val)
     : ASTTest( location )
     , _val( val )

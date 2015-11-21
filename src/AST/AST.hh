@@ -11,6 +11,7 @@
 #include "ASTRequire.hh"
 #include "ASTSieve.hh"
 #include "ASTString.hh"
+#include "ASTStringList.hh"
 #include "ASTTag.hh"
 #include "ASTTest.hh"
 #include "ASTTraceVisitor.hh"

@@ -1,7 +1,6 @@
 #ifndef __ASTREQUIRE_HH__
 #define __ASTREQUIRE_HH__
 
-#include <string>
 
 #include "ASTCommand.hh"
 
@@ -17,6 +16,7 @@ public:
     
     void accept(ASTVisitor &visitor);
     
+    std::string value() const { return "ASTRequire"; }
     
 private:
 };

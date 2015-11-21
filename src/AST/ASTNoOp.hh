@@ -1,7 +1,6 @@
 #ifndef __ASTNOOP_HH__
 #define __ASTNOOP_HH__
 
-#include <string>
 
 #include "ASTNode.hh"
 
@@ -17,6 +16,7 @@ public:
     
     void accept(ASTVisitor &visitor);
     
+    std::string value() const { return "ASTNoOp"; }
     
 private:
 };

@@ -131,11 +131,15 @@ command :
     | FOREVERYPART block
         {
             sieve::ASTCommand *command = new sieve::ASTCommand(@1, $1);
+            command->push($2);
             $$ = dynamic_cast<sieve::ASTNode *>(command);
         }
     | FOREVERYPART TAG STRING_LITERAL block
         {
             sieve::ASTCommand *command = new sieve::ASTCommand(@1, $1);
+            command->push(new sieve::ASTTag(@2, $2));
+            command->push(new sieve::ASTString(@3, $3));
+            command->push($4);
             $$ = dynamic_cast<sieve::ASTNode *>(command);
         }
     | if_flow { $$ = $1; }

@@ -173,6 +173,7 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
         if (child->value() == "foreverypart") {
             _command_map["foreverypart"] = 1;
             _command_map["break"] = 1;
+            _tag_map[":name"] = 1;
         }
         
         // "mime"
@@ -190,18 +191,23 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
         // RFC 5703
         if (child->value() == "extracttext") {
             _command_map["extracttext"] = 1;
+            _tag_map[":first"] = 1;
         }
 
         // "replace"
         // RFC 5703
         if (child->value() == "replace") {
             _command_map["replace"] = 1;
+            _tag_map[":subject"] = 1;
+            _tag_map[":from"] = 1;
         }
 
         // "enclose"
         // RFC 5703
         if (child->value() == "enclose") {
             _command_map["enclose"] = 1;
+            _tag_map[":subject"] = 1;
+            _tag_map[":headers"] = 1;
         }
 
         // "include"

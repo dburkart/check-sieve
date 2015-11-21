@@ -716,65 +716,69 @@ namespace yy {
 #line 132 "../src/sieve_parser.yy" // lalr1.cc:859
     {
             sieve::ASTCommand *command = new sieve::ASTCommand(yystack_[1].location, yystack_[1].value.as< std::string > ());
+            command->push(yystack_[0].value.as< sieve::ASTNode * > ());
             yylhs.value.as< sieve::ASTNode * > () = dynamic_cast<sieve::ASTNode *>(command);
         }
-#line 722 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 723 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 10:
-#line 137 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 138 "../src/sieve_parser.yy" // lalr1.cc:859
     {
             sieve::ASTCommand *command = new sieve::ASTCommand(yystack_[3].location, yystack_[3].value.as< std::string > ());
+            command->push(new sieve::ASTTag(yystack_[2].location, yystack_[2].value.as< std::string > ()));
+            command->push(new sieve::ASTString(yystack_[1].location, yystack_[1].value.as< std::string > ()));
+            command->push(yystack_[0].value.as< sieve::ASTNode * > ());
             yylhs.value.as< sieve::ASTNode * > () = dynamic_cast<sieve::ASTNode *>(command);
         }
-#line 731 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 735 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 11:
-#line 141 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 145 "../src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< sieve::ASTNode * > () = yystack_[0].value.as< sieve::ASTNode * > (); }
-#line 737 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 741 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 12:
-#line 143 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 147 "../src/sieve_parser.yy" // lalr1.cc:859
     {
             yystack_[2].value.as< sieve::ASTNode * > ()->push(yystack_[0].value.as< sieve::ASTNode * > ());
             yylhs.value.as< sieve::ASTNode * > () = yystack_[2].value.as< sieve::ASTNode * > ();
         }
-#line 746 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 750 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 13:
-#line 148 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 152 "../src/sieve_parser.yy" // lalr1.cc:859
     {
             sieve::ASTNoOp *noop = new sieve::ASTNoOp(yystack_[0].location);
             yylhs.value.as< sieve::ASTNode * > () = noop;
         }
-#line 755 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 759 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 14:
-#line 155 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 159 "../src/sieve_parser.yy" // lalr1.cc:859
     {
             sieve::ASTBlock *block = new sieve::ASTBlock( yystack_[2].location );
             block->push(yystack_[1].value.as< std::vector<sieve::ASTNode *> > ());
             yylhs.value.as< sieve::ASTNode * > () = dynamic_cast<sieve::ASTNode *>( block );
         }
-#line 765 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 769 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 15:
-#line 161 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 165 "../src/sieve_parser.yy" // lalr1.cc:859
     {
             sieve::ASTNoOp *noop = new sieve::ASTNoOp( yystack_[1].location );
             yylhs.value.as< sieve::ASTNode * > () = noop;
         }
-#line 774 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 778 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 16:
-#line 168 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 172 "../src/sieve_parser.yy" // lalr1.cc:859
     {
             sieve::ASTBranch *branch = new sieve::ASTBranch( yystack_[2].location );
             sieve::ASTCondition *condition = new sieve::ASTCondition( yystack_[1].location );
@@ -784,11 +788,11 @@ namespace yy {
             yylhs.value.as< sieve::ASTNode * > () = dynamic_cast<sieve::ASTNode *>(branch);
             
         }
-#line 788 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 792 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 17:
-#line 178 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 182 "../src/sieve_parser.yy" // lalr1.cc:859
     {
             sieve::ASTCondition *condition = new sieve::ASTCondition( yystack_[1].location );
             condition->push(yystack_[1].value.as< std::vector<sieve::ASTNode *> > ());
@@ -796,47 +800,47 @@ namespace yy {
             yystack_[3].value.as< sieve::ASTNode * > ()->push(yystack_[0].value.as< sieve::ASTNode * > ());
             yylhs.value.as< sieve::ASTNode * > () = yystack_[3].value.as< sieve::ASTNode * > ();
         }
-#line 800 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 804 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 18:
-#line 187 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 191 "../src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[0].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 806 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 810 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 19:
-#line 188 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 192 "../src/sieve_parser.yy" // lalr1.cc:859
     { yystack_[1].value.as< std::vector<sieve::ASTNode *> > ().insert(yystack_[1].value.as< std::vector<sieve::ASTNode *> > ().end(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().begin(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().end()); yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[1].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 812 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 816 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 20:
-#line 189 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 193 "../src/sieve_parser.yy" // lalr1.cc:859
     { yystack_[1].value.as< std::vector<sieve::ASTNode *> > ().insert(yystack_[1].value.as< std::vector<sieve::ASTNode *> > ().end(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().begin(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().end()); yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[1].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 818 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 822 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 21:
-#line 190 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 194 "../src/sieve_parser.yy" // lalr1.cc:859
     { yystack_[1].value.as< std::vector<sieve::ASTNode *> > ().insert(yystack_[1].value.as< std::vector<sieve::ASTNode *> > ().end(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().begin(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().end()); yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[1].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 824 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 828 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 22:
-#line 191 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 195 "../src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[0].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 830 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 834 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 23:
-#line 192 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 196 "../src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[0].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 836 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 840 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 24:
-#line 196 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 200 "../src/sieve_parser.yy" // lalr1.cc:859
     {
             if (yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().size() > 1) {
                 sieve::ASTStringList *stringList = new sieve::ASTStringList(yystack_[0].location);
@@ -846,109 +850,109 @@ namespace yy {
                 yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[0].value.as< std::vector<sieve::ASTNode *> > ();
             }
         }
-#line 850 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 854 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 25:
-#line 206 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 210 "../src/sieve_parser.yy" // lalr1.cc:859
     {
             yylhs.value.as< std::vector<sieve::ASTNode *> > () = std::vector<sieve::ASTNode *>( 1, dynamic_cast<sieve::ASTNode *>(yystack_[0].value.as< sieve::ASTNumeric * > ()));
         }
-#line 858 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 862 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 26:
-#line 210 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 214 "../src/sieve_parser.yy" // lalr1.cc:859
     {
             sieve::ASTTag *tag = new sieve::ASTTag(yystack_[0].location, yystack_[0].value.as< std::string > ());
             yylhs.value.as< std::vector<sieve::ASTNode *> > () = std::vector<sieve::ASTNode *>( 1, dynamic_cast<sieve::ASTNode *>(tag));
         }
-#line 867 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 871 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 27:
-#line 216 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 220 "../src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[1].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 873 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 877 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 28:
-#line 219 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 223 "../src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[0].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 879 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 883 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 29:
-#line 220 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 224 "../src/sieve_parser.yy" // lalr1.cc:859
     { yystack_[2].value.as< std::vector<sieve::ASTNode *> > ().insert(yystack_[2].value.as< std::vector<sieve::ASTNode *> > ().end(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().begin(), yystack_[0].value.as< std::vector<sieve::ASTNode *> > ().end()); yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[2].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 885 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 889 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 30:
-#line 225 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 229 "../src/sieve_parser.yy" // lalr1.cc:859
     {
             sieve::ASTTest *test = new sieve::ASTTest(yystack_[1].location, yystack_[1].value.as< std::string > ());
             test->push(yystack_[0].value.as< std::vector<sieve::ASTNode *> > ());
             yylhs.value.as< std::vector<sieve::ASTNode *> > () = std::vector<sieve::ASTNode *>(1, test);
         }
-#line 895 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 899 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 31:
-#line 230 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 234 "../src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<sieve::ASTNode *> > () = std::vector<sieve::ASTNode *>(1, new sieve::ASTBoolean(yystack_[0].location, yystack_[0].value.as< bool > ())); }
-#line 901 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 905 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 32:
-#line 231 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 235 "../src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<sieve::ASTNode *> > () = std::vector<sieve::ASTNode *>(1, new sieve::ASTBoolean(yystack_[0].location, yystack_[0].value.as< bool > ())); }
-#line 907 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 911 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 33:
-#line 234 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 238 "../src/sieve_parser.yy" // lalr1.cc:859
     {yylhs.value.as< std::vector<sieve::ASTNode *> > () = std::vector<sieve::ASTNode *>(1,  new sieve::ASTString(yystack_[0].location, yystack_[0].value.as< std::string > ())); }
-#line 913 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 917 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 34:
-#line 235 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 239 "../src/sieve_parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[1].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 919 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 923 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 35:
-#line 238 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 242 "../src/sieve_parser.yy" // lalr1.cc:859
     {yylhs.value.as< std::vector<sieve::ASTNode *> > () = std::vector<sieve::ASTNode *>(1, new sieve::ASTString(yystack_[0].location, yystack_[0].value.as< std::string > ())); }
-#line 925 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 929 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 36:
-#line 239 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 243 "../src/sieve_parser.yy" // lalr1.cc:859
     { yystack_[2].value.as< std::vector<sieve::ASTNode *> > ().push_back( new sieve::ASTString(yystack_[0].location, yystack_[0].value.as< std::string > ())); yylhs.value.as< std::vector<sieve::ASTNode *> > () = yystack_[2].value.as< std::vector<sieve::ASTNode *> > (); }
-#line 931 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 935 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 37:
-#line 244 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 248 "../src/sieve_parser.yy" // lalr1.cc:859
     {
             yylhs.value.as< sieve::ASTNumeric * > () = new sieve::ASTNumeric(yystack_[0].location, yystack_[0].value.as< int > ());
         }
-#line 939 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 943 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
   case 38:
-#line 248 "../src/sieve_parser.yy" // lalr1.cc:859
+#line 252 "../src/sieve_parser.yy" // lalr1.cc:859
     {
             // TODO: Somehow incorporate the quantifier in here
             yylhs.value.as< sieve::ASTNumeric * > () = new sieve::ASTNumeric(yystack_[1].location, yystack_[1].value.as< int > ());
         }
-#line 948 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 952 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
     break;
 
 
-#line 952 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
+#line 956 "../gen/sieve_parser.tab.cc" // lalr1.cc:859
             default:
               break;
             }
@@ -1326,9 +1330,9 @@ namespace yy {
   sieve_parser::yyrline_[] =
   {
        0,    88,    88,    94,   103,   104,   108,   120,   126,   131,
-     136,   141,   142,   147,   154,   160,   167,   177,   187,   188,
-     189,   190,   191,   192,   195,   205,   209,   216,   219,   220,
-     224,   230,   231,   234,   235,   238,   239,   243,   247
+     137,   145,   146,   151,   158,   164,   171,   181,   191,   192,
+     193,   194,   195,   196,   199,   209,   213,   220,   223,   224,
+     228,   234,   235,   238,   239,   242,   243,   247,   251
   };
 
   // Print the state stack on the debug stream.
@@ -1363,8 +1367,8 @@ namespace yy {
 
 
 } // yy
-#line 1367 "../gen/sieve_parser.tab.cc" // lalr1.cc:1167
-#line 254 "../src/sieve_parser.yy" // lalr1.cc:1168
+#line 1371 "../gen/sieve_parser.tab.cc" // lalr1.cc:1167
+#line 258 "../src/sieve_parser.yy" // lalr1.cc:1168
 
 
 void yy::sieve_parser::error( const location_type &l, const std::string &m ) {

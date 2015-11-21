@@ -116,7 +116,7 @@ class TestActions(unittest.TestCase):
                }
            }
         '''
-        self.assertFalse(checksieve.parse_string(sieve, False))
+        self.assertTrue(checksieve.parse_string(sieve, True))
 
     def test_replace(self):
         sieve = '''

@@ -19,6 +19,21 @@ public:
     void accept(ASTVisitor &visitor);
     
     int value() const { return this->_number; }
+
+    template<class T>
+    ASTNode *find(const T& value) const {
+        for (auto i = this->children().begin(); i != this->children().end(); ++i) {
+            const T* child = dynamic_cast<T*>(*i);
+
+            if (child == NULL)
+                continue;
+
+            if (child->value() == value.value())
+                return *i;
+        }
+
+        return NULL;
+    }
     
 private:
     int _number;

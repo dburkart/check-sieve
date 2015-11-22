@@ -33,11 +33,11 @@ bool validateFileintoCommand(const ASTCommand *command) {
 
     int minArguments = 1;
 
-    if (command->find(ASTTag(":flags")) != NULL) {
+    if (command->find(ASTTag(":flags")) != command->children().end()) {
         minArguments += 2;
     }
 
-    if (command->find(ASTTag(":copy")) != NULL) {
+    if (command->find(ASTTag(":copy")) != command->children().end()) {
         minArguments++;
     }
 

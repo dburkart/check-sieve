@@ -19,23 +19,18 @@ public:
     std::string value() const { return "ASTStringList"; }
 
     template<class T>
-    ASTNode *find(const T& value) const {
-        for (auto i = this->children().begin(); i != this->children().end(); ++i) {
-            const T* child;
-
-            if (*i == NULL)
-                return NULL;
-
-            child = dynamic_cast<T*>(*i);
+    std::vector<ASTNode *>::const_iterator find(const T& value) const {
+        for (std::vector<ASTNode *>::const_iterator it = this->children().begin(); it != this->children().end(); ++it) {
+            const T* child = dynamic_cast<T*>(*it);
 
             if (child == NULL)
                 continue;
 
             if (child->value() == value.value())
-                return *i;
+                return it;
         }
 
-        return NULL;
+        return this->children().end();
     }
     
 private:

@@ -9,6 +9,6 @@ LEX = flex -I
 YACC = bison -d
 
 CXX ?= clang++ -DYYDEBUG=1
-CFLAGS = -I$(BASE)/gen/ -I$(BASE)/src/ -I$(BASE)/src/AST -std=c++11 -fPIC -Wno-deprecated-register -DPLATFORM=\"$(ARCH)-$(PLATFORM)\"
+CFLAGS += -I$(BASE)/gen/ -I$(BASE)/src/ -I$(BASE)/src/AST -std=c++0x -fPIC -Wno-deprecated-register -DPLATFORM=\"$(ARCH)-$(PLATFORM)\"
 
 endif

@@ -15,6 +15,8 @@
 #include <sstream>
 #include <vector>
 
+#include "AST.hh"
+
 namespace sieve {
     class driver;
 }
@@ -43,7 +45,6 @@ typedef void* yyscan_t;
     IF            "if"
     ELSIF         "elsif"
     ELSE          "else"
-    FOREVERYPART  "foreverypart"
     SEMICOLON     ";"
     LPAREN        "("
     RPAREN        ")"
@@ -52,233 +53,139 @@ typedef void* yyscan_t;
     LCURLY        "{"
     RCURLY        "}"
     COMMA         ","
-    TRUE          "true"
-    FALSE         "false"
     QUANTIFIER    "quantifier"
   ;
 
-%token <std::string> IDENTIFIER "identifier"
-%token <std::string> TAG ":tag"
-%token <std::string> STRING_LITERAL "string literal"
-%token <int> NUMBER "number"
 
-%type <int> numeric
-%type <std::vector<std::string>> argument
-%type <std::vector<std::string>> arguments
-%type <std::vector<std::string>> test
-%type <std::vector<std::string>> tests
-%type <std::vector<std::string>> test_list
-%type <std::vector<std::string>> strings
-%type <std::vector<std::string>> string_list
+%token <std::string> IDENTIFIER "identifier"
+%token <std::string> FOREVERYPART "foreverypart"
+%token <std::string> TAG ":tag"
+%token <std::string> STRING_LITERAL
+%token <int> NUMBER "number"
+%token <bool> TRUE "true"
+%token <bool> FALSE "false"
+
+%type <sieve::ASTNumeric *> numeric
+%type <std::vector<sieve::ASTNode *>> argument
+%type <std::vector<sieve::ASTNode *>> arguments
+%type <std::vector<sieve::ASTNode *>> test
+%type <std::vector<sieve::ASTNode *>> tests
+%type <std::vector<sieve::ASTNode *>> test_list
+
+%type <std::vector<sieve::ASTNode *>> strings
+%type <std::vector<sieve::ASTNode *>> string_list
+
+%type <sieve::ASTNode *> command
+%type <std::vector<sieve::ASTNode *>> command_list
+%type <sieve::ASTNode *> block
+%type <sieve::ASTNode *> if_flow
+
+%type <sieve::ASTSieve *> sieve
 
 %%
-%start commands;
+%start sieve;
 
-commands : END
-    | command
-    | commands command
+sieve : END 
+        {
+            sieve::ASTSieve *sieve = new sieve::ASTSieve(@1);
+            driver.syntax_tree(sieve);
+            $$ = sieve;
+        }
+    | command_list
+        {
+            sieve::ASTSieve *sieve = new sieve::ASTSieve(@1);
+            sieve->push($1);
+            driver.syntax_tree(sieve);
+            $$ = sieve;
+        }
+    ;
+
+command_list : command { $$ = std::vector<sieve::ASTNode *>(1, $1); }
+    | command_list command { $1.push_back($2); $$ = $1; }
     ;
 
 command :
       REQUIRE string_list ";"
         {
-            driver.add_required_modules( $2 );
+            sieve::ASTRequire *require = new sieve::ASTRequire(@1);
+            if ($2.size() > 1) {
+                sieve::ASTStringList *stringList = new sieve::ASTStringList(@2);
+                stringList->push($2);
+                require->push(stringList);
+            } else {
+                require->push($2);
+            }
+            $$ = dynamic_cast<sieve::ASTNode *>(require);
         }
     | IDENTIFIER arguments ";"
         {
-            if (!driver.supports_module("imap4flags") && ($1 == "addflag" || $1 == "setflag" || $1 == "removeflag" || $1 == "hasflag")) {
-                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require imap4flags");
-                YYABORT;
-            }
-
-            if (!driver.supports_module("variables") && ($1 == "set")) {
-                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require variables");
-                YYABORT;
-            }
-
-            if (!driver.supports_module("fileinto") && ($1 == "fileinto")) {
-                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require fileinto");
-                YYABORT;
-            }
-
-            if (!driver.supports_module("vacation") && ($1 == "vacation")) {
-                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require vacation");
-                YYABORT;
-            }
-
-            if (!driver.supports_module("include") && ($1 == "include")) {
-                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require include");
-                YYABORT;
-            }
-
-            if (!driver.supports_module("reject") && ($1 == "reject")) {
-                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require reject");
-                YYABORT;
-            }
-
-            if (!driver.supports_module("ereject") && ($1 == "ereject")) {
-                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require ereject");
-                YYABORT;
-            }
-
-            if (!driver.supports_module("foreverypart") && ($1 == "break")) {
-                driver.error(@1, "Unrecognized command\"" + $1 + "\".", "Hint: require foreverypart");
-                YYABORT;
-            }
-
-            if (!driver.supports_module("enclose") && ($1 == "enclose")) {
-                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require enclose");
-                YYABORT;
-            }
-
-            if (!driver.supports_module("extracttext") && ($1 == "extracttext")) {
-                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require extracttext");
-                YYABORT;
-            }
-            if (!driver.supports_module("replace") && ($1 == "replace")) {
-                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require replace");
-                YYABORT;
-            }
-
-            if ($1 == "reject" && $2.size() != 1) {
-                driver.error(@2, "Incorrect arguments to \"reject\" command.", "Syntax:   reject <reason: string>");
-                YYABORT;
-            }
-
-            if ($1 == "ereject" && $2.size() != 1) {
-                driver.error(@2, "Incorrect arguments to \"reject\" command.", "Syntax:   ereject <reason: string>");
-                YYABORT;
-            }
-
-            if ($1 == "fileinto") {
-                std::string suggestion = "Syntax:   fileinto [\":flags\" <list-of-flags: string-list>][\":copy\"] <folder: string>";
-
-                if ($2.size() < 1) {
-                    driver.error(@2, "Incorrect arguments to \"fileinto\" command.", suggestion);
-                    YYABORT;
-                }
-
-                int minArguments = 1;
-
-                if (std::find($2.begin(), $2.end(), ":flags") != $2.end()) {
-                    minArguments += 2;
-                }
-
-                if (std::find($2.begin(), $2.end(), ":copy") != $2.end()) {
-                    minArguments++;
-                }
-
-                // verify minimum number of arguments
-                if ($2.size() < minArguments) {
-                    driver.error(@2, "Incorrect number of arguments to \"fileinto\" command.", suggestion);
-                    YYABORT;
-                }
-            }
-
-            if ($1 == "redirect" && ($2.size() > 2 || $2.size() < 1)) {
-                driver.error(@2, "Incorrect arguments to \"redirect\" command.", "Syntax:   redirect [\":copy\"] <address: string>");
-                YYABORT;
-            }
-
-            if ($1 == "break") {
-                if ($2.size() != 2) {
-                    driver.error(@2, "Incorrect arguments to \"break\" command.", "Syntax:   break [\":name\" string]");
-                    YYABORT;
-                }
-
-                if ($2[0] != ":name") {
-                    driver.error(@2, "Unrecognized tag.", "Syntax:    break [\":name\" string]");
-                    YYABORT;
-                }
-            }
-
-            if ($1 == "discard") {
-                driver.error(@2, "Too many arguments passed to \"discard\" command.", "Syntax:   discard");
-                YYABORT;
-            }
-
-            if ($1 == "return") {
-                driver.error(@2, "Too many arguments passed to \"return\" command.", "Syntax:   return");
-                YYABORT;
-            }
-
-            if (!driver.valid_command($1)) {
-                driver.error(@1, "Unrecognized command \"" + $1 + "\".");
-                YYABORT;
-            }
+            sieve::ASTCommand *command = new sieve::ASTCommand(@1, $1);
+            command->push($2);
+            $$ = dynamic_cast<sieve::ASTNode *>(command);
         }
     | IDENTIFIER ";"
         {
-            if (!driver.supports_module("include") && ($1 == "return")) {
-                driver.error(@1, "Unrecognized command \"" + $1 + "\".", "Hint: require include");
-                YYABORT;
-            }
-
-            if (!driver.supports_module("foreverypart") && ($1 == "break")) {
-                driver.error(@1, "Unrecognized command\"" + $1 + "\".", "Hint: require foreverypart");
-                YYABORT;
-            }
-
-            if ($1 == "reject") {
-                driver.error(@2, "Incorrect arguments to \"reject\" command.", "Syntax:   reject <reason: string>");
-                YYABORT;
-            }
-
-            if ($1 == "fileinto") {
-                driver.error(@2, "Incorrect arguments to \"fileinto\" command.", "Syntax:   fileinto [\":copy\"] <folder: string>");
-                YYABORT;
-            }
-
-            if ($1 == "redirect") {
-                driver.error(@2, "Incorrect arguments to \"redirect\" command.", "Syntax:   fileinto <address: string>");
-                YYABORT;
-            }
-
-            if ($1 == "vacation") {
-                driver.error(@2, "Incorrect arguments to \"vacation\" command.");
-                YYABORT;
-            }
-
-            if ($1 == "include") {
-                driver.error(@2, "Incorrect arguments to \"include\" command.");
-                YYABORT;
-            }
-
-            if (!driver.valid_command($1)) {
-                driver.error(@1, "Unrecognized command \"" + $1 + "\".");
-                YYABORT;
-            }
+            sieve::ASTCommand *command = new sieve::ASTCommand(@1, $1);
+            $$ = dynamic_cast<sieve::ASTNode *>(command);
         }
     | FOREVERYPART block
         {
-            if (!driver.supports_module("foreverypart")) {
-                driver.error(@1, "Unrecognized action \"foreverypart\".", "Hint: require foreverypart");
-                YYABORT;
-            }
+            sieve::ASTCommand *command = new sieve::ASTCommand(@1, $1);
+            command->push($2);
+            $$ = dynamic_cast<sieve::ASTNode *>(command);
         }
     | FOREVERYPART TAG STRING_LITERAL block
         {
-            if (!driver.supports_module("foreverypart")) {
-                driver.error(@1, "Unrecognized action \"foreverypart\".", "Hint: require foreverypart");
-                YYABORT;
-            }
-
-            if ($2 != ":name") {
-                driver.error(@2, "Unrecognized tag \"" + $2 + "\".", "Syntax:    foreverypart [\":name\" string] block");
-                YYABORT;
-            }
+            sieve::ASTCommand *command = new sieve::ASTCommand(@1, $1);
+            command->push(new sieve::ASTTag(@2, $2));
+            command->push(new sieve::ASTString(@3, $3));
+            command->push($4);
+            $$ = dynamic_cast<sieve::ASTNode *>(command);
         }
-    | if_flow
+    | if_flow { $$ = $1; }
     | if_flow ELSE block
+        {
+            $1->push($3);
+            $$ = $1;
+        }
     | ";"
+        {
+            sieve::ASTNoOp *noop = new sieve::ASTNoOp(@1);
+            $$ = noop;
+        }
     ;
 
-block : "{" commands "}"
-    | "{" "}"
+block : "{" command_list "}"
+        {
+            sieve::ASTBlock *block = new sieve::ASTBlock( @1 );
+            block->push($2);
+            $$ = dynamic_cast<sieve::ASTNode *>( block );
+        }
+    | "{" "}" 
+        {
+            sieve::ASTNoOp *noop = new sieve::ASTNoOp( @1 );
+            $$ = noop;
+        }
     ;
 
 if_flow : IF test block
+        {
+            sieve::ASTBranch *branch = new sieve::ASTBranch( @1 );
+            sieve::ASTCondition *condition = new sieve::ASTCondition( @2 );
+            condition->push($2);
+            branch->push(condition);
+            branch->push($3);
+            $$ = dynamic_cast<sieve::ASTNode *>(branch);
+            
+        }
     | if_flow ELSIF test block
+        {
+            sieve::ASTCondition *condition = new sieve::ASTCondition( @3 );
+            condition->push($3);
+            $1->push(condition);
+            $1->push($4);
+            $$ = $1;
+        }
     ;
 
 arguments : argument { $$ = $1; }
@@ -289,31 +196,24 @@ arguments : argument { $$ = $1; }
     | test_list { $$ = $1; }
     ;
 
-argument : string_list { $$ = $1; }
-    | numeric { $$ = std::vector<std::string>( 1, std::to_string($1) ); }
+argument : string_list 
+        {
+            if ($1.size() > 1) {
+                sieve::ASTStringList *stringList = new sieve::ASTStringList(@1);
+                stringList->push($1);
+                $$ = std::vector<sieve::ASTNode *>( 1, dynamic_cast<sieve::ASTNode *>(stringList));
+            } else {
+                $$ = $1;
+            }
+        }
+    | numeric
+        {
+            $$ = std::vector<sieve::ASTNode *>( 1, dynamic_cast<sieve::ASTNode *>($1));
+        }
     | TAG
         {
-            if ( !driver.supports_module("index") && $1 == ":index" ) {
-                driver.error(@1, "Unrecognized tag \"" + $1 + "\".", "Hint: require index");
-                YYABORT;
-            }
-
-            if ( !driver.supports_module("copy") && $1 == ":copy" ) {
-                driver.error(@1, "Unrecognized tag \"" + $1 + "\".", "Hint: require copy");
-                YYABORT;
-            }
-
-            if ( !driver.supports_module("relational") && ($1 == ":count" || $1 == ":value") ) {
-                driver.error(@1, "Unrecognized tag \"" + $1 + "\".", "Hint: require relational");
-                YYABORT;
-            }
-            
-            if ( !driver.supports_module("comparator-.*") && ($1 == ":comparator") ) {
-                driver.error(@1, "Unrecognized tag \"" + $1 + "\".", "Hint: require comparator-*");
-                YYABORT;
-            }
-
-            $$ = std::vector<std::string>(1, $1);
+            sieve::ASTTag *tag = new sieve::ASTTag(@1, $1);
+            $$ = std::vector<sieve::ASTNode *>( 1, dynamic_cast<sieve::ASTNode *>(tag));
         }
     ;
 
@@ -325,49 +225,34 @@ tests : test { $$ = $1; }
     ;
 
 test :
-     IDENTIFIER arguments {
-        std::transform($1.begin(), $1.end(), $1.begin(), ::tolower);
-        if (!driver.valid_test($1)) {
-            driver.error(@1, "Unknown test \"" + $1 + "\".");
-            YYABORT;
+    IDENTIFIER arguments 
+        {
+            sieve::ASTTest *test = new sieve::ASTTest(@1, $1);
+            test->push($2);
+            $$ = std::vector<sieve::ASTNode *>(1, test);
         }
-
-        if ( !driver.supports_module("imap4flags") && $1 == "hasflag" ) {
-            driver.error(@1, "Unrecognized test \"" + $1 + "\".", "Hint: require imap4flags");
-            YYABORT;
-        }
-
-        if ( !driver.supports_module("variables") && $1 == "string" ) {
-            driver.error(@1, "Unrecognized test \"" + $1 + "\".", "Hint: require variables");
-            YYABORT;
-        }
-
-        if ( !driver.supports_module("date") && ($1 == "date" || $1 == "currentdate") ) {
-            driver.error(@1, "Unrecognized test \"" + $1 + "\".", "Hint: require date");
-            YYABORT;
-        }
-
-        if ( !driver.supports_module("body") && ($1 == "body") ) {
-            driver.error(@1, "Unrecognized test \"" + $1 + "\".", "Hint: require body");
-            YYABORT;
-        }
-
-        $2.push_back($1);
-     }
-    | "true" { $$ = std::vector<std::string>(1, "true"); }
-    | "false" { $$ = std::vector<std::string>(1, "false"); }
+    | TRUE { $$ = std::vector<sieve::ASTNode *>(1, new sieve::ASTBoolean(@1, $1)); }
+    | FALSE { $$ = std::vector<sieve::ASTNode *>(1, new sieve::ASTBoolean(@1, $1)); }
     ;
 
-string_list : STRING_LITERAL {$$ = std::vector<std::string>(1, $1); }
+string_list : STRING_LITERAL {$$ = std::vector<sieve::ASTNode *>(1,  new sieve::ASTString(@1, $1)); }
     | "[" strings "]" { $$ = $2; }
     ;
 
-strings : STRING_LITERAL {$$ = std::vector<std::string>(1, $1); }
-    | strings "," STRING_LITERAL { $1.push_back($3); $$ = $1; }
+strings : STRING_LITERAL {$$ = std::vector<sieve::ASTNode *>(1, new sieve::ASTString(@1, $1)); }
+    | strings "," STRING_LITERAL { $1.push_back( new sieve::ASTString(@3, $3)); $$ = $1; }
     ;
 
-numeric : NUMBER { $$ = $1; }
-    | NUMBER QUANTIFIER { $$ = $1; }
+numeric :
+    NUMBER
+        {
+            $$ = new sieve::ASTNumeric(@1, $1);
+        }
+    | NUMBER QUANTIFIER 
+        {
+            // TODO: Somehow incorporate the quantifier in here
+            $$ = new sieve::ASTNumeric(@1, $1);
+        }
     ;
 
 %%

@@ -3,6 +3,7 @@
 #include <fstream>
 #include "checksieve.h"
 #include "sieve_driver.hh"
+#include "AST.hh"
 
 const char *usage_string  =
 "Usage: check-sieve [options] file1 [file2 ...]                                 \n"
@@ -11,6 +12,7 @@ const char *usage_string  =
 "  --help                   Show this message                                   \n"
 "  --trace-parser           Trace the operation of the parser                   \n"
 "  --trace-scanner          Trace the operation of the scanner                  \n"
+"  --trace-tree             Trace the abstract-syntax-tree                      \n"
 "  --version                Print out version information                       \n";
 
 void print_version() {
@@ -47,6 +49,11 @@ int main( int argc, char *argv[] ) {
                 driver.trace_parsing = true;
                 continue;
             }
+            
+            if (strcmp(argv[i], "--trace-tree") == 0) {
+                driver.trace_tree = true;
+                continue;
+            }
 
             if (strcmp(argv[i], "--help") == 0) {
                 print_help();
@@ -70,7 +77,12 @@ int main( int argc, char *argv[] ) {
             }
 
             if ( !driver.parse_file(argv[i]) ) {
-                std::cout << "No errors found!" << std::endl;
+                if (driver.trace_tree) {
+                    sieve::ASTTraceVisitor visitor = sieve::ASTTraceVisitor();
+                    visitor.walk(driver.syntax_tree());
+                } else {
+                    std::cout << "No errors found!" << std::endl;
+                }
             } else {
                 result = 1;
             }

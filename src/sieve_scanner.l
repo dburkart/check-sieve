@@ -46,14 +46,14 @@ tag       :[a-zA-Z_][a-zA-Z0-9_]*
 ["]                        { BEGIN(STRING); loc.step(); multiline_buffer = ""; }
 <STRING>\\\"               { loc.step(); multiline_buffer += '"'; }
 <STRING>\\                 { loc.step(); multiline_buffer += yytext; }
-<STRING>["]                { loc.step(); BEGIN(0); return yy::sieve_parser::make_STRING_LITERAL( multiline_buffer.c_str(), loc); }
+<STRING>["]                { loc.step(); BEGIN(0); return yy::sieve_parser::make_STRING_LITERAL( multiline_buffer, loc); }
 <STRING>[^"\\\n]*          { loc.step(); multiline_buffer += yytext; }
 <STRING>[\n]+              { loc.lines(yyleng); loc.step(); multiline_buffer += yytext; }
 
 "text:"[ \t]*[\n]          { BEGIN(MULTILINE); loc.step(); loc.lines(yyleng); multiline_buffer = ""; }
 "text:"[ \t]*#.*[\n]       { BEGIN(MULTILINE); loc.step(); loc.lines(yyleng); multiline_buffer = ""; }
 <MULTILINE>[^\.][^\n]*[\n] { loc.lines(yyleng); loc.step(); multiline_buffer += yytext; }
-<MULTILINE>[\.][\n]        { loc.lines(yyleng); loc.step(); BEGIN(0); return yy::sieve_parser::make_STRING_LITERAL( multiline_buffer.c_str(), loc); }
+<MULTILINE>[\.][\n]        { loc.lines(yyleng); loc.step(); BEGIN(0); return yy::sieve_parser::make_STRING_LITERAL( multiline_buffer, loc); }
 
 ";"             return yy::sieve_parser::make_SEMICOLON( loc );
 "["             return yy::sieve_parser::make_LBRACKET( loc );
@@ -63,10 +63,10 @@ tag       :[a-zA-Z_][a-zA-Z0-9_]*
 "{"             return yy::sieve_parser::make_LCURLY( loc );
 "}"             return yy::sieve_parser::make_RCURLY( loc );
 ","             return yy::sieve_parser::make_COMMA( loc );
-"true"          return yy::sieve_parser::make_TRUE( loc );
-"false"         return yy::sieve_parser::make_FALSE( loc );
+"true"          return yy::sieve_parser::make_TRUE( true, loc );
+"false"         return yy::sieve_parser::make_FALSE( false, loc );
 "require"       return yy::sieve_parser::make_REQUIRE( loc );
-"foreverypart"  return yy::sieve_parser::make_FOREVERYPART( loc );
+"foreverypart"  return yy::sieve_parser::make_FOREVERYPART( std::string(yytext), loc );
 
 "if"            return yy::sieve_parser::make_IF( loc );
 "elsif"         return yy::sieve_parser::make_ELSIF( loc );

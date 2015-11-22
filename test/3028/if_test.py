@@ -7,11 +7,11 @@ import checksieve
 class TestIf(unittest.TestCase):
 
     def test_simple_if(self):
-        sieve = 'if header :contains :comparitor "i;octet" "Subject" "MAKE MONEY FAST" { discard; }'
+        sieve = 'if header :contains :comparator "i;octet" "Subject" "MAKE MONEY FAST" { discard; }'
         self.assertFalse(checksieve.parse_string(sieve, False))
 
     def test_bogus_test(self):
-        sieve = 'if bogus :contains :comparitor "i;octet" "Subject" "MAKE MONEY FAST" { discard; }'
+        sieve = 'if bogus :contains :comparator "i;octet" "Subject" "MAKE MONEY FAST" { discard; }'
         self.assertTrue(checksieve.parse_string(sieve, True))
 
     def test_elsif(self):

@@ -1,0 +1,17 @@
+Mail Sieve
+    Require
+        String ("fileinto")
+    Branch
+        Condition
+            True
+        Block
+            Command (keep)
+            Command (stop)
+        Condition
+            False
+        Block
+            Command (fileinto)
+                String ("\\Seen")
+            Command (stop)
+        Block
+            Command (stop)

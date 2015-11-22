@@ -8,6 +8,7 @@
 #include <vector>
 #include "sieve_parser.tab.hh"
 #include "checksieve.h"
+#include "AST.hh"
 
 #define YY_DECL \
     yy::sieve_parser::symbol_type yylex( yyscan_t yyscanner, sieve::driver &driver )
@@ -32,29 +33,24 @@ public:
     std::string file;
     std::string sieve_string;
     bool trace_parsing;
+    bool trace_tree;
     
     struct parse_result result;
     
-    void add_required_modules(std::vector<std::string> &modules);
-    bool supports_module(const std::string &mod);
-    
-    void init_maps();
-    bool valid_command(const std::string &command);
-    bool valid_test(const std::string &command);
-    
     void error( const yy::location &l, const std::string &message, const std::string &suggestion);
     void error( const yy::location &l, const std::string &message );
-    void error( const std::string &m ); 
+    void error( const std::string &m );
+    void error( const parse_result );
+    
+    ASTSieve *syntax_tree() { return _sieve; }
+    ASTSieve *syntax_tree(ASTSieve *sieve) { _sieve = sieve; return _sieve; }
 
 private:
-    std::map<std::string, bool> _command_map;
-    std::map<std::string, bool> _test_map;
-    
-    std::vector<std::string> _modules;
-    
     std::istringstream _input_stream;
     yyscan_t yyscanner;
     bool _suppress_output;
+    
+    ASTSieve *_sieve;
 };
 
 } // namespace sieve

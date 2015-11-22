@@ -1,0 +1,9 @@
+Mail Sieve
+    Branch
+        Condition
+            True
+        Block
+            Command (keep)
+            Command (stop)
+        Block
+            Command (stop)

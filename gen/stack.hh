@@ -31,7 +31,7 @@
 // version 2.2 of Bison.
 
 /**
- ** \file gen/stack.hh
+ ** \file ../gen/stack.hh
  ** Define the yy::stack class.
  */
 
@@ -42,7 +42,7 @@
 
 
 namespace yy {
-#line 46 "gen/stack.hh" // stack.hh:151
+#line 46 "../gen/stack.hh" // stack.hh:151
   template <class T, class S = std::vector<T> >
   class stack
   {
@@ -152,6 +152,6 @@ namespace yy {
 
 
 } // yy
-#line 156 "gen/stack.hh" // stack.hh:151
+#line 156 "../gen/stack.hh" // stack.hh:151
 
 #endif // !YY_YY_GEN_STACK_HH_INCLUDED

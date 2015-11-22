@@ -1,6 +1,6 @@
-#line 2 "gen/sieve_scanner.cc"
+#line 2 "../gen/sieve_scanner.cc"
 
-#line 4 "gen/sieve_scanner.cc"
+#line 4 "../gen/sieve_scanner.cc"
 
 #define  YY_INT_ALIGNED short int
 
@@ -623,8 +623,8 @@ goto find_rule; \
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "src/sieve_scanner.l"
-#line 2 "src/sieve_scanner.l"
+#line 1 "../src/sieve_scanner.l"
+#line 2 "../src/sieve_scanner.l"
 #include <cerrno>
 #include <climits>
 #include <cstdlib>
@@ -637,10 +637,10 @@ static yy::location loc;
 
 std::string multiline_buffer;
 #define YY_NO_INPUT 1
-#line 25 "src/sieve_scanner.l"
+#line 25 "../src/sieve_scanner.l"
 #define YY_USER_ACTION  loc.columns (yyleng);
 
-#line 644 "gen/sieve_scanner.cc"
+#line 644 "../gen/sieve_scanner.cc"
 
 #define INITIAL 0
 #define COMMENT 1
@@ -937,14 +937,14 @@ YY_DECL
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
 /* %% [7.0] user's declarations go here */
-#line 30 "src/sieve_scanner.l"
+#line 30 "../src/sieve_scanner.l"
 
 
 
     loc.step();
 
 
-#line 948 "gen/sieve_scanner.cc"
+#line 948 "../gen/sieve_scanner.cc"
 
 	if ( !yyg->yy_init )
 		{
@@ -1090,13 +1090,13 @@ do_action:	/* This label is used only to access EOF actions. */
 /* %% [13.0] actions go here */
 case 1:
 YY_RULE_SETUP
-#line 36 "src/sieve_scanner.l"
+#line 36 "../src/sieve_scanner.l"
 loc.step();
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 37 "src/sieve_scanner.l"
+#line 37 "../src/sieve_scanner.l"
 loc.lines(yyleng); loc.step();
 	YY_BREAK
 case 3:
@@ -1104,163 +1104,163 @@ case 3:
 yyg->yy_c_buf_p = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 39 "src/sieve_scanner.l"
+#line 39 "../src/sieve_scanner.l"
 loc.step();
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 41 "src/sieve_scanner.l"
+#line 41 "../src/sieve_scanner.l"
 { BEGIN(COMMENT); loc.step(); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 42 "src/sieve_scanner.l"
+#line 42 "../src/sieve_scanner.l"
 { BEGIN(0); loc.step(); }
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 43 "src/sieve_scanner.l"
+#line 43 "../src/sieve_scanner.l"
 { loc.lines(yyleng); loc.step(); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 44 "src/sieve_scanner.l"
+#line 44 "../src/sieve_scanner.l"
 { loc.step(); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 46 "src/sieve_scanner.l"
+#line 46 "../src/sieve_scanner.l"
 { BEGIN(STRING); loc.step(); multiline_buffer = ""; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 47 "src/sieve_scanner.l"
+#line 47 "../src/sieve_scanner.l"
 { loc.step(); multiline_buffer += '"'; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 48 "src/sieve_scanner.l"
+#line 48 "../src/sieve_scanner.l"
 { loc.step(); multiline_buffer += yytext; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 49 "src/sieve_scanner.l"
-{ loc.step(); BEGIN(0); return yy::sieve_parser::make_STRING_LITERAL( multiline_buffer.c_str(), loc); }
+#line 49 "../src/sieve_scanner.l"
+{ loc.step(); BEGIN(0); return yy::sieve_parser::make_STRING_LITERAL( multiline_buffer, loc); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 50 "src/sieve_scanner.l"
+#line 50 "../src/sieve_scanner.l"
 { loc.step(); multiline_buffer += yytext; }
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 51 "src/sieve_scanner.l"
+#line 51 "../src/sieve_scanner.l"
 { loc.lines(yyleng); loc.step(); multiline_buffer += yytext; }
 	YY_BREAK
 case 14:
 /* rule 14 can match eol */
 YY_RULE_SETUP
-#line 53 "src/sieve_scanner.l"
+#line 53 "../src/sieve_scanner.l"
 { BEGIN(MULTILINE); loc.step(); loc.lines(yyleng); multiline_buffer = ""; }
 	YY_BREAK
 case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
-#line 54 "src/sieve_scanner.l"
+#line 54 "../src/sieve_scanner.l"
 { BEGIN(MULTILINE); loc.step(); loc.lines(yyleng); multiline_buffer = ""; }
 	YY_BREAK
 case 16:
 /* rule 16 can match eol */
 YY_RULE_SETUP
-#line 55 "src/sieve_scanner.l"
+#line 55 "../src/sieve_scanner.l"
 { loc.lines(yyleng); loc.step(); multiline_buffer += yytext; }
 	YY_BREAK
 case 17:
 /* rule 17 can match eol */
 YY_RULE_SETUP
-#line 56 "src/sieve_scanner.l"
-{ loc.lines(yyleng); loc.step(); BEGIN(0); return yy::sieve_parser::make_STRING_LITERAL( multiline_buffer.c_str(), loc); }
+#line 56 "../src/sieve_scanner.l"
+{ loc.lines(yyleng); loc.step(); BEGIN(0); return yy::sieve_parser::make_STRING_LITERAL( multiline_buffer, loc); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 58 "src/sieve_scanner.l"
+#line 58 "../src/sieve_scanner.l"
 return yy::sieve_parser::make_SEMICOLON( loc );
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 59 "src/sieve_scanner.l"
+#line 59 "../src/sieve_scanner.l"
 return yy::sieve_parser::make_LBRACKET( loc );
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 60 "src/sieve_scanner.l"
+#line 60 "../src/sieve_scanner.l"
 return yy::sieve_parser::make_RBRACKET( loc );
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 61 "src/sieve_scanner.l"
+#line 61 "../src/sieve_scanner.l"
 return yy::sieve_parser::make_LPAREN( loc );
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 62 "src/sieve_scanner.l"
+#line 62 "../src/sieve_scanner.l"
 return yy::sieve_parser::make_RPAREN( loc );
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 63 "src/sieve_scanner.l"
+#line 63 "../src/sieve_scanner.l"
 return yy::sieve_parser::make_LCURLY( loc );
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 64 "src/sieve_scanner.l"
+#line 64 "../src/sieve_scanner.l"
 return yy::sieve_parser::make_RCURLY( loc );
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 65 "src/sieve_scanner.l"
+#line 65 "../src/sieve_scanner.l"
 return yy::sieve_parser::make_COMMA( loc );
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 66 "src/sieve_scanner.l"
-return yy::sieve_parser::make_TRUE( loc );
+#line 66 "../src/sieve_scanner.l"
+return yy::sieve_parser::make_TRUE( true, loc );
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 67 "src/sieve_scanner.l"
-return yy::sieve_parser::make_FALSE( loc );
+#line 67 "../src/sieve_scanner.l"
+return yy::sieve_parser::make_FALSE( false, loc );
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 68 "src/sieve_scanner.l"
+#line 68 "../src/sieve_scanner.l"
 return yy::sieve_parser::make_REQUIRE( loc );
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 69 "src/sieve_scanner.l"
-return yy::sieve_parser::make_FOREVERYPART( loc );
+#line 69 "../src/sieve_scanner.l"
+return yy::sieve_parser::make_FOREVERYPART( std::string(yytext), loc );
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 71 "src/sieve_scanner.l"
+#line 71 "../src/sieve_scanner.l"
 return yy::sieve_parser::make_IF( loc );
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 72 "src/sieve_scanner.l"
+#line 72 "../src/sieve_scanner.l"
 return yy::sieve_parser::make_ELSIF( loc );
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 73 "src/sieve_scanner.l"
+#line 73 "../src/sieve_scanner.l"
 return yy::sieve_parser::make_ELSE( loc );
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 75 "src/sieve_scanner.l"
+#line 75 "../src/sieve_scanner.l"
 {
                     errno = 0;
                     long n = strtol( yytext, NULL, 10 );
@@ -1271,37 +1271,37 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 82 "src/sieve_scanner.l"
+#line 82 "../src/sieve_scanner.l"
 return yy::sieve_parser::make_QUANTIFIER( loc );
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 83 "src/sieve_scanner.l"
+#line 83 "../src/sieve_scanner.l"
 return yy::sieve_parser::make_IDENTIFIER( yytext, loc );
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 84 "src/sieve_scanner.l"
+#line 84 "../src/sieve_scanner.l"
 return yy::sieve_parser::make_TAG( yytext, loc );
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 86 "src/sieve_scanner.l"
+#line 86 "../src/sieve_scanner.l"
 driver.error( loc, "invalid character" );
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMENT):
 case YY_STATE_EOF(MULTILINE):
 case YY_STATE_EOF(STRING):
-#line 87 "src/sieve_scanner.l"
+#line 87 "../src/sieve_scanner.l"
 return yy::sieve_parser::make_END( loc );
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 88 "src/sieve_scanner.l"
+#line 88 "../src/sieve_scanner.l"
 ECHO;
 	YY_BREAK
-#line 1305 "gen/sieve_scanner.cc"
+#line 1305 "../gen/sieve_scanner.cc"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2523,7 +2523,7 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 
 /* %ok-for-header */
 
-#line 88 "src/sieve_scanner.l"
+#line 88 "../src/sieve_scanner.l"
 
 
 

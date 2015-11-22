@@ -24,7 +24,12 @@ public:
     template<class T>
     ASTNode *find(const T& value) const {
         for (auto i = this->children().begin(); i != this->children().end(); ++i) {
-            const T* child = dynamic_cast<T*>(*i);
+            const T* child;
+
+            if (*i == NULL)
+                return NULL;
+
+            child = dynamic_cast<T*>(*i);
 
             if (child == NULL)
                 continue;

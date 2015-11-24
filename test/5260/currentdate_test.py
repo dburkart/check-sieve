@@ -17,7 +17,7 @@ class TestCurrentDate(unittest.TestCase):
         '''
         self.assertFalse(checksieve.parse_string(sieve, False))
 
-    def test_current_date(self):
+    def test_current_date_no_require(self):
         sieve = '''
      require ["relational"];
      if anyof(currentdate :is "weekday" "0",

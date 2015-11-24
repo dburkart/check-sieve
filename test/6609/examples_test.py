@@ -25,7 +25,7 @@ class TestExamples(unittest.TestCase):
         '''
         self.assertFalse(checksieve.parse_string(sieve, False))
 
-    def test_return_command_no_include(self):
+    def test_return_command_no_require(self):
         sieve = '''
             return;
         '''

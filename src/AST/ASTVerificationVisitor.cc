@@ -69,10 +69,13 @@ void ASTVerificationVisitor::visit( ASTNumeric* node ) {
 
 void ASTVerificationVisitor::visit( ASTRequire* node ) {
     std::vector<sieve::ASTNode *> children = node->children();
+    ASTStringList *requires = NULL;
 
     // If we are requiring multiple modules, we need our grandchildren
-    if (dynamic_cast<ASTStringList *>(children[0]) != NULL)
+    if (dynamic_cast<ASTStringList *>(children[0]) != NULL) {
+        requires = dynamic_cast<ASTStringList *>(children[0]);
         children = children[0]->children();
+    }
 
     for (std::vector<sieve::ASTNode *>::iterator it = children.begin(); it != children.end(); ++it) {
         sieve::ASTString *child = static_cast<ASTString *>(*it);
@@ -219,6 +222,13 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
             _tag_map[":optional"] = 1;
             _tag_map[":personal"] = 1;
             _tag_map[":global"] = 1;
+
+            // The "global" command can only be used if both "include" and
+            // "variables" are required
+            if (requires != NULL &&
+                requires->find(ASTString("variables")) != requires->children().end()) {
+                _command_map["global"] = 1;
+            }
         }
     }
 }

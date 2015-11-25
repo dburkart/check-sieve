@@ -27,9 +27,10 @@ driver::driver( bool quiet )
 
 driver::~driver() {}
 
-parse_result driver::parse_file( std::ifstream &file, const std::string &fp ) {
+parse_result driver::parse_file( const std::string &fp ) {
     std::string line;
     std::string buffer;
+    std::ifstream file( fp );
 
     filepath = fp;
 
@@ -38,7 +39,7 @@ parse_result driver::parse_file( std::ifstream &file, const std::string &fp ) {
         buffer += line + "\n";
     }
 
-    file.seekg(0);
+    file.seekg(0, file.beg);
 
     return parse_string(buffer);
 }

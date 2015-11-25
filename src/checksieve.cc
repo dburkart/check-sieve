@@ -14,8 +14,7 @@ extern const char *version() {
 
 struct parse_result sieve_parse_file( const char *filename ) {
     driver driver;
-    std::ifstream fin( filename );
-    return driver.parse_file(fin, filename);
+    return driver.parse_file(filename);
 }
 
 struct parse_result sieve_parse_string( const char *sieve ) {

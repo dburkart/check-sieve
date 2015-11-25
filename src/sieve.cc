@@ -79,8 +79,7 @@ int main( int argc, char *argv[] ) {
                 break;
             }
 
-            std::ifstream fin( argv[i] );
-            sieve::parse_result parse_res = driver.parse_file(fin, argv[i]);
+            sieve::parse_result parse_res = driver.parse_file( argv[i] );
 
             if ( !parse_res.status ) {
                 if (driver.trace_tree) {
@@ -90,6 +89,7 @@ int main( int argc, char *argv[] ) {
                     std::cout << "No errors found!" << std::endl;
                 }
             } else {
+                std::ifstream fin( argv[i] );
                 std::cerr << diag.describe(parse_res, fin);
                 result = 1;
             }

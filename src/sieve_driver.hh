@@ -29,7 +29,7 @@ public:
     void scan_end();
     bool trace_scanning;
     
-    parse_result parse_file( std::ifstream &file, const std::string &fp );
+    parse_result parse_file( const std::string &fp );
     parse_result parse_string( const std::string &sieve );
 
     std::string filepath;

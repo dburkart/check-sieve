@@ -68,7 +68,7 @@ bool Command::validate(const ASTCommand *command) {
 }
 
 std::string Command::usage(const ASTCommand *command) {
-    return _usage_map[command->value()];
+    return "Usage: " + _usage_map[command->value()];
 }
 
 }

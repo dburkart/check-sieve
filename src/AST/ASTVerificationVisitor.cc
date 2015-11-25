@@ -50,8 +50,13 @@ void ASTVerificationVisitor::visit( ASTCommand* node ) {
         _verification_result = {1, node->location(), "Unrecognized command \"" + node->value() + "\"."};
     }
     
-    if (!_command.validate(node)) {
-        _verification_result = {1, node->location(), "Incorrect syntax for command \"" + node->value() + "\"."};
+    else if (!_command.validate(node)) {
+        _verification_result = {
+            1,
+            node->location(),
+            "Incorrect syntax for command \"" + node->value() + "\".",
+            _command.usage(node)
+        };
     }
 }
 

@@ -30,6 +30,10 @@ std::string Diagnostic::describe( parse_result result, std::ifstream &input ) {
            << std::string(result.location.end.column - result.location.begin.column, '^')
            << std::endl;
 
+    if (result.hint != "") {
+        output << result.hint << std::endl;
+    }
+
     return output.str();
 }
 

@@ -11,6 +11,7 @@ struct parse_result {
     int status;
     yy::location location;
     std::string error;
+    std::string hint;
 
     void set_error( std::string err ) {
         status = 1;

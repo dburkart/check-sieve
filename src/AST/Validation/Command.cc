@@ -41,7 +41,7 @@ bool validateFileintoCommand(const ASTCommand *command) {
         minArguments++;
     }
 
-    if (children.size() < minArguments) {
+    if (size < minArguments) {
         return false;
     }
 
@@ -58,7 +58,53 @@ bool validateKeepCommand(const ASTCommand *command) {
         numArguments += 2;
     }
 
-    if (children.size() != numArguments) {
+    if (size != numArguments) {
+        return false;
+    }
+
+    return true;
+}
+
+bool validateReplaceCommand(const ASTCommand *command) {
+    std::vector<sieve::ASTNode *> children = command->children();
+    size_t size = children.size();
+
+    int numArguments = 1;
+
+    if (command->find(ASTTag(":mime")) != command->children().end()) {
+        numArguments += 1;
+    }
+
+    if (command->find(ASTTag(":subject")) != command->children().end()) {
+        numArguments += 2;
+    }
+
+    if (command->find(ASTTag(":from")) != command->children().end()) {
+        numArguments += 2;
+    }
+
+    if (size != numArguments) {
+        return false;
+    }
+
+    return true;
+}
+
+bool validateEncloseCommand(const ASTCommand *command) {
+    std::vector<sieve::ASTNode *> children = command->children();
+    size_t size = children.size();
+
+    int numArguments = 1;
+
+    if (command->find(ASTTag(":subject")) != command->children().end()) {
+        numArguments += 2;
+    }
+
+    if (command->find(ASTTag(":headers")) != command->children().end()) {
+        numArguments += 2;
+    }
+
+    if (size != numArguments) {
         return false;
     }
 
@@ -76,20 +122,24 @@ bool validateSingleWordCommand(const ASTCommand *command) {
 
 Command::Command() {
     _usage_map["addflag"] = "addflag [<variablename: string>] <list-of-flags: string-list>";
+    _usage_map["enclose"] = "enclose <:subject string> <:headers string-list> string";
     _usage_map["fileinto"] = "fileinto [:flags <list-of-flags: string-list>][:copy] <folder: string>";
     _usage_map["include"] = "include [:global / :personal] [\":once\"] [\":optional\"] <value: string>";
     _usage_map["keep"] = "keep [:flags <list-of-flags: string-list>]";
+    _usage_map["removeflag"] = "removeflag [<variablename: string>] <list-of-flags: string-list>";
+    _usage_map["replace"] = "replace [:mime] [:subject string] [:from string] <replacement: string>";
     _usage_map["setflag"] = "setflag [<variablename: string>] <list-of-flags: string-list>";
     _usage_map["stop"] = "stop";
-    _usage_map["removeflag"] = "removeflag [<variablename: string>] <list-of-flags: string-list>";
 
     _validation_fn_map["addflag"] = &validateIMAP4FlagsAction;
+    _validation_fn_map["enclose"] = &validateEncloseCommand;
     _validation_fn_map["fileinto"] = &validateFileintoCommand;
     _validation_fn_map["include"] = &validateIncludeCommand;
     _validation_fn_map["keep"] = &validateKeepCommand;
+    _validation_fn_map["removeflag"] = &validateIMAP4FlagsAction;
+    _validation_fn_map["replace"] = &validateReplaceCommand;
     _validation_fn_map["setflag"] = &validateIMAP4FlagsAction;
     _validation_fn_map["stop"] = &validateSingleWordCommand;
-    _validation_fn_map["removeflag"] = &validateIMAP4FlagsAction;
 }
 
 bool Command::validate(const ASTCommand *command) {

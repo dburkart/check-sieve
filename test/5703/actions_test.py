@@ -135,6 +135,57 @@ class TestActions(unittest.TestCase):
         '''
         self.assertFalse(checksieve.parse_string(sieve, False))
 
+    def test_replace_with_mime(self):
+        sieve = '''
+               require [ "foreverypart", "mime", "replace" ];
+           foreverypart
+           {
+             if anyof (
+                    header :mime :contenttype :is
+                      "Content-Type" "application/exe",
+                    header :mime :param "filename"
+                      :matches ["Content-Type", "Content-Disposition"] "*.com" )
+             {
+               replace :mime "Executable attachment removed by user filter";
+             }
+           }
+        '''
+        self.assertFalse(checksieve.parse_string(sieve, False))
+
+    def test_replace_with_from(self):
+        sieve = '''
+               require [ "foreverypart", "mime", "replace" ];
+           foreverypart
+           {
+             if anyof (
+                    header :mime :contenttype :is
+                      "Content-Type" "application/exe",
+                    header :mime :param "filename"
+                      :matches ["Content-Type", "Content-Disposition"] "*.com" )
+             {
+               replace :from "bob@foo.com" "bob@bar.com";
+             }
+           }
+        '''
+        self.assertFalse(checksieve.parse_string(sieve, False))
+
+    def test_replace_with_weird_tag(self):
+        sieve = '''
+               require [ "foreverypart", "mime", "replace" ];
+           foreverypart
+           {
+             if anyof (
+                    header :mime :contenttype :is
+                      "Content-Type" "application/exe",
+                    header :mime :param "filename"
+                      :matches ["Content-Type", "Content-Disposition"] "*.com" )
+             {
+               replace :param "filename" "Executable attachment removed by user filter";
+             }
+           }
+        '''
+        self.assertTrue(checksieve.parse_string(sieve, True))
+
     def test_replace_no_require(self):
         sieve = '''
                require [ "foreverypart", "mime" ];
@@ -179,6 +230,34 @@ computer virus.
 }
         '''
         self.assertFalse(checksieve.parse_string(sieve, False))
+
+    def test_enclose(self):
+        sieve = '''
+require [ "foreverypart", "mime", "enclose" ];
+
+foreverypart
+{
+ if header :mime :param "filename"
+    :matches ["Content-Type", "Content-Disposition"]
+      ["*.com", "*.exe", "*.vbs", "*.scr",
+       "*.pif", "*.hta", "*.bat", "*.zip" ]
+ {
+   # these attachment types are executable
+   enclose :mime text:
+WARNING! The enclosed message contains executable attachments.
+These attachment types may contain a computer virus program
+that can infect your computer and potentially damage your data.
+
+Before clicking on these message attachments, you should verify
+with the sender that this message was sent by them and not a
+computer virus.
+.
+;
+   break;
+ }
+}
+        '''
+        self.assertTrue(checksieve.parse_string(sieve, True))
 
     def test_enclose_no_require(self):
         sieve = '''

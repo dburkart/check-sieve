@@ -48,16 +48,48 @@ bool validateFileintoCommand(const ASTCommand *command) {
     return true;
 }
 
+bool validateKeepCommand(const ASTCommand *command) {
+    std::vector<sieve::ASTNode *> children = command->children();
+    size_t size = children.size();
+
+    int numArguments = 0;
+
+    if (command->find(ASTTag(":flags")) != command->children().end()) {
+        numArguments += 2;
+    }
+
+    if (children.size() != numArguments) {
+        return false;
+    }
+
+    return true;
+}
+
+bool validateSingleWordCommand(const ASTCommand *command) {
+    size_t size = command->children().size();
+
+    if (size == 0)
+        return true;
+    else
+        return false;
+}
+
 Command::Command() {
-    _usage_map["include"] = "include [:global / :personal] [\":once\"] [\":optional\"] <value: string>";
-    _usage_map["setflag"] = "setflag [<variablename: string>] <list-of-flags: string-list>";
     _usage_map["addflag"] = "addflag [<variablename: string>] <list-of-flags: string-list>";
     _usage_map["fileinto"] = "fileinto [:flags <list-of-flags: string-list>][:copy] <folder: string>";
+    _usage_map["include"] = "include [:global / :personal] [\":once\"] [\":optional\"] <value: string>";
+    _usage_map["keep"] = "keep [:flags <list-of-flags: string-list>]";
+    _usage_map["setflag"] = "setflag [<variablename: string>] <list-of-flags: string-list>";
+    _usage_map["stop"] = "stop";
+    _usage_map["removeflag"] = "removeflag [<variablename: string>] <list-of-flags: string-list>";
 
-    _validation_fn_map["include"] = &validateIncludeCommand;
-    _validation_fn_map["setflag"] = &validateIMAP4FlagsAction;
     _validation_fn_map["addflag"] = &validateIMAP4FlagsAction;
     _validation_fn_map["fileinto"] = &validateFileintoCommand;
+    _validation_fn_map["include"] = &validateIncludeCommand;
+    _validation_fn_map["keep"] = &validateKeepCommand;
+    _validation_fn_map["setflag"] = &validateIMAP4FlagsAction;
+    _validation_fn_map["stop"] = &validateSingleWordCommand;
+    _validation_fn_map["removeflag"] = &validateIMAP4FlagsAction;
 }
 
 bool Command::validate(const ASTCommand *command) {

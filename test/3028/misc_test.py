@@ -52,5 +52,11 @@ class TestMiscellany(unittest.TestCase):
         '''
         self.assertFalse(checksieve.parse_string(sieve, False))
 
+    def test_stop_too_many_args(self):
+        sieve = '''
+        stop "foo";
+        '''
+        self.assertTrue(checksieve.parse_string(sieve, True))
+
 if __name__ == '__main__':
     unittest.main()

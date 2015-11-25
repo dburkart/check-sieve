@@ -54,5 +54,29 @@ class TestAddFlag(unittest.TestCase):
         '''
         self.assertTrue(checksieve.parse_string(sieve, True))
 
+
+class TestRemoveFlag(unittest.TestCase):
+
+    def test_removeflag(self):
+        sieve = '''
+        require ["imap4flags"];
+        removeflag "\\Seen";
+        '''
+        self.assertFalse(checksieve.parse_string(sieve, False))
+
+    def test_removeflag_with_var(self):
+        sieve = '''
+        require ["imap4flags"];
+        removeflag "flagvar" ["\\Deleted", "\\Answered"];
+        '''
+        self.assertFalse(checksieve.parse_string(sieve, False))
+
+    def test_removeflag_no_args(self):
+        sieve = '''
+        require ["imap4flags"];
+        removeflag;
+        '''
+        self.assertTrue(checksieve.parse_string(sieve, True))
+
 if __name__ == '__main__':
     unittest.main()

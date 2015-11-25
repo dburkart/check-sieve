@@ -10,10 +10,13 @@ namespace sieve {
 
 class Diagnostic {
 public:
+	Diagnostic() : _tab_size( 4 ) { }
+	Diagnostic(size_t tab_size) : _tab_size( tab_size ) { }
+
 	std::string describe(parse_result result, std::ifstream &input);
 
 private:
-	size_t _tab_size = 4;
+	size_t _tab_size;
 };
 
 } // namespace sieve

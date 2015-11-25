@@ -12,9 +12,15 @@ struct parse_result {
     yy::location location;
     std::string error;
 
-    void set_error(std::string err) {
+    void set_error( std::string err ) {
         status = 1;
         error = err;
+    }
+
+    void set_error( std::string err, yy::location loc ) {
+        status = 1;
+        error = err;
+        location = loc;
     }
 };
 

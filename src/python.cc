@@ -49,7 +49,7 @@ static PyObject *parse_string(PyObject *self, PyObject *args) {
         return NULL;
 
     sieve::driver driver(PyObject_IsTrue(quiet));
-    return Py_BuildValue("i", driver.parse_string(sieve));
+    return Py_BuildValue("i", driver.parse_string(sieve).status);
 }
 
 PY_MODINIT(checksieve) {

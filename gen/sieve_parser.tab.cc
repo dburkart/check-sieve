@@ -493,7 +493,7 @@ namespace yy {
     // User initialization code.
     #line 28 "../src/sieve_parser.yy" // lalr1.cc:745
 {
-    yyla.location.begin.filename = yyla.location.end.filename = &driver.file;
+    yyla.location.begin.filename = yyla.location.end.filename = &driver.filepath;
 }
 
 #line 500 "../gen/sieve_parser.tab.cc" // lalr1.cc:745
@@ -1372,5 +1372,5 @@ namespace yy {
 
 
 void yy::sieve_parser::error( const location_type &l, const std::string &m ) {
-    driver.error(l, m);
+    driver.push_error(l, m);
 }

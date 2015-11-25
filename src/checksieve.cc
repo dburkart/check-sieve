@@ -1,6 +1,8 @@
 #include "checksieve.h"
 #include "sieve_driver.hh"
 
+#include <fstream>
+
 namespace sieve
 {
 
@@ -12,14 +14,13 @@ extern const char *version() {
 
 struct parse_result sieve_parse_file( const char *filename ) {
     driver driver;
-    driver.parse_file(filename);
-    return driver.result;
+    std::ifstream fin( filename );
+    return driver.parse_file(fin, filename);
 }
 
 struct parse_result sieve_parse_string( const char *sieve ) {
     driver driver;
-    driver.parse_string(sieve);
-    return driver.result;
+    return driver.parse_string(sieve);
 }
 
 }

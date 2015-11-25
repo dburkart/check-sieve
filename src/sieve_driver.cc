@@ -1,8 +1,8 @@
 #include <algorithm>
-#include <string>
 #include <fstream>
-#include <sstream>
 #include <regex>
+#include <sstream>
+#include <string>
 
 #include "sieve_driver.hh"
 #include "sieve_parser.tab.hh"
@@ -15,86 +15,62 @@ driver::driver()
     : trace_scanning( false )
     , trace_parsing( false )
     , trace_tree( false )
-    , _suppress_output(false) {}
+    , _suppress_output(false)
+    , result( 0 ) {}
 
 driver::driver( bool quiet )
     : trace_scanning( false )
     , trace_parsing( false )
     , trace_tree( false )
-    , _suppress_output( quiet ) {}
+    , _suppress_output( quiet )
+    , result( 0 ) {}
 
 driver::~driver() {}
 
-int driver::parse_file( const std::string &f ) {
-    file = f;
-    std::ifstream fin( file.c_str() );
+parse_result driver::parse_file( std::ifstream &file, const std::string &fp ) {
     std::string line;
     std::string buffer;
 
-    for (int i = 1; !fin.eof(); i++) {
-        getline(fin, line);
+    filepath = fp;
+
+    for (int i = 1; !file.eof(); i++) {
+        getline(file, line);
         buffer += line + "\n";
     }
+
+    file.seekg(0);
 
     return parse_string(buffer);
 }
 
-int driver::parse_string( const std::string &sieve ) {
+parse_result driver::parse_string( const std::string &sieve ) {
+    parse_result res;
+
+    res.status = 0;
     sieve_string = sieve + "\n";
     scan_begin( sieve_string );
     yy::sieve_parser parser( yyscanner, *this );
     parser.set_debug_level( trace_parsing );
-    result.status = parser.parse();
+    parser.parse();
     scan_end();
 
-    if (!result.status) {
+    if ( result )
+        res = _errors[0];
+
+    if ( !result ) {
         ASTVerificationVisitor visitor = ASTVerificationVisitor();
         visitor.walk(syntax_tree());
-        parse_result res = visitor.result();
 
-        if (res.status)
-            error(res.location, res.error);
-
-        result.status = res.status;
+        res = visitor.result();
+        result = res.status;
     }
 
-    return result.status;
+    return res;
 }
 
-void driver::error( const yy::location &l, const std::string &message, const std::string &suggestion ) {
-    error( l, message );
-
-    if (!_suppress_output) {
-        std::cerr << std::endl << suggestion << std::endl;
-    }
-}
-
-void driver::error( const yy::location &l, const std::string &message ) {
-    std::istringstream f( sieve_string );
-    std::string line;
-
-    for (int i = 1; getline(f, line, '\n'); i++) {
-        if (i == l.begin.line)
-            break;
-    }
-
-    result.location = l;
-    result.error = message;
-
-    if (!_suppress_output) {
-        std::cerr << message << std::endl;
-        std::cerr << "On line " << l.begin.line << ":" << std::endl;
-        std::cerr << line << std::endl;
-        std::cerr << std::string(l.begin.column - 1, ' ') << std::string(l.end.column - l.begin.column, '^') << std::endl;
-    }
-}
-
-void driver::error( const std::string &m ) {
-    std::cerr << m << std::endl;
-}
-
-void driver::error( const parse_result result ) {
-    error( result.location, result.error );
+void driver::push_error( const yy::location &l, const std::string &message ) {
+    result = 1;
+    _errors.push_back({ 1, l, message });
 }
 
 } // namespace sieve

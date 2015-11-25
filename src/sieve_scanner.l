@@ -76,14 +76,14 @@ tag       :[a-zA-Z_][a-zA-Z0-9_]*
                     errno = 0;
                     long n = strtol( yytext, NULL, 10 );
                     if (! (INT_MIN <= n && n <= INT_MAX && errno != ERANGE))
-                        driver.error (loc, "integer is out of range");
+                        driver.push_error(loc, "integer is out of range");
                     return yy::sieve_parser::make_NUMBER( n, loc );
                 }
 [KGM]?      return yy::sieve_parser::make_QUANTIFIER( loc );
 {id}        return yy::sieve_parser::make_IDENTIFIER( yytext, loc );
 {tag}       return yy::sieve_parser::make_TAG( yytext, loc );
 
-.           driver.error( loc, "invalid character" );
+.           driver.push_error( loc, "invalid character" );
 <<EOF>>     return yy::sieve_parser::make_END( loc );
 %%
 
@@ -100,8 +100,8 @@ void sieve::driver::scan_begin() {
     yyg = (struct yyguts_t*)yyscanner;
     loc = yy::location();
 
-    if (!(yyin = fopen(file.c_str(), "r"))) {
-        error( "cannot open " + file + ": " + strerror(errno) );
+    if (!(yyin = fopen(filepath.c_str(), "r"))) {
+        push_error(yy::location(), "cannot open " + filepath + ": " + strerror(errno));
         exit( EXIT_FAILURE );
     }
 }

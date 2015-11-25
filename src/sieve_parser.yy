@@ -26,7 +26,7 @@ typedef void* yyscan_t;
 
 %locations
 %initial-action {
-    @$.begin.filename = @$.end.filename = &driver.file;
+    @$.begin.filename = @$.end.filename = &driver.filepath;
 }
 
 %define parse.trace
@@ -258,5 +258,5 @@ numeric :
 %%
 
 void yy::sieve_parser::error( const location_type &l, const std::string &m ) {
-    driver.error(l, m);
+    driver.push_error(l, m);
 }

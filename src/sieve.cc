@@ -1,9 +1,11 @@
 #include <string.h>
 #include <iostream>
 #include <fstream>
-#include "checksieve.h"
-#include "sieve_driver.hh"
+
 #include "AST.hh"
+#include "checksieve.h"
+#include "diagnostic.hh"
+#include "sieve_driver.hh"
 
 const char *usage_string  =
 "Usage: check-sieve [options] file1 [file2 ...]                                 \n"
@@ -30,6 +32,7 @@ bool file_exists(const char *filename) {
 
 int main( int argc, char *argv[] ) {
     int result = 0;
+    sieve::Diagnostic diag;
 
     if (argc == 1) {
         print_help();
@@ -49,7 +52,7 @@ int main( int argc, char *argv[] ) {
                 driver.trace_parsing = true;
                 continue;
             }
-            
+
             if (strcmp(argv[i], "--trace-tree") == 0) {
                 driver.trace_tree = true;
                 continue;
@@ -76,7 +79,10 @@ int main( int argc, char *argv[] ) {
                 break;
             }
 
-            if ( !driver.parse_file(argv[i]) ) {
+            std::ifstream fin( argv[i] );
+            sieve::parse_result parse_res = driver.parse_file(fin, argv[i]);
+
+            if ( !parse_res.status ) {
                 if (driver.trace_tree) {
                     sieve::ASTTraceVisitor visitor = sieve::ASTTraceVisitor();
                     visitor.walk(driver.syntax_tree());
@@ -84,6 +90,7 @@ int main( int argc, char *argv[] ) {
                     std::cout << "No errors found!" << std::endl;
                 }
             } else {
+                std::cerr << diag.describe(parse_res, fin);
                 result = 1;
             }
         }

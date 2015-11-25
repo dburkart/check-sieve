@@ -1265,7 +1265,7 @@ YY_RULE_SETUP
                     errno = 0;
                     long n = strtol( yytext, NULL, 10 );
                     if (! (INT_MIN <= n && n <= INT_MAX && errno != ERANGE))
-                        driver.error (loc, "integer is out of range");
+                        driver.push_error(loc, "integer is out of range");
                     return yy::sieve_parser::make_NUMBER( n, loc );
                 }
 	YY_BREAK
@@ -1287,7 +1287,7 @@ return yy::sieve_parser::make_TAG( yytext, loc );
 case 37:
 YY_RULE_SETUP
 #line 86 "../src/sieve_scanner.l"
-driver.error( loc, "invalid character" );
+driver.push_error( loc, "invalid character" );
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMENT):
@@ -2540,8 +2540,8 @@ void sieve::driver::scan_begin() {
     yyg = (struct yyguts_t*)yyscanner;
     loc = yy::location();
 
-    if (!(yyin = fopen(file.c_str(), "r"))) {
-        error( "cannot open " + file + ": " + strerror(errno) );
+    if (!(yyin = fopen(filepath.c_str(), "r"))) {
+        push_error(yy::location(), "cannot open " + filepath + ": " + strerror(errno));
         exit( EXIT_FAILURE );
     }
 }

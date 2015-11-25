@@ -12,6 +12,13 @@ class TestBasic(unittest.TestCase):
             reject "I don't like mail";
         '''
         self.assertFalse(checksieve.parse_string(sieve, False))
+
+    def test_reject_no_arg(self):
+        sieve = '''
+            require ["reject"];
+            reject;
+        '''
+        self.assertTrue(checksieve.parse_string(sieve, True))
     
     def test_reject_no_require(self):
         sieve = '''
@@ -25,6 +32,13 @@ class TestBasic(unittest.TestCase):
             ereject "I don't like mail";
         '''
         self.assertFalse(checksieve.parse_string(sieve, False))
+
+    def test_ereject_no_arg(self):
+        sieve = '''
+            require ["ereject"];
+            ereject;
+        '''
+        self.assertTrue(checksieve.parse_string(sieve, True))
     
     def test_ereject_no_require(self):
         sieve = '''

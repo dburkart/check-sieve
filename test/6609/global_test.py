@@ -44,5 +44,13 @@ class GlobalTest(unittest.TestCase):
         '''
         self.assertFalse(checksieve.parse_string(sieve, False))
 
+    def test_global_no_args(self):
+        sieve = '''
+            require ["include", "variables"];
+
+            global;
+        '''
+        self.assertTrue(checksieve.parse_string(sieve, True))
+
 if __name__ == '__main__':
     unittest.main()

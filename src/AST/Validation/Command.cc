@@ -111,6 +111,23 @@ bool validateEncloseCommand(const ASTCommand *command) {
     return true;
 }
 
+bool validateRedirectCommand(const ASTCommand *command) {
+    std::vector<sieve::ASTNode *> children = command->children();
+    size_t size = children.size();
+
+    int numArguments = 1;
+
+    if (command->find(ASTTag(":copy")) != command->children().end()) {
+        numArguments += 1;
+    }
+
+    if (size != numArguments) {
+        return false;
+    }
+
+    return true;
+}
+
 bool validateBareCommand(const ASTCommand *command) {
     size_t size = command->children().size();
 
@@ -131,12 +148,14 @@ bool validateSingleArgumentCommand(const ASTCommand *command) {
 
 Command::Command() {
     _usage_map["addflag"] = "addflag [<variablename: string>] <list-of-flags: string-list>";
+    _usage_map["discard"] = "discard";
     _usage_map["enclose"] = "enclose <:subject string> <:headers string-list> string";
     _usage_map["ereject"] = "ereject <reason: string>";
     _usage_map["fileinto"] = "fileinto [:flags <list-of-flags: string-list>][:copy] <folder: string>";
     _usage_map["global"] = "global <value: string-list>";
-    _usage_map["include"] = "include [:global / :personal] [\":once\"] [\":optional\"] <value: string>";
+    _usage_map["include"] = "include [:global / :personal] [:once] [:optional] <value: string>";
     _usage_map["keep"] = "keep [:flags <list-of-flags: string-list>]";
+    _usage_map["redirect"] = "redirect [:copy] <address: string>";
     _usage_map["reject"] = "reject <reason: string>";
     _usage_map["removeflag"] = "removeflag [<variablename: string>] <list-of-flags: string-list>";
     _usage_map["replace"] = "replace [:mime] [:subject string] [:from string] <replacement: string>";
@@ -144,12 +163,14 @@ Command::Command() {
     _usage_map["stop"] = "stop";
 
     _validation_fn_map["addflag"] = &validateIMAP4FlagsAction;
+    _validation_fn_map["discard"] = &validateBareCommand;
     _validation_fn_map["enclose"] = &validateEncloseCommand;
     _validation_fn_map["ereject"] = &validateSingleArgumentCommand;
     _validation_fn_map["fileinto"] = &validateFileintoCommand;
     _validation_fn_map["global"] = &validateSingleArgumentCommand;
     _validation_fn_map["include"] = &validateIncludeCommand;
     _validation_fn_map["keep"] = &validateKeepCommand;
+    _validation_fn_map["redirect"] = &validateRedirectCommand;
     _validation_fn_map["reject"] = &validateSingleArgumentCommand;
     _validation_fn_map["removeflag"] = &validateIMAP4FlagsAction;
     _validation_fn_map["replace"] = &validateReplaceCommand;

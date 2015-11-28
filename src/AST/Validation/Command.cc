@@ -1,3 +1,4 @@
+#include "ASTString.hh"
 #include "ASTTag.hh"
 #include "Command.hh"
 
@@ -128,6 +129,43 @@ bool validateRedirectCommand(const ASTCommand *command) {
     return true;
 }
 
+bool validateSetCommand(const ASTCommand *command) {
+    std::vector<sieve::ASTNode *> children = command->children();
+    size_t size = children.size();
+
+    int numArguments = 2;
+    int stringArguments = 0;
+
+    for (std::vector<ASTNode *>::const_iterator it = children.begin(); it != children.end(); ++it) {
+        const ASTTag *tagChild = dynamic_cast<ASTTag *>(*it);
+        const ASTString *stringChild = dynamic_cast<ASTString *>(*it);
+
+        if (tagChild && (
+            tagChild->value() == ":lower" ||
+            tagChild->value() == ":upper" ||
+            tagChild->value() == ":lowerfirst" ||
+            tagChild->value() == ":upperfirst" ||
+            tagChild->value() == ":quotewildcard" ||
+            tagChild->value() == ":length"
+           ))
+            numArguments += 1;
+        else if (tagChild)
+            return false;
+
+        if (stringChild)
+            stringArguments++;
+
+        if (stringArguments > 2)
+            return false;
+    }
+
+    if (size != numArguments || stringArguments < 2) {
+        return false;
+    }
+
+    return true;
+}
+
 bool validateBareCommand(const ASTCommand *command) {
     size_t size = command->children().size();
 
@@ -159,6 +197,7 @@ Command::Command() {
     _usage_map["reject"] = "reject <reason: string>";
     _usage_map["removeflag"] = "removeflag [<variablename: string>] <list-of-flags: string-list>";
     _usage_map["replace"] = "replace [:mime] [:subject string] [:from string] <replacement: string>";
+    _usage_map["set"] = "set [:modifier] <name: string> <value: string>";
     _usage_map["setflag"] = "setflag [<variablename: string>] <list-of-flags: string-list>";
     _usage_map["stop"] = "stop";
 
@@ -174,6 +213,7 @@ Command::Command() {
     _validation_fn_map["reject"] = &validateSingleArgumentCommand;
     _validation_fn_map["removeflag"] = &validateIMAP4FlagsAction;
     _validation_fn_map["replace"] = &validateReplaceCommand;
+    _validation_fn_map["set"] = &validateSetCommand;
     _validation_fn_map["setflag"] = &validateIMAP4FlagsAction;
     _validation_fn_map["stop"] = &validateBareCommand;
 }

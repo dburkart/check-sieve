@@ -166,6 +166,43 @@ bool validateSetCommand(const ASTCommand *command) {
     return true;
 }
 
+bool validateVacationCommand(const ASTCommand *command) {
+    std::vector<sieve::ASTNode *> children = command->children();
+    size_t size = children.size();
+
+    int numArguments = 1;
+
+    if (command->find(ASTTag(":days")) != command->children().end()) {
+        numArguments += 2;
+    }
+
+    if (command->find(ASTTag(":subject")) != command->children().end()) {
+        numArguments += 2;
+    }
+
+    if (command->find(ASTTag(":from")) != command->children().end()) {
+        numArguments += 2;
+    }
+
+    if (command->find(ASTTag(":addresses")) != command->children().end()) {
+        numArguments += 2;
+    }
+
+    if (command->find(ASTTag(":mime")) != command->children().end()) {
+        numArguments += 1;
+    }
+
+    if (command->find(ASTTag(":handle")) != command->children().end()) {
+        numArguments += 2;
+    }
+
+    if (size != numArguments) {
+        return false;
+    }
+
+    return true;
+}
+
 bool validateBareCommand(const ASTCommand *command) {
     size_t size = command->children().size();
 
@@ -200,6 +237,7 @@ Command::Command() {
     _usage_map["set"] = "set [:modifier] <name: string> <value: string>";
     _usage_map["setflag"] = "setflag [<variablename: string>] <list-of-flags: string-list>";
     _usage_map["stop"] = "stop";
+    _usage_map["vacation"] = "vacation [:days number] [:subject string] [:from string]\n\t[:addresses string-list] [:mime] [:handle string] <reason: string>";
 
     _validation_fn_map["addflag"] = &validateIMAP4FlagsAction;
     _validation_fn_map["discard"] = &validateBareCommand;
@@ -216,6 +254,7 @@ Command::Command() {
     _validation_fn_map["set"] = &validateSetCommand;
     _validation_fn_map["setflag"] = &validateIMAP4FlagsAction;
     _validation_fn_map["stop"] = &validateBareCommand;
+    _validation_fn_map["vacation"] = &validateVacationCommand;
 }
 
 bool Command::validate(const ASTCommand *command) {

@@ -234,6 +234,7 @@ Command::Command() {
     _usage_map["reject"] = "reject <reason: string>";
     _usage_map["removeflag"] = "removeflag [<variablename: string>] <list-of-flags: string-list>";
     _usage_map["replace"] = "replace [:mime] [:subject string] [:from string] <replacement: string>";
+    _usage_map["return"] = "return";
     _usage_map["set"] = "set [:modifier] <name: string> <value: string>";
     _usage_map["setflag"] = "setflag [<variablename: string>] <list-of-flags: string-list>";
     _usage_map["stop"] = "stop";
@@ -251,6 +252,7 @@ Command::Command() {
     _validation_fn_map["reject"] = &validateSingleArgumentCommand;
     _validation_fn_map["removeflag"] = &validateIMAP4FlagsAction;
     _validation_fn_map["replace"] = &validateReplaceCommand;
+    _validation_fn_map["return"] = &validateBareCommand;
     _validation_fn_map["set"] = &validateSetCommand;
     _validation_fn_map["setflag"] = &validateIMAP4FlagsAction;
     _validation_fn_map["stop"] = &validateBareCommand;

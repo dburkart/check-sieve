@@ -11,4 +11,8 @@ YACC = bison -d
 CXX ?= clang++ -DYYDEBUG=1
 CFLAGS += -I$(BASE)/gen/ -I$(BASE)/src/ -I$(BASE)/src/AST -std=c++0x -fPIC -Wno-deprecated-register -DPLATFORM=\"$(ARCH)-$(PLATFORM)\"
 
+ifeq ($(PLATFORM), Darwin)
+CFLAGS += -mmacosx-version-min=10.9
+endif
+
 endif

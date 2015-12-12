@@ -1,3 +1,13 @@
+Version 0.4:
+ * Add usage validation for supported commands.
+ * Factor out user reporting to a separate API (issue #20).
+ * Support for the "global" command from RFC 6609.
+ * Fix broken "foreverypart" syntax.
+ * Add support for python 3 in unit test C extension.
+ * Add support for AST command validation.
+ * Add the ability to trace operation of the AST.
+ * Implement an Abstract Syntax Tree (AST)
+
 Version 0.3:
  * Renamed the project to check-sieve, for better consistency.
  * Fix linking issue on some flavors of linux.

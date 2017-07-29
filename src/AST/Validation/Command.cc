@@ -2,14 +2,42 @@
 #include "ASTTag.hh"
 #include "Command.hh"
 
-namespace sieve 
+namespace sieve
 {
+
+bool validateAddHeadersCommand(const ASTCommand *command) {
+    std::vector<sieve::ASTNode *> children = command->children();
+    size_t size = command->children().size();
+
+    if (size != 2 && size != 3)
+        return false;
+
+    int i = 0;
+    for (std::vector<ASTNode *>::const_iterator it = children.begin(); it != children.end(); ++it) {
+        const ASTTag *tagChild = dynamic_cast<ASTTag *>(*it);
+        const ASTString *stringChild = dynamic_cast<ASTString *>(*it);
+
+        // If we have 3 children, the first child must be a :last tag.
+        if (size == 3 && i == 0) {
+            if (!tagChild || tagChild->value() != ":last")
+                return false;
+        }
+        // Every other child must be a string
+        else if (!stringChild) {
+            return false;
+        }
+
+        i++;
+    }
+
+    return true;
+}
 
 // Validation logic
 // TODO: Think about if this is the right way to do this
 bool validateIncludeCommand(const ASTCommand *command) {
     size_t size = command->children().size();
-    
+
     if (size < 5 && size > 0)
         return true;
     else
@@ -223,6 +251,8 @@ bool validateSingleArgumentCommand(const ASTCommand *command) {
 
 Command::Command() {
     _usage_map["addflag"] = "addflag [<variablename: string>] <list-of-flags: string-list>";
+    _usage_map["addheader"] = "addheader [:last] <field-name: string> <value: string>";
+    _usage_map["deleteheader"] = "deleteheader [:index <fieldno: number> [:last]]\n\t[COMPARATOR] [MATCH-TYPE]\n\t<field-name: string>\n\t[<value-patterns: string-list>]";
     _usage_map["discard"] = "discard";
     _usage_map["enclose"] = "enclose <:subject string> <:headers string-list> string";
     _usage_map["ereject"] = "ereject <reason: string>";
@@ -241,6 +271,7 @@ Command::Command() {
     _usage_map["vacation"] = "vacation [:days number] [:subject string] [:from string]\n\t[:addresses string-list] [:mime] [:handle string] <reason: string>";
 
     _validation_fn_map["addflag"] = &validateIMAP4FlagsAction;
+    _validation_fn_map["addheader"] = &validateAddHeadersCommand;
     _validation_fn_map["discard"] = &validateBareCommand;
     _validation_fn_map["enclose"] = &validateEncloseCommand;
     _validation_fn_map["ereject"] = &validateSingleArgumentCommand;
@@ -262,7 +293,7 @@ Command::Command() {
 bool Command::validate(const ASTCommand *command) {
     if (!_validation_fn_map[command->value()])
         return true;
-    
+
     return _validation_fn_map[command->value()](command);
 }
 

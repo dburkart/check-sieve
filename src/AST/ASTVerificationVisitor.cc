@@ -49,7 +49,7 @@ void ASTVerificationVisitor::visit( ASTCommand* node ) {
     if (!_command_map[value_lower]) {
         _verification_result = {1, node->location(), "Unrecognized command \"" + node->value() + "\"."};
     }
-    
+
     else if (!_command.validate(node)) {
         _verification_result = {
             1,
@@ -136,7 +136,7 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
             _tag_map[":mime"] = 1;
             _tag_map[":handle"] = 1;
         }
-        
+
         // "relational"
         // RFC 5231
         if (child->value() == "relational") {
@@ -162,7 +162,7 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
             _tag_map[":zone"] = 1;
             _tag_map[":originalzone"] = 1;
         }
-        
+
         // "index"
         // RFC 5260
         if (child->value() == "index") {
@@ -183,7 +183,7 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
             _command_map["break"] = 1;
             _tag_map[":name"] = 1;
         }
-        
+
         // "mime"
         // RFC 5703
         if (child->value() == "mime") {
@@ -253,7 +253,7 @@ void ASTVerificationVisitor::visit( ASTStringList* node ) {
 void ASTVerificationVisitor::visit( ASTTag* node ) {
     std::string value_lower = node->value();
     std::transform(value_lower.begin(), value_lower.end(), value_lower.begin(), ::tolower);
-    
+
     if (!_tag_map[value_lower]) {
         _verification_result = {1, node->location(), "Unrecognized tag \"" + node->value() + "\"."};
     }
@@ -270,6 +270,7 @@ void ASTVerificationVisitor::visit( ASTTest* node ) {
 
 //-- Private methods
 void ASTVerificationVisitor::_init() {
+    _command_map["addheader"] = 1;
     _command_map["keep"] = 1;
     _command_map["discard"] = 1;
     _command_map["redirect"] = 1;
@@ -287,16 +288,16 @@ void ASTVerificationVisitor::_init() {
     _tag_map[":is"] = 1;
     _tag_map[":contains"] = 1;
     _tag_map[":matches"] = 1;
+    _tag_map[":last"] = 1;
     _tag_map[":localpart"] = 1;
     _tag_map[":domain"] = 1;
     _tag_map[":all"] = 1;
     _tag_map[":over"] = 1;
     _tag_map[":under"] = 1;
-    
+
     // TODO: "Comparators other than "i;octet" and "i;ascii-casemap" must be
     // declared with require, as they are extensions"
     _tag_map[":comparator"] = 1;
 }
 
 } // namespace sieve
-

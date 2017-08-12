@@ -235,6 +235,14 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
                 _command_map["global"] = 1;
             }
         }
+
+        // DRAFT RFCs
+
+        // "regex"
+        // (https://tools.ietf.org/html/draft-ietf-sieve-regex-01)
+        if (child->value() == "regex") {
+            _tag_map[":regex"] = 1;
+        }
     }
 }
 

@@ -272,6 +272,7 @@ void ASTVerificationVisitor::visit( ASTTest* node ) {
 void ASTVerificationVisitor::_init() {
     _command_map["addheader"] = 1;
     _command_map["keep"] = 1;
+    _command_map["deleteheader"] = 1;
     _command_map["discard"] = 1;
     _command_map["redirect"] = 1;
     _command_map["stop"] = 1;

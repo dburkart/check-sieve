@@ -1,4 +1,6 @@
+#include "ASTNumeric.hh"
 #include "ASTString.hh"
+#include "ASTStringList.hh"
 #include "ASTTag.hh"
 #include "Command.hh"
 
@@ -32,6 +34,66 @@ bool validateAddHeadersCommand(const ASTCommand *command) {
 
     return true;
 }
+
+bool validateDeleteHeadersCommand(const ASTCommand *command) {
+    std::vector<sieve::ASTNode *> children = command->children();
+    std::vector<ASTNode *>::const_iterator it;
+    size_t size = command->children().size();
+    size_t minSize = 1;
+
+    ASTNumeric* numeric;
+    ASTTag* tag;
+
+    // :index
+    std::vector<ASTNode *>::const_iterator indexTag = command->find(ASTTag(":index"));
+    if (indexTag != command->children().end()) {
+        // Must be the first child
+        if (indexTag != command->children().begin())
+            return false;
+
+        minSize += 2;
+        it = indexTag + 1;
+
+        // Ensure that the next argument is a numeric
+        //const T* child = dynamic_cast<T*>(*it);
+        numeric = dynamic_cast<ASTNumeric*>(*it);
+        if (numeric == NULL)
+            return false;
+
+        indexTag++;
+        it = indexTag + 1;
+
+        // Allow a :last tag, but only if it's the next child
+        std::vector<ASTNode *>::const_iterator lastTag = command->find(ASTTag(":last"));
+        if (lastTag != command->children().end() && lastTag != it)
+            return false;
+
+        if (lastTag != command->children().end() && lastTag == it) {
+            indexTag++;
+            minSize += 1;
+        }
+    } else {
+        // Ensure that :last hasn't been specified since their's no :index
+        std::vector<ASTNode *>::const_iterator lastTag = command->find(ASTTag(":last"));
+
+        if (indexTag != command->children().end())
+            return false;
+    }
+
+    // TODO: Validate comparators
+    // it = indexTag + 1;
+    // tag = dynamic_cast<ASTTag*>(*it);
+    // if (tag)
+    //     minSize += 1;
+
+    if (size < minSize)
+        return false;
+
+    // TODO: Validate string-list
+
+    return true;
+}
+
 
 // Validation logic
 // TODO: Think about if this is the right way to do this
@@ -272,6 +334,7 @@ Command::Command() {
 
     _validation_fn_map["addflag"] = &validateIMAP4FlagsAction;
     _validation_fn_map["addheader"] = &validateAddHeadersCommand;
+    _validation_fn_map["deleteheader"] = &validateDeleteHeadersCommand;
     _validation_fn_map["discard"] = &validateBareCommand;
     _validation_fn_map["enclose"] = &validateEncloseCommand;
     _validation_fn_map["ereject"] = &validateSingleArgumentCommand;

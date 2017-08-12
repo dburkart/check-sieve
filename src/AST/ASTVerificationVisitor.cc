@@ -242,6 +242,13 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
         // (https://tools.ietf.org/html/draft-ietf-sieve-regex-01)
         if (child->value() == "regex") {
             _tag_map[":regex"] = 1;
+
+            // The ":quoteregex" command is supported if both "regex" and
+            // "variables" are required
+            if (requires != NULL &&
+                requires->find(ASTString("variables")) != requires->children().end()) {
+                _tag_map[":quoteregex"] = 1;
+            }
         }
     }
 }

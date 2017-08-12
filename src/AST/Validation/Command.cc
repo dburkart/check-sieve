@@ -236,7 +236,8 @@ bool validateSetCommand(const ASTCommand *command) {
             tagChild->value() == ":lowerfirst" ||
             tagChild->value() == ":upperfirst" ||
             tagChild->value() == ":quotewildcard" ||
-            tagChild->value() == ":length"
+            tagChild->value() == ":length" ||
+            tagChild->value() == ":quoteregex"
            ))
             numArguments += 1;
         else if (tagChild)

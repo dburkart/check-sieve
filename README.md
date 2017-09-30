@@ -44,4 +44,4 @@ Currently, the supported RFCs are:
 * Regex Extension ([DRAFT](https://tools.ietf.org/html/draft-ietf-sieve-regex-01))
 
 If you find any discrepancies with these RFCs, or have reduced test-cases that should work but don't, please file an
-issue in the issues tab. If an RFC is missing which isn't supported, also file an issue!
+issue. If there's an RFC that isn't supported that you want, file an issue!

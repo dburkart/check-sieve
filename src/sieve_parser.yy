@@ -105,7 +105,7 @@ command_list : command { $$ = std::vector<sieve::ASTNode *>(1, $1); }
     ;
 
 command :
-      REQUIRE string_list ";"
+      REQUIRE string_list SEMICOLON
         {
             sieve::ASTRequire *require = new sieve::ASTRequire(@1);
             if ($2.size() > 1) {
@@ -117,13 +117,13 @@ command :
             }
             $$ = dynamic_cast<sieve::ASTNode *>(require);
         }
-    | IDENTIFIER arguments ";"
+    | IDENTIFIER arguments SEMICOLON
         {
             sieve::ASTCommand *command = new sieve::ASTCommand(@1, $1);
             command->push($2);
             $$ = dynamic_cast<sieve::ASTNode *>(command);
         }
-    | IDENTIFIER ";"
+    | IDENTIFIER SEMICOLON
         {
             sieve::ASTCommand *command = new sieve::ASTCommand(@1, $1);
             $$ = dynamic_cast<sieve::ASTNode *>(command);
@@ -147,11 +147,6 @@ command :
         {
             $1->push($3);
             $$ = $1;
-        }
-    | ";"
-        {
-            sieve::ASTNoOp *noop = new sieve::ASTNoOp(@1);
-            $$ = noop;
         }
     ;
 

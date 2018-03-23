@@ -18,7 +18,7 @@ class TestMiscellany(unittest.TestCase):
 
     def test_unnecessary_semicolon(self):
         sieve = 'if header :matches "Subject" "*" { keep; stop; };'
-        self.assertFalse(checksieve.parse_string(sieve, False))
+        self.assertTrue(checksieve.parse_string(sieve, True))
 
     def test_multiline_string(self):
         sieve = '''

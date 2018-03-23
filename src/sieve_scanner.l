@@ -40,8 +40,9 @@ tag       :[a-zA-Z_][a-zA-Z0-9_]*
 
 "/*"                       { BEGIN(COMMENT); loc.step(); }
 <COMMENT>"*/"              { BEGIN(0); loc.step(); }
-<COMMENT>[\n]+             { loc.lines(yyleng); loc.step(); }
-<COMMENT>[^\n]*            { loc.step(); }
+<COMMENT>[^*\n]+           { loc.step(); }
+<COMMENT>"*"               { loc.step(); }
+<COMMENT>\n                { loc.lines(yyleng); loc.step(); }
 
 ["]                        { BEGIN(STRING); loc.step(); multiline_buffer = ""; }
 <STRING>\\\"               { loc.step(); multiline_buffer += '"'; }

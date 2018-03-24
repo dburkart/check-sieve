@@ -6,3 +6,4 @@ check-sieve
 build
 *.pyc
 *~
+xcuserdata

@@ -126,6 +126,7 @@
 		87C852C32066DF2500B5ABE1 /* sieve_parser.tab.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sieve_parser.tab.cc; path = gen/sieve_parser.tab.cc; sourceTree = "<group>"; };
 		87C852D02066DF8F00B5ABE1 /* check-sieve */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "check-sieve"; sourceTree = BUILT_PRODUCTS_DIR; };
 		87C852D72066DF9E00B5ABE1 /* sieve.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sieve.cc; path = src/sieve.cc; sourceTree = "<group>"; };
+		87C852ED2066E36800B5ABE1 /* python.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = python.cc; path = src/python.cc; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -220,6 +221,7 @@
 		87C852AB2066DEAB00B5ABE1 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				87C852ED2066E36800B5ABE1 /* python.cc */,
 				87C852B02066DEFD00B5ABE1 /* checksieve.cc */,
 				87C852B22066DEFD00B5ABE1 /* checksieve.h */,
 				87C852B12066DEFD00B5ABE1 /* diagnostic.cc */,
@@ -407,12 +409,16 @@
 		87414E002066DD2B002BB510 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = /System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 			};
 			name = Debug;
 		};
 		87414E012066DD2B002BB510 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = /System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 			};
 			name = Release;
 		};

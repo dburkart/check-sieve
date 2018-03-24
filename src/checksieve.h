@@ -1,6 +1,12 @@
 #ifndef __CHECKSIEVE_H__
 #define __CHECKSIEVE_H__
 
+#ifndef PLATFORM
+#if defined __APPLE__ && defined __MACH__
+#define PLATFORM "Darwin"
+#endif
+#endif
+
 #include <string>
 #include "location.hh"
 

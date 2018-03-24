@@ -11,7 +11,7 @@ const char *usage_string  =
 "Usage: check-sieve [options] file1 [file2 ...]                                 \n"
 "                                                                               \n"
 "Options:                                                                       \n"
-"  --help                   Show this message                                   \n"
+"  -h, --help               Show this message                                   \n"
 "  --trace-parser           Trace the operation of the parser                   \n"
 "  --trace-scanner          Trace the operation of the scanner                  \n"
 "  --trace-tree             Trace the abstract-syntax-tree                      \n"
@@ -70,6 +70,13 @@ int main( int argc, char *argv[] ) {
 
             std::cout << "Unrecognized argument \"" << argv[i] << "\"" << std::endl;
             return 1;
+        }
+        // Short argument
+        else if (argv[i][0] == '-') {
+            if (strcmp(argv[i], "-h") == 0) {
+                print_help();
+                return 0;
+            }
         }
         // Sieve file
         else {

@@ -30,6 +30,16 @@ class TestCommands(unittest.TestCase):
         '''
         self.assertTrue(checksieve.parse_string(sieve, True))
 
+    def test_multiple_is(self):
+        sieve = '''
+        if header :is "X-Phabricator-Mail-Tags" :is "<audit-commit>"
+        {
+            discard;
+            stop;
+        }
+        '''
+        self.assertTrue(checksieve.parse_string(sieve, True))
+
 
 if __name__ == '__main__':
     unittest.main()

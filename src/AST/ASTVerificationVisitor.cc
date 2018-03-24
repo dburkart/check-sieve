@@ -275,11 +275,33 @@ void ASTVerificationVisitor::visit( ASTTag* node ) {
 }
 
 void ASTVerificationVisitor::visit( ASTTest* node ) {
+    std::vector<sieve::ASTNode *> children = node->children();
     std::string value_lower = node->value();
     std::transform(value_lower.begin(), value_lower.end(), value_lower.begin(), ::tolower);
+    const ASTTag *first_match_tag = NULL;
+    const ASTTag *second_match_tag = NULL;
 
     if (!_test_map[value_lower]) {
         _verification_result = {1, node->location(), "Unrecognized test \"" + node->value() + "\"."};
+    }
+
+    for (std::vector<sieve::ASTNode *>::iterator it = children.begin(); it != children.end(); ++it) {
+        // Are we an ASTTag?
+        const ASTTag *child = dynamic_cast<ASTTag*>(*it);
+
+        if (child != NULL) {
+            // Ensure that we have only _one_ of :is, :contains, or :matches
+            if (child->value() == ":is" || child->value() == ":contains" || child->value() == ":matches") {
+                if (first_match_tag == NULL)
+                    first_match_tag = child;
+                else if (second_match_tag == NULL)
+                    second_match_tag = child;
+            }
+        }
+    }
+
+    if (second_match_tag != NULL) {
+        _verification_result = {1, second_match_tag->location(), "Only one match type tag is allowed; first match type tag was \"" + first_match_tag->value() + "\"."};
     }
 }
 

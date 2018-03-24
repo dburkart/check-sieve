@@ -27,7 +27,7 @@ public:
         this->_children.insert(this->_children.end(), children.begin(), children.end());
     }
 
-    yy::location location() { return this->_location; }
+    yy::location location() const { return this->_location; }
 
 private:
     std::vector<ASTNode *> _children;

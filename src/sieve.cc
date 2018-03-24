@@ -32,6 +32,9 @@ bool file_exists(const char *filename) {
 
 int main( int argc, char *argv[] ) {
     int result = 0;
+    bool trace_scanning = false;
+    bool trace_parsing = false;
+    bool trace_tree = false;
     sieve::Diagnostic diag;
 
     if (argc == 1) {
@@ -39,22 +42,21 @@ int main( int argc, char *argv[] ) {
         return 1;
     }
 
-    sieve::driver driver;
     for (int i = 1; i < argc; ++i) {
         // Long argument
         if (argv[i][0] == '-' && argv[i][1] == '-') {
             if (strcmp(argv[i], "--trace-scanner") == 0) {
-                driver.trace_scanning = true;
+                trace_scanning = true;
                 continue;
             }
 
             if (strcmp(argv[i], "--trace-parser") == 0) {
-                driver.trace_parsing = true;
+                trace_parsing = true;
                 continue;
             }
 
             if (strcmp(argv[i], "--trace-tree") == 0) {
-                driver.trace_tree = true;
+                trace_tree = true;
                 continue;
             }
 
@@ -85,6 +87,13 @@ int main( int argc, char *argv[] ) {
                 result = 2;
                 break;
             }
+
+            sieve::driver driver;
+
+            // Configure driver
+            driver.trace_scanning = trace_scanning;
+            driver.trace_parsing = trace_parsing;
+            driver.trace_tree = trace_tree;
 
             sieve::parse_result parse_res = driver.parse_file( argv[i] );
 

@@ -102,10 +102,11 @@ int main( int argc, char *argv[] ) {
                     sieve::ASTTraceVisitor visitor = sieve::ASTTraceVisitor();
                     visitor.walk(driver.syntax_tree());
                 } else {
-                    std::cout << "No errors found!" << std::endl;
+                    std::cout << argv[i] << ": No errors found!" << std::endl;
                 }
             } else {
                 std::ifstream fin( argv[i] );
+                std::cerr << "Errors found in \"" << argv[i] << "\":" << std::endl << std::endl;
                 std::cerr << diag.describe(parse_res, fin);
                 result = 1;
             }

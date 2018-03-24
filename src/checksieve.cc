@@ -6,7 +6,7 @@
 namespace sieve
 {
 
-#define LIBCHECKSIEVE_VERSION "0.4"
+#define LIBCHECKSIEVE_VERSION "0.5"
 
 extern const char *version() {
     return LIBCHECKSIEVE_VERSION;

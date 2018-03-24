@@ -1,3 +1,11 @@
+Version 0.5:
+ * Implement Editheader Extension (RFC 5239).
+ * Implement Regex Extension (DRAFT).
+ * Stricter semicolon conformance.
+ * Fix for multi-line comment syntax.
+ * Match type validation for tests.
+ * Add Xcode project.
+
 Version 0.4:
  * Add usage validation for supported commands.
  * Factor out user reporting to a separate API (issue #20).

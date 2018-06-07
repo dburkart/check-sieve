@@ -1,0 +1,82 @@
+.TH check-sieve 1 "6 May 2018" "version 0.5"
+.
+.
+.
+.SH NAME
+.
+check-sieve - Syntax checker for mail sieves.
+.
+.SH SYNOPSIS
+.
+.B check-sieve [options]
+.I file
+.B [
+.I file ...
+.B ]
+.br
+.B check-sieve --help
+.br
+.B check-sieve --version
+.
+.SH DESCRIPTION
+.
+.B check-sieve
+is a simple syntax checker for server-side mail sieves. It supports many
+mail-sieve RFCs, details of which can be found below.
+.
+.SH OPTIONS
+.
+.IP "-h, --help"
+Show the program help
+.IP "--trace-parser"
+Trace the operation of the parser
+.IP "--trace-scanner"
+Trace the operation of the scanner
+.IP "--trace-tree"
+Trace the abstract-syntax-tree
+.IP "--version"
+Print out version information
+.
+.SH BUGS
+.
+For information on existing issues, check the following URL:
+.br
+https://github.com/dburkart/check-sieve/issues
+.
+.SH AUTHORS
+.
+Dana Burkart
+.br
+Stuart Montgomery
+.
+.SH SUPPORTED RFCs
+.
+The full list of supported RFCs is:
+
+.RS
+Sieve: An Email Filtering Language (RFC 5228)
+.br
+Variables Extension (RFC 5229)
+.br
+Date and Index Extensions (RFC 5260)
+.br
+Vacation Extension (RFC 5230)
+.br
+Include Extension (RFC 6609)
+.br
+Copying Without Side Effects (RFC 3894)
+.br
+Reject and Extended Reject Extensions (RFC 5429)
+.br
+Body Extension (RFC 5173)
+.br
+Relational Extension (RFC 5231)
+.br
+MIME Part Tests, Iteration, Extraction, Replacement, and Enclosure (RFC 5703)
+.br
+Imap4flags Extension (RFC 5232)
+.br
+Editheader Extension (RFC 5293)
+.br
+Regex Extension (DRAFT)
+.RE

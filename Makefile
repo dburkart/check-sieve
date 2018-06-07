@@ -32,8 +32,10 @@ test: libchecksieve.a checksieve.so check-sieve
 install: all
 	mkdir -p $(INSTALL_PREFIX)/bin
 	mkdir -p $(INSTALL_PREFIX)/lib
+	mkdir -p $(INSTALL_PREFIX)/share/man/man1
 	install check-sieve $(INSTALL_PREFIX)/bin
 	install libchecksieve.a $(INSTALL_PREFIX)/lib
+	install ./docs/man1/check-sieve.1 $(INSTALL_PREFIX)/share/man/man1
 
 clean:
 	make -C $(BASE)/gen clean

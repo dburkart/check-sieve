@@ -1,5 +1,9 @@
 BASE = .
 
+ifeq ($(INSTALL_PREFIX),)
+INSTALL_PREFIX := /usr/local
+endif
+
 include $(BASE)/Makefile.shared
 include $(BASE)/gen/Makefile.env
 include $(BASE)/src/Makefile.env
@@ -24,6 +28,12 @@ checksieve.so: $(BASE)/src/python.cc libchecksieve.a
 
 test: libchecksieve.a checksieve.so check-sieve
 	python -m unittest discover -s test -p '*_test.py'
+
+install: all
+	mkdir -p $(INSTALL_PREFIX)/bin
+	mkdir -p $(INSTALL_PREFIX)/lib
+	install check-sieve $(INSTALL_PREFIX)/bin
+	install libchecksieve.a $(INSTALL_PREFIX)/lib
 
 clean:
 	make -C $(BASE)/gen clean

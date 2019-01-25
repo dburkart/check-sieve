@@ -21,7 +21,7 @@ namespace sieve
 class driver {
 public:
     driver();
-    driver(bool quiet);
+    driver(struct parse_options options);
     virtual ~driver();
     
     void scan_begin();
@@ -44,10 +44,12 @@ public:
     ASTSieve *syntax_tree() { return _sieve; }
     ASTSieve *syntax_tree(ASTSieve *sieve) { _sieve = sieve; return _sieve; }
 
+    struct parse_options parse_options() { return _options; }
+
 private:
+    struct parse_options _options;
     std::istringstream _input_stream;
     yyscan_t yyscanner;
-    bool _suppress_output;
     
     ASTSieve *_sieve;
 

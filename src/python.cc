@@ -48,7 +48,7 @@ static PyObject *parse_string(PyObject *self, PyObject *args) {
     if (!PyArg_ParseTuple(args, "sO:parse_string", &sieve, &quiet))
         return NULL;
 
-    sieve::driver driver(PyObject_IsTrue(quiet));
+    sieve::driver driver;
     return Py_BuildValue("i", driver.parse_string(sieve).status);
 }
 

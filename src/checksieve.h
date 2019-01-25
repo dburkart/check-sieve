@@ -31,8 +31,13 @@ struct parse_result {
     }
 };
 
-struct parse_result sieve_parse_file( const char *filename );
-struct parse_result sieve_parse_string( const char *sieve );
+struct parse_options {
+    bool quiet;
+    int string_list_max_length;
+};
+
+struct parse_result sieve_parse_file( const char *filename, struct parse_options options );
+struct parse_result sieve_parse_string( const char *sieve, struct parse_options options );
 
 const char *version();
 

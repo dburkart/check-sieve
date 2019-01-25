@@ -14,14 +14,13 @@ driver::driver()
     : trace_scanning( false )
     , trace_parsing( false )
     , trace_tree( false )
-    , _suppress_output(false)
     , result( 0 ) {}
 
-driver::driver( bool quiet )
+driver::driver( struct parse_options options )
     : trace_scanning( false )
     , trace_parsing( false )
     , trace_tree( false )
-    , _suppress_output( quiet )
+    , _options( options )
     , result( 0 ) {}
 
 driver::~driver() {}

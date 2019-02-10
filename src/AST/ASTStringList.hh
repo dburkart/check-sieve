@@ -32,6 +32,14 @@ public:
 
         return this->children().end();
     }
+
+    int length() const {
+        int length = 0;
+        for (std::vector<ASTNode *>::const_iterator it = this->children().begin(); it != this->children().end(); ++it) {
+            length += 1;
+        }
+        return length;
+    }
     
 private:
 };

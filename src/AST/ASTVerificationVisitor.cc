@@ -7,9 +7,10 @@
 namespace sieve
 {
 
-ASTVerificationVisitor::ASTVerificationVisitor()
+ASTVerificationVisitor::ASTVerificationVisitor(struct parse_options options)
     : _verification_result()
-    , _command() {
+    , _command()
+    , _options( options ) {
     _init();
 }
 
@@ -262,7 +263,11 @@ void ASTVerificationVisitor::visit( ASTString* node ) {
 }
 
 void ASTVerificationVisitor::visit( ASTStringList* node ) {
-
+    if ( _options.string_list_max_length ) {
+        if ( node->length() > _options.string_list_max_length ) {
+            _verification_result = {1, node->location(), "String list length is " + std::to_string(node->length()) + ", but the configured maximum is " + std::to_string(_options.string_list_max_length)};
+        }
+    }
 }
 
 void ASTVerificationVisitor::visit( ASTTag* node ) {

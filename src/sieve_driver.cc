@@ -14,6 +14,7 @@ driver::driver()
     : trace_scanning( false )
     , trace_parsing( false )
     , trace_tree( false )
+    , _options()
     , result( 0 ) {}
 
 driver::driver( struct parse_options options )
@@ -57,7 +58,7 @@ parse_result driver::parse_string( const std::string &sieve ) {
         res = _errors[0];
 
     if ( !result ) {
-        ASTVerificationVisitor visitor = ASTVerificationVisitor();
+        ASTVerificationVisitor visitor = ASTVerificationVisitor( _options );
         visitor.walk(syntax_tree());
 
         res = visitor.result();

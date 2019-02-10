@@ -13,7 +13,7 @@ namespace sieve
 
 class ASTVerificationVisitor : public ASTVisitor {
 public:
-    ASTVerificationVisitor();
+    ASTVerificationVisitor( struct parse_options options);
     void walk( ASTSieve * );
 
     void visit( ASTBlock* );
@@ -36,6 +36,7 @@ private:
     void _init();
     void _traverse_tree(sieve::ASTNode *node);
 
+    struct parse_options _options;
     parse_result _verification_result;
 
     std::map<std::string, bool> _command_map;

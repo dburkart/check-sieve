@@ -32,7 +32,7 @@ struct parse_result {
 };
 
 struct parse_options {
-    bool quiet;
+    parse_options() : string_list_max_length(0) {}
     int string_list_max_length;
 };
 

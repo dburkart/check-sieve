@@ -11,9 +11,11 @@
 #include "sieve_driver.hh"
 
 static PyObject *parse_string(PyObject *, PyObject *);
+static PyObject *parse_string_with_options(PyObject *self, PyObject *args);
 
 static PyMethodDef checksieve_methods[] = {
     {"parse_string", parse_string, METH_VARARGS, "guhhh"},
+    {"parse_string_with_options", parse_string_with_options, METH_VARARGS, "Parse a sieve buffer with the specified options"},
     {NULL, NULL}
 };
 
@@ -49,6 +51,29 @@ static PyObject *parse_string(PyObject *self, PyObject *args) {
         return NULL;
 
     sieve::driver driver;
+    return Py_BuildValue("i", driver.parse_string(sieve).status);
+}
+
+static PyObject *parse_string_with_options(PyObject *self, PyObject *args) {
+    const char *sieve;
+    PyObject *options;
+    PyObject *value;
+    struct sieve::parse_options opts;
+
+    if (!PyArg_ParseTuple(args, "sO:parse_string", &sieve, &options))
+        return NULL;
+
+    // TODO: Set error.
+    if (!PyDict_Check(options))
+        return NULL;
+
+    // Pull out max line length
+    value = PyDict_GetItem(options, PyString_FromString("string_list_max_length"));
+    if (value != NULL) {
+        opts.string_list_max_length = int(PyInt_AsLong(value));
+    }
+
+    sieve::driver driver(opts);
     return Py_BuildValue("i", driver.parse_string(sieve).status);
 }
 

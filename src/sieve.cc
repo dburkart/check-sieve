@@ -12,6 +12,7 @@ const char *usage_string  =
 "                                                                               \n"
 "Options:                                                                       \n"
 "  -h, --help               Show this message                                   \n"
+"  --max-list-length        Flag lists over a certain length (default: none)    \n"
 "  --trace-parser           Trace the operation of the parser                   \n"
 "  --trace-scanner          Trace the operation of the scanner                  \n"
 "  --trace-tree             Trace the abstract-syntax-tree                      \n"
@@ -36,6 +37,7 @@ int main( int argc, char *argv[] ) {
     bool trace_parsing = false;
     bool trace_tree = false;
     sieve::Diagnostic diag;
+    struct sieve::parse_options options;
 
     if (argc == 1) {
         print_help();
@@ -45,6 +47,16 @@ int main( int argc, char *argv[] ) {
     for (int i = 1; i < argc; ++i) {
         // Long argument
         if (argv[i][0] == '-' && argv[i][1] == '-') {
+            if (strcmp(argv[i], "--max-list-length") == 0) {
+                if (i + 1 >= argc) {
+                    std::cout << "Expected a number after --max-list-length." << std::endl;
+                    return 1;
+                }
+                options.string_list_max_length = atoi(argv[i+1]);
+                i++;
+                continue;
+            }
+
             if (strcmp(argv[i], "--trace-scanner") == 0) {
                 trace_scanning = true;
                 continue;
@@ -88,7 +100,7 @@ int main( int argc, char *argv[] ) {
                 break;
             }
 
-            sieve::driver driver;
+            sieve::driver driver(options);
 
             // Configure driver
             driver.trace_scanning = trace_scanning;

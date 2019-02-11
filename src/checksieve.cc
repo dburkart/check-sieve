@@ -13,12 +13,12 @@ extern const char *version() {
 }
 
 struct parse_result sieve_parse_file( const char *filename, struct parse_options options ) {
-    driver driver;
+    driver driver(options);
     return driver.parse_file(filename);
 }
 
 struct parse_result sieve_parse_string( const char *sieve, struct parse_options options ) {
-    driver driver;
+    driver driver(options);
     return driver.parse_string(sieve);
 }
 

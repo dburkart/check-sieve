@@ -1,9 +1,6 @@
-import sys
-sys.path.append('./')
-
 import unittest
 import checksieve
-import util
+from . import util
 
 class TestControlAST(util.DiffTestCase):
     

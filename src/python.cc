@@ -37,7 +37,7 @@ static struct PyModuleDef moduledef = {
     NULL,
 };
 
-#define PY_MODCREATE() PyModule_Create(&moduledef)
+#define PY_MODCREATE() return PyModule_Create(&moduledef)
 #else
 #define PY_MODINIT(name) PyMODINIT_FUNC init##name(void)
 #define PY_MODCREATE() Py_InitModule3( PY_MODNAME, checksieve_methods, PY_MODDESC )
@@ -68,9 +68,9 @@ static PyObject *parse_string_with_options(PyObject *self, PyObject *args) {
         return NULL;
 
     // Pull out max line length
-    value = PyDict_GetItem(options, PyString_FromString("string_list_max_length"));
+    value = PyDict_GetItem(options, PyUnicode_FromString("string_list_max_length"));
     if (value != NULL) {
-        opts.string_list_max_length = int(PyInt_AsLong(value));
+        opts.string_list_max_length = int(PyLong_AsLong(value));
     }
 
     sieve::driver driver(opts);

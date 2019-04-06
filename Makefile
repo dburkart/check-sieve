@@ -24,10 +24,10 @@ libchecksieve.a: $(GENERATED_SRC) $(LIBCHECKSIEVE_SRC) $(AST_SRC)
 	ar rc libchecksieve.a $(GENERATED_OBJ) $(LIBCHECKSIEVE_OBJ) $(AST_OBJ)
 
 checksieve.so: $(BASE)/src/python.cc libchecksieve.a
-	python $(BASE)/test/setup.py build_ext -i
+	python3 $(BASE)/test/setup.py build_ext -i
 
 test: libchecksieve.a checksieve.so check-sieve
-	python -m unittest discover -s test -p '*_test.py'
+	python3 -m unittest discover -s test -p '*_test.py'
 
 install: all
 	mkdir -p $(INSTALL_PREFIX)/bin

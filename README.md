@@ -26,6 +26,21 @@ To build `check-sieve` simply run `make`. This will also build the static librar
 Running `make test` will compile `checksieve.so` and run the python tests in the tests directory.
 Finally, running `make all` will run all of the other targets.
 
+#### Installing
+
+To install to `/usr/local/`, simply run the following:
+
+```
+make install
+```
+
+To install to a custom location, build and install with `INSTALL_PREFIX` set in your environment
+to the desired location.
+
+##### Packages
+
+Archlinux: https://aur.archlinux.org/packages/check-sieve/
+
 #### Supported RFCs
 
 Currently, the supported RFCs are:

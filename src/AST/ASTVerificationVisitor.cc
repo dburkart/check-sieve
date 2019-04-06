@@ -171,6 +171,19 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
             _tag_map[":last"] = 1;
         }
 
+        // "spamtest" or "spamtestplus"
+        // RFC 5235
+        if (child->value() == "spamtest" || child->value() == "spamtestplus") {
+            _test_map["spamtest"] = 1;
+            _tag_map[":percent"] = 1;
+        }
+
+        // "virustest"
+        // RFC 5235
+        if (child->value() == "virustest") {
+            _test_map["virustest"] = 1;
+        }
+
         // "ereject"
         // RFC 5429
         if (child->value() == "ereject") {

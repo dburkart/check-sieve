@@ -11,7 +11,8 @@ for developing on the project:
 
 * bison >= v3.0.4
 * flex >= v2.5.35
-* python development headers (for testing)
+* Python >= 3.7
+* Python development headers (for testing)
 
 #### Compiling
 

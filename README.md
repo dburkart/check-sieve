@@ -43,6 +43,7 @@ Currently, the supported RFCs are:
 * Imap4flags Extension ([RFC 5232](https://tools.ietf.org/html/rfc5232))
 * Editheader Extension ([RFC 5293](https://tools.ietf.org/html/rfc5293))
 * Regex Extension ([DRAFT](https://tools.ietf.org/html/draft-ietf-sieve-regex-01))
+* Spamtest and Virustest Extensions ([RFC 5235](https://tools.ietf.org/html/rfc5235))
 
 If you find any discrepancies with these RFCs, or have reduced test-cases that should work but don't, please file an
 issue. If there's an RFC that isn't supported that you want, file an issue!

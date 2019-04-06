@@ -23,10 +23,9 @@ libchecksieve.a: $(GENERATED_SRC) $(LIBCHECKSIEVE_SRC) $(AST_SRC)
 	make -C $(BASE)/src lib
 	ar rc libchecksieve.a $(GENERATED_OBJ) $(LIBCHECKSIEVE_OBJ) $(AST_OBJ)
 
-checksieve.so: $(BASE)/src/python.cc libchecksieve.a
+test: libchecksieve.a check-sieve
+	rm checksieve.*.so
 	python3 $(BASE)/test/setup.py build_ext -i
-
-test: libchecksieve.a checksieve.so check-sieve
 	python3 -m unittest discover -s test -p '*_test.py'
 
 install: all

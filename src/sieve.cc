@@ -12,7 +12,7 @@ const char *usage_string  =
 "                                                                               \n"
 "Options:                                                                       \n"
 "  -h, --help               Show this message                                   \n"
-"  --max-list-length        Flag lists over a certain length (default: none)    \n"
+"  --max-list-length N      Flag lists over a certain length (default: none)    \n"
 "  --trace-parser           Trace the operation of the parser                   \n"
 "  --trace-scanner          Trace the operation of the scanner                  \n"
 "  --trace-tree             Trace the abstract-syntax-tree                      \n"

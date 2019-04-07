@@ -201,6 +201,14 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
         // RFC 5490
         if (child->value() == "mboxmetadata") {
             _test_map["metadata"] = 1;
+            _test_map["metadataexists"] =1;
+        }
+
+        // "servermetadata"
+        // RFC 5490
+        if (child->value() == "servermetadata") {
+            _test_map["servermetadata"] = 1;
+            _test_map["servermetadataexists"] = 1;
         }
 
         // "foreverypart"

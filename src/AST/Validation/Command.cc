@@ -7,7 +7,8 @@
 namespace sieve
 {
 
-bool validateAddHeadersCommand(const ASTCommand *command) {
+bool validateAddHeadersCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
     size_t size = command->children().size();
 
@@ -35,7 +36,8 @@ bool validateAddHeadersCommand(const ASTCommand *command) {
     return true;
 }
 
-bool validateDeleteHeadersCommand(const ASTCommand *command) {
+bool validateDeleteHeadersCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
     std::vector<ASTNode *>::const_iterator it;
     size_t size = command->children().size();
@@ -97,7 +99,8 @@ bool validateDeleteHeadersCommand(const ASTCommand *command) {
 
 // Validation logic
 // TODO: Think about if this is the right way to do this
-bool validateIncludeCommand(const ASTCommand *command) {
+bool validateIncludeCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
     size_t size = command->children().size();
 
     if (size < 5 && size > 0)
@@ -106,7 +109,8 @@ bool validateIncludeCommand(const ASTCommand *command) {
         return false;
 }
 
-bool validateIMAP4FlagsAction(const ASTCommand *command) {
+bool validateIMAP4FlagsAction(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
     size_t size = command->children().size();
 
     if (size > 0 && size < 3)
@@ -115,7 +119,8 @@ bool validateIMAP4FlagsAction(const ASTCommand *command) {
         return false;
 }
 
-bool validateFileintoCommand(const ASTCommand *command) {
+bool validateFileintoCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
     size_t size = children.size();
 
@@ -139,7 +144,8 @@ bool validateFileintoCommand(const ASTCommand *command) {
     return true;
 }
 
-bool validateKeepCommand(const ASTCommand *command) {
+bool validateKeepCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
     size_t size = children.size();
 
@@ -156,7 +162,8 @@ bool validateKeepCommand(const ASTCommand *command) {
     return true;
 }
 
-bool validateReplaceCommand(const ASTCommand *command) {
+bool validateReplaceCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
     size_t size = children.size();
 
@@ -181,7 +188,8 @@ bool validateReplaceCommand(const ASTCommand *command) {
     return true;
 }
 
-bool validateEncloseCommand(const ASTCommand *command) {
+bool validateEncloseCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
     size_t size = children.size();
 
@@ -202,7 +210,8 @@ bool validateEncloseCommand(const ASTCommand *command) {
     return true;
 }
 
-bool validateRedirectCommand(const ASTCommand *command) {
+bool validateRedirectCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
     size_t size = children.size();
 
@@ -219,7 +228,8 @@ bool validateRedirectCommand(const ASTCommand *command) {
     return true;
 }
 
-bool validateSetCommand(const ASTCommand *command) {
+bool validateSetCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
     size_t size = children.size();
 
@@ -257,7 +267,8 @@ bool validateSetCommand(const ASTCommand *command) {
     return true;
 }
 
-bool validateVacationCommand(const ASTCommand *command) {
+bool validateVacationCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
     size_t size = children.size();
 
@@ -294,7 +305,8 @@ bool validateVacationCommand(const ASTCommand *command) {
     return true;
 }
 
-bool validateBareCommand(const ASTCommand *command) {
+bool validateBareCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
     size_t size = command->children().size();
 
     if (size == 0)
@@ -303,7 +315,8 @@ bool validateBareCommand(const ASTCommand *command) {
         return false;
 }
 
-bool validateSingleArgumentCommand(const ASTCommand *command) {
+bool validateSingleArgumentCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
     size_t size = command->children().size();
 
     if (size == 1)

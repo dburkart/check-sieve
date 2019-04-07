@@ -4,12 +4,11 @@
 #include <map>
 #include <string>
 
+#include "Validation.hh"
 #include "ASTCommand.hh"
 
 namespace sieve 
 {
-
-typedef bool (*ValidationFunctionPtr)(const ASTCommand *);
 
 class Command {
 public:

@@ -190,6 +190,19 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
             _command_map["ereject"] = 1;
         }
 
+        // "mailbox"
+        // RFC 5490
+        if (child->value() == "mailbox") {
+            _test_map["mailboxexists"] = 1;
+            _tag_map[":create"] = 1;
+        }
+
+        // "mboxmetadata"
+        // RFC 5490
+        if (child->value() == "mboxmetadata") {
+            _test_map["metadata"] = 1;
+        }
+
         // "foreverypart"
         // RFC 5703
         if (child->value() == "foreverypart") {

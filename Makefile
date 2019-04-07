@@ -24,7 +24,7 @@ libchecksieve.a: $(GENERATED_SRC) $(LIBCHECKSIEVE_SRC) $(AST_SRC)
 	ar rc libchecksieve.a $(GENERATED_OBJ) $(LIBCHECKSIEVE_OBJ) $(AST_OBJ)
 
 test: libchecksieve.a check-sieve
-	rm checksieve.*.so
+	rm checksieve.*.so || true
 	python3 $(BASE)/test/setup.py build_ext -i
 	python3 -m unittest discover -s test -p '*_test.py'
 

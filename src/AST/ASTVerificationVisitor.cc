@@ -342,6 +342,15 @@ void ASTVerificationVisitor::visit( ASTTest* node ) {
     if (second_match_tag != NULL) {
         _verification_result = {1, second_match_tag->location(), "Only one match type tag is allowed; first match type tag was \"" + first_match_tag->value() + "\"."};
     }
+
+    if (!_test.validate(node)) {
+        _verification_result = {
+            1,
+            node->location(),
+            "Incorrect syntax for test \"" + node->value() + "\".",
+            _test.usage(node)
+        };
+    }
 }
 
 //-- Private methods

@@ -7,6 +7,7 @@
 #include "checksieve.h"
 #include "ASTVisitor.hh"
 #include "Validation/Command.hh"
+#include "Validation/Test.hh"
 
 namespace sieve
 {
@@ -43,7 +44,9 @@ private:
     std::map<std::string, bool> _test_map;
     std::map<std::string, bool> _tag_map;
     
+    // Validators
     Command _command;
+    Test _test;
 };
 
 } // namespace sieve

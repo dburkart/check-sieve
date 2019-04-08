@@ -353,8 +353,7 @@ bool validateForeverypartCommand(const ASTNode *node) {
     if (size != 1 && size != 3)
         return false;
 
-    const ASTBlock *blockChild = dynamic_cast<ASTBlock *>(command->children()[size-1]);
-    if (blockChild == NULL)
+    if (!nodeIsType<ASTBlock>(command->children()[size-1]))
         return false;
 
     if (size == 3) {
@@ -368,6 +367,19 @@ bool validateForeverypartCommand(const ASTNode *node) {
     return true;
 }
 
+bool validateExtracttextCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    size_t size = command->children().size();
+
+    if (size < 1 && size > 4)
+        return false;
+
+    if (!nodeIsType<ASTString>(command->children()[size-1]))
+        return false;
+
+    return true;
+}
+
 Command::Command() {
     _usage_map["addflag"] = "addflag [<variablename: string>] <list-of-flags: string-list>";
     _usage_map["addheader"] = "addheader [:last] <field-name: string> <value: string>";
@@ -376,6 +388,7 @@ Command::Command() {
     _usage_map["discard"] = "discard";
     _usage_map["enclose"] = "enclose <:subject string> <:headers string-list> string";
     _usage_map["ereject"] = "ereject <reason: string>";
+    _usage_map["extracttext"] = "extracttext [MODIFIER] [:first number] <varname: string>";
     _usage_map["fileinto"] = "fileinto [:flags <list-of-flags: string-list>][:copy] <folder: string>";
     _usage_map["foreverypart"] = "foreverypart [:name string] block";
     _usage_map["global"] = "global <value: string-list>";
@@ -398,6 +411,7 @@ Command::Command() {
     _validation_fn_map["discard"] = &validateBareCommand;
     _validation_fn_map["enclose"] = &validateEncloseCommand;
     _validation_fn_map["ereject"] = &validateSingleArgumentCommand;
+    _validation_fn_map["extracttext"] = &validateExtracttextCommand;
     _validation_fn_map["fileinto"] = &validateFileintoCommand;
     _validation_fn_map["foreverypart"] = &validateForeverypartCommand;
     _validation_fn_map["global"] = &validateSingleArgumentCommand;

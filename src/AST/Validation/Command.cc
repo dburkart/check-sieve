@@ -249,7 +249,8 @@ bool validateSetCommand(const ASTNode *node) {
             tagChild->value() == ":upperfirst" ||
             tagChild->value() == ":quotewildcard" ||
             tagChild->value() == ":length" ||
-            tagChild->value() == ":quoteregex"
+            tagChild->value() == ":quoteregex" ||
+            tagChild->value() == ":encodeurl"
            ))
             numArguments += 1;
         else if (tagChild)
@@ -380,6 +381,37 @@ bool validateExtracttextCommand(const ASTNode *node) {
     return true;
 }
 
+bool validateNotifyCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    size_t size = command->children().size();
+
+    int numArguments = 1;
+
+    if (!nodeIsType<ASTString>(command->children()[size-1]))
+        return false;
+
+    if (command->find(ASTTag(":from")) != command->children().end()) {
+        numArguments += 2;
+    }
+
+    if (command->find(ASTTag(":importance")) != command->children().end()) {
+        numArguments += 2;
+    }
+
+    if (command->find(ASTTag(":options")) != command->children().end()) {
+        numArguments += 2;
+    }
+
+    if (command->find(ASTTag(":message")) != command->children().end()) {
+        numArguments += 2;
+    }
+
+    if (size != numArguments)
+        return false;
+
+    return true;
+}
+
 Command::Command() {
     _usage_map["addflag"] = "addflag [<variablename: string>] <list-of-flags: string-list>";
     _usage_map["addheader"] = "addheader [:last] <field-name: string> <value: string>";
@@ -394,6 +426,7 @@ Command::Command() {
     _usage_map["global"] = "global <value: string-list>";
     _usage_map["include"] = "include [:global / :personal] [:once] [:optional] <value: string>";
     _usage_map["keep"] = "keep [:flags <list-of-flags: string-list>]";
+    _usage_map["notify"] = "notify [:from string] [:importance <1 / 2 / 3>] [:options string-list] [:message string] <method: string>";
     _usage_map["redirect"] = "redirect [:copy] <address: string>";
     _usage_map["reject"] = "reject <reason: string>";
     _usage_map["removeflag"] = "removeflag [<variablename: string>] <list-of-flags: string-list>";
@@ -417,6 +450,7 @@ Command::Command() {
     _validation_fn_map["global"] = &validateSingleArgumentCommand;
     _validation_fn_map["include"] = &validateIncludeCommand;
     _validation_fn_map["keep"] = &validateKeepCommand;
+    _validation_fn_map["notify"] = &validateNotifyCommand;
     _validation_fn_map["redirect"] = &validateRedirectCommand;
     _validation_fn_map["reject"] = &validateSingleArgumentCommand;
     _validation_fn_map["removeflag"] = &validateIMAP4FlagsAction;

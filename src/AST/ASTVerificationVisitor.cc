@@ -190,6 +190,25 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
             _command_map["ereject"] = 1;
         }
 
+        // "enotify"
+        // RFC 5435
+        if (child->value() == "enotify") {
+            _command_map["notify"] = 1;
+            _tag_map[":from"] = 1;
+            _tag_map[":importance"] = 1;
+            _tag_map[":options"] = 1;
+            _tag_map[":message"] = 1;
+            _test_map["valid_notify_method"] = 1;
+            _test_map["notify_method_capability"] = 1;
+
+            // The :encodeurl tag can only be used if both "enotify" and
+            // "variables" are required
+            if (requires != NULL &&
+                requires->find(ASTString("variables")) != requires->children().end()) {
+                _tag_map[":encodeurl"] = 1;
+            }
+        }
+
         // "mailbox"
         // RFC 5490
         if (child->value() == "mailbox") {

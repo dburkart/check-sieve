@@ -3,6 +3,7 @@
 #include "ASTString.hh"
 #include "ASTStringList.hh"
 #include "ASTTag.hh"
+#include "checksieve.h"
 #include "Test.hh"
 
 namespace sieve {
@@ -104,8 +105,10 @@ Test::Test() {
 }
 
 bool Test::validate(const ASTTest *test) {
-    if (!_validation_fn_map[test->value()])
+    if (!_validation_fn_map[test->value()]) {
+        DEBUGLOG(test->value(), "Test is missing validation.")
         return true;
+    }
 
     return _validation_fn_map[test->value()](test);
 }

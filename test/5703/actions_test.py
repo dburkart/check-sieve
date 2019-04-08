@@ -7,13 +7,17 @@ class TestActions(unittest.TestCase):
         sieve = '''
             require ["foreverypart"];
 
-            foreverypart { }
+            foreverypart {
+              discard;
+            }
         '''
         self.assertFalse(checksieve.parse_string(sieve, False))
 
     def test_foreverypart_no_require(self):
         sieve = '''
-            foreverypart { }
+            foreverypart {
+              discard;
+            }
         '''
         self.assertTrue(checksieve.parse_string(sieve, True))
 
@@ -22,7 +26,7 @@ class TestActions(unittest.TestCase):
             require "foreverypart";
 
             foreverypart :name "Cc" {
-
+              discard;
             }
         '''
         self.assertFalse(checksieve.parse_string(sieve, False))

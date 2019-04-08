@@ -15,4 +15,8 @@ ifeq ($(PLATFORM), Darwin)
 CFLAGS += -mmacosx-version-min=10.9
 endif
 
+ifdef DEBUG
+CFLAGS += -DDEBUG
+endif
+
 endif

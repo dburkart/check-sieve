@@ -4,6 +4,10 @@ ifeq ($(INSTALL_PREFIX),)
 INSTALL_PREFIX := /usr/local
 endif
 
+ifdef DEBUG
+CFLAGS += -DDEBUG
+endif
+
 include $(BASE)/Makefile.shared
 include $(BASE)/gen/Makefile.env
 include $(BASE)/src/Makefile.env

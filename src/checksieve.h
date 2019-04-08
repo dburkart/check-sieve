@@ -7,6 +7,12 @@
 #endif
 #endif
 
+#ifdef DEBUG
+#define DEBUGLOG(i, x) std::cout << "DEBUG: " << i << ": "<< x << std::endl;
+#else
+#define DEBUGLOG(i, x)
+#endif
+
 #include <string>
 #include "location.hh"
 

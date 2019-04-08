@@ -1,7 +1,9 @@
+#include "ASTBlock.hh"
 #include "ASTNumeric.hh"
 #include "ASTString.hh"
 #include "ASTStringList.hh"
 #include "ASTTag.hh"
+#include "checksieve.h"
 #include "Command.hh"
 
 namespace sieve
@@ -325,14 +327,57 @@ bool validateSingleArgumentCommand(const ASTNode *node) {
         return false;
 }
 
+bool validateBreakCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    size_t size = command->children().size();
+
+    if (size == 0)
+        return true;
+
+    if (size != 2)
+        return false;
+
+    const ASTTag *tagChild = dynamic_cast<ASTTag *>(command->children()[0]);
+    const ASTString *stringChild = dynamic_cast<ASTString *>(command->children()[1]);
+
+    if (tagChild == NULL || stringChild == NULL)
+        return false;
+
+    return true;
+}
+
+bool validateForeverypartCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    size_t size = command->children().size();
+
+    if (size != 1 && size != 3)
+        return false;
+
+    const ASTBlock *blockChild = dynamic_cast<ASTBlock *>(command->children()[size-1]);
+    if (blockChild == NULL)
+        return false;
+
+    if (size == 3) {
+        const ASTTag *tagChild = dynamic_cast<ASTTag *>(command->children()[0]);
+        const ASTString *stringChild = dynamic_cast<ASTString *>(command->children()[1]);
+
+        if (tagChild == NULL || stringChild == NULL)
+            return false;
+    }
+
+    return true;
+}
+
 Command::Command() {
     _usage_map["addflag"] = "addflag [<variablename: string>] <list-of-flags: string-list>";
     _usage_map["addheader"] = "addheader [:last] <field-name: string> <value: string>";
+    _usage_map["break"] = "break [:name string]";
     _usage_map["deleteheader"] = "deleteheader [:index <fieldno: number> [:last]]\n\t[COMPARATOR] [MATCH-TYPE]\n\t<field-name: string>\n\t[<value-patterns: string-list>]";
     _usage_map["discard"] = "discard";
     _usage_map["enclose"] = "enclose <:subject string> <:headers string-list> string";
     _usage_map["ereject"] = "ereject <reason: string>";
     _usage_map["fileinto"] = "fileinto [:flags <list-of-flags: string-list>][:copy] <folder: string>";
+    _usage_map["foreverypart"] = "foreverypart [:name string] block";
     _usage_map["global"] = "global <value: string-list>";
     _usage_map["include"] = "include [:global / :personal] [:once] [:optional] <value: string>";
     _usage_map["keep"] = "keep [:flags <list-of-flags: string-list>]";
@@ -348,11 +393,13 @@ Command::Command() {
 
     _validation_fn_map["addflag"] = &validateIMAP4FlagsAction;
     _validation_fn_map["addheader"] = &validateAddHeadersCommand;
+    _validation_fn_map["break"] = &validateBreakCommand;
     _validation_fn_map["deleteheader"] = &validateDeleteHeadersCommand;
     _validation_fn_map["discard"] = &validateBareCommand;
     _validation_fn_map["enclose"] = &validateEncloseCommand;
     _validation_fn_map["ereject"] = &validateSingleArgumentCommand;
     _validation_fn_map["fileinto"] = &validateFileintoCommand;
+    _validation_fn_map["foreverypart"] = &validateForeverypartCommand;
     _validation_fn_map["global"] = &validateSingleArgumentCommand;
     _validation_fn_map["include"] = &validateIncludeCommand;
     _validation_fn_map["keep"] = &validateKeepCommand;
@@ -368,8 +415,10 @@ Command::Command() {
 }
 
 bool Command::validate(const ASTCommand *command) {
-    if (!_validation_fn_map[command->value()])
+    if (!_validation_fn_map[command->value()]) {
+        DEBUGLOG(command->value(), "Command is missing validation.")
         return true;
+    }
 
     return _validation_fn_map[command->value()](command);
 }

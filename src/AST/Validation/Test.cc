@@ -90,18 +90,33 @@ bool validateSizeTest(const ASTNode *node) {
     return true;
 }
 
-Test::Test() {
-    _usage_map["allof"]  = "allof <tests: test-list>";
-    _usage_map["anyof"]  = "anyof <tests: test-list>";
-    _usage_map["exists"] = "exists [:mime] [:anychild] <header-names: string-list>";
-    _usage_map["not"]    = "not <test1: test>";
-    _usage_map["size"]   = "size <:over / :under> <limit: number>";
+bool validateValidNotifyMethodTest(const ASTNode *node) {
+    const ASTTest *test = dynamic_cast<const ASTTest*>(node);
+    size_t size = test->children().size();
 
-    _validation_fn_map["allof"]  = &validateHasOnlyTestList;
-    _validation_fn_map["anyof"]  = &validateHasOnlyTestList;
-    _validation_fn_map["exists"] = &validateExists;
-    _validation_fn_map["not"]    = &validateNotTest;
-    _validation_fn_map["size"]   = &validateSizeTest;
+    if (size != 1)
+        return false;
+
+    if (!nodeIsType<ASTStringList>(test->children()[0]) && !nodeIsType<ASTString>(test->children()[0]))
+        return false;
+
+    return true;
+}
+
+Test::Test() {
+    _usage_map["allof"]                 = "allof <tests: test-list>";
+    _usage_map["anyof"]                 = "anyof <tests: test-list>";
+    _usage_map["exists"]                = "exists [:mime] [:anychild] <header-names: string-list>";
+    _usage_map["not"]                   = "not <test1: test>";
+    _usage_map["size"]                  = "size <:over / :under> <limit: number>";
+    _usage_map["valid_notify_method"]   = "valid_notify_method <notification-uris: string-list>";
+
+    _validation_fn_map["allof"]                 = &validateHasOnlyTestList;
+    _validation_fn_map["anyof"]                 = &validateHasOnlyTestList;
+    _validation_fn_map["exists"]                = &validateExists;
+    _validation_fn_map["not"]                   = &validateNotTest;
+    _validation_fn_map["size"]                  = &validateSizeTest;
+    _validation_fn_map["valid_notify_method"]   = &validateValidNotifyMethodTest;
 }
 
 bool Test::validate(const ASTTest *test) {

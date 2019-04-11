@@ -8,8 +8,8 @@ namespace sieve {
 typedef bool (*ValidationFunctionPtr)(const ASTNode *);
 
 template <class T>
-bool nodeIsType(ASTNode *node) {
-    T *t_node = dynamic_cast<T*>(node);
+bool nodeIsType(const ASTNode *node) {
+    const T *t_node = dynamic_cast<const T*>(node);
     return t_node != NULL;
 }
 

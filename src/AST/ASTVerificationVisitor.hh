@@ -7,6 +7,7 @@
 #include "checksieve.h"
 #include "ASTVisitor.hh"
 #include "Validation/Command.hh"
+#include "Validation/Tag.hh"
 #include "Validation/Test.hh"
 
 namespace sieve
@@ -46,6 +47,7 @@ private:
     
     // Validators
     Command _command;
+    Tag _tag;
     Test _test;
 };
 

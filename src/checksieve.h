@@ -8,9 +8,9 @@
 #endif
 
 #ifdef DEBUG
-#define DEBUGLOG(i, x) std::cout << "DEBUG: " << i << ": "<< x << std::endl;
+#define DEBUGLOG(x) std::cout << "DEBUG: " << x << std::endl;
 #else
-#define DEBUGLOG(i, x)
+#define DEBUGLOG(x)
 #endif
 
 #include <string>

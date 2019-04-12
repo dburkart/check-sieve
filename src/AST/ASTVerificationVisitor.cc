@@ -330,6 +330,15 @@ void ASTVerificationVisitor::visit( ASTTag* node ) {
     if (!_tag_map[value_lower]) {
         _verification_result = {1, node->location(), "Unrecognized tag \"" + node->value() + "\"."};
     }
+
+    if (!_tag.validate(node)) {
+        _verification_result = {
+            1,
+            node->location(),
+            "Incorrect syntax for tag \"" + node->value() + "\".",
+            _tag.usage(node)
+        };
+    }
 }
 
 void ASTVerificationVisitor::visit( ASTTest* node ) {

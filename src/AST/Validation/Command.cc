@@ -464,7 +464,7 @@ Command::Command() {
 
 bool Command::validate(const ASTCommand *command) {
     if (!_validation_fn_map[command->value()]) {
-        DEBUGLOG(command->value(), "Command is missing validation.")
+        DEBUGLOG(command->value() + " command is missing validation.")
         return true;
     }
 

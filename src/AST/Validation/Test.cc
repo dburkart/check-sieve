@@ -121,7 +121,7 @@ Test::Test() {
 
 bool Test::validate(const ASTTest *test) {
     if (!_validation_fn_map[test->value()]) {
-        DEBUGLOG(test->value(), "Test is missing validation.")
+        DEBUGLOG(test->value() + " test is missing validation.")
         return true;
     }
 

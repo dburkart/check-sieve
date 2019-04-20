@@ -103,10 +103,54 @@ bool validateValidNotifyMethodTest(const ASTNode *node) {
     return true;
 }
 
+bool nodeIsMatchType(const ASTNode *node) {
+    const ASTTag *tag = dynamic_cast<const ASTTag*>(node);
+    if (tag == NULL)
+        return false;
+
+    const std::string value = tag->value();
+    if (!(value == ":is" || value == ":contains" || value == ":matches")) {
+        return false;
+    }
+    return true;
+}
+
+bool validateHeaderTest(const ASTNode *node) {
+    const ASTTest *test = dynamic_cast<const ASTTest*>(node);
+    size_t size = test->children().size();
+
+    if (size < 2)
+        return false;
+
+    if (!(nodeIsType<ASTStringList>(test->children()[size-1]) || nodeIsType<ASTString>(test->children()[size-1])) ||
+        !(nodeIsType<ASTStringList>(test->children()[size-2]) || nodeIsType<ASTString>(test->children()[size-2])))
+        return false;
+
+    // The first argument can be :comparator or :is / :contains / :matches
+    if (size == 3) {
+        if (!nodeIsMatchType(test->children()[0])) {
+            const ASTTag *tag = dynamic_cast<const ASTTag*>(test->children()[0]);
+            if (tag == NULL)
+                return false;
+
+            if (tag->value() != ":comparator")
+                return false;
+        }
+
+        return true;
+    }
+
+    if (size == 5)
+        return nodeIsMatchType(test->children()[0]) || nodeIsMatchType(test->children()[2]);
+
+    return false;
+}
+
 Test::Test() {
     _usage_map["allof"]                 = "allof <tests: test-list>";
     _usage_map["anyof"]                 = "anyof <tests: test-list>";
     _usage_map["exists"]                = "exists [:mime] [:anychild] <header-names: string-list>";
+    _usage_map["header"]                = "header [COMPARATOR] [MATCH-TYPE] <header-names: string-list> <key-list: string-list>";
     _usage_map["not"]                   = "not <test1: test>";
     _usage_map["size"]                  = "size <:over / :under> <limit: number>";
     _usage_map["valid_notify_method"]   = "valid_notify_method <notification-uris: string-list>";
@@ -114,6 +158,7 @@ Test::Test() {
     _validation_fn_map["allof"]                 = &validateHasOnlyTestList;
     _validation_fn_map["anyof"]                 = &validateHasOnlyTestList;
     _validation_fn_map["exists"]                = &validateExists;
+    _validation_fn_map["header"]                = &validateHeaderTest;
     _validation_fn_map["not"]                   = &validateNotTest;
     _validation_fn_map["size"]                  = &validateSizeTest;
     _validation_fn_map["valid_notify_method"]   = &validateValidNotifyMethodTest;

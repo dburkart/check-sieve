@@ -103,54 +103,51 @@ bool validateValidNotifyMethodTest(const ASTNode *node) {
     return true;
 }
 
-bool nodeIsMatchType(const ASTNode *node) {
-    const ASTTag *tag = dynamic_cast<const ASTTag*>(node);
-    if (tag == NULL)
-        return false;
-
-    const std::string value = tag->value();
-    if (!(value == ":is" || value == ":contains" || value == ":matches")) {
-        return false;
-    }
-    return true;
-}
-
 bool validateHeaderTest(const ASTNode *node) {
     const ASTTest *test = dynamic_cast<const ASTTest*>(node);
-    size_t size = test->children().size();
+    std::vector<ASTNode *> children = node->children();
+    size_t size = children.size();
 
     if (size < 2)
         return false;
 
-    if (!(nodeIsType<ASTStringList>(test->children()[size-1]) || nodeIsType<ASTString>(test->children()[size-1])) ||
-        !(nodeIsType<ASTStringList>(test->children()[size-2]) || nodeIsType<ASTString>(test->children()[size-2])))
-        return false;
+    for (std::vector<ASTNode *>::iterator it = children.begin(); it != children.end(); ++it) {
+        const ASTTag *tag = dynamic_cast<const ASTTag*>(*it);
 
-    // The first argument can be :comparator or :is / :contains / :matches
-    if (size == 3) {
-        if (!nodeIsMatchType(test->children()[0])) {
-            const ASTTag *tag = dynamic_cast<const ASTTag*>(test->children()[0]);
-            if (tag == NULL)
-                return false;
+        if (tag != NULL) {
+            std::string tagValue;
+            tagValue = tag->value();
 
-            if (tag->value() != ":comparator")
-                return false;
+            if (tagValue == ":is" ||
+                tagValue == ":matches" ||
+                tagValue == ":contains" ||
+                tagValue == ":comparator" ||
+                tagValue == ":mime" ||
+                tagValue == ":anychild" ||
+                tagValue == ":type" ||
+                tagValue == ":subtype" ||
+                tagValue == ":contenttype" ||
+                tagValue == ":param" ||
+                tagValue == ":regex") {
+                    continue;
+                }
+            
+            return false;
         }
+    } 
 
-        return true;
-    }
-
-    if (size == 5)
-        return nodeIsMatchType(test->children()[0]) || nodeIsMatchType(test->children()[2]);
-
-    return false;
+    return true;
 }
 
 Test::Test() {
     _usage_map["allof"]                 = "allof <tests: test-list>";
     _usage_map["anyof"]                 = "anyof <tests: test-list>";
-    _usage_map["exists"]                = "exists [:mime] [:anychild] <header-names: string-list>";
-    _usage_map["header"]                = "header [COMPARATOR] [MATCH-TYPE] <header-names: string-list> <key-list: string-list>";
+    _usage_map["exists"]                = "exists [:mime] [:anychild] <header-names: string-list>\n";
+    _usage_map["header"]                =        "header [:mime] [:anychild] [:regex]\n"
+                                          "              [:type / :subtype / :contenttype / :param <param-list: string-list>]\n"
+                                          "              [:comparator <string>]\n"
+                                          "              [:is / :contains / :matches]\n"
+                                          "              <header-names: string-list> <key-list: string-list>\n";
     _usage_map["not"]                   = "not <test1: test>";
     _usage_map["size"]                  = "size <:over / :under> <limit: number>";
     _usage_map["valid_notify_method"]   = "valid_notify_method <notification-uris: string-list>";

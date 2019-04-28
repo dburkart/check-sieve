@@ -155,6 +155,13 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
             _tag_map[":flags"] = 1;
         }
 
+        // "subaddress"
+        // RFC 5233
+        if (child->value() == "subaddress") {
+            _tag_map[":user"] = 1;
+            _tag_map[":detail"] = 1;
+        }
+
         // "date"
         // RFC 5260
         if (child->value() == "date") {

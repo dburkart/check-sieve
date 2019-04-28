@@ -60,6 +60,7 @@ Currently, the supported RFCs are:
 * Regex Extension ([DRAFT](https://tools.ietf.org/html/draft-ietf-sieve-regex-01))
 * Spamtest and Virustest Extensions ([RFC 5235](https://tools.ietf.org/html/rfc5235))
 * Extensions for Notifications ([RFC 5435](https://tools.ietf.org/html/rfc5435))
+* Subaddress Extension ([RFC 5233](https://tools.ietf.org/html/rfc5233.html))
 
 If you find any discrepancies with these RFCs, or have reduced test-cases that should work but don't, please file an
 issue. If there's an RFC that isn't supported that you want, file an issue!

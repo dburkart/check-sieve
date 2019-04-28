@@ -147,6 +147,15 @@ void ASTVerificationVisitor::visit( ASTTest* node ) {
                     second_match_tag = child;
             }
         }
+
+        // If it's an "ihave" test, we need to enable any specified capabilities
+        if (value_lower == "ihave") {
+            const ASTString *capability = dynamic_cast<ASTString*>(*it);
+
+            if (capability != NULL) {
+                _enable_capability(capability->value());
+            }
+        }
     }
 
     if (second_match_tag != NULL) {
@@ -325,6 +334,13 @@ void ASTVerificationVisitor::_enable_capability(std::string capability) {
             _required_capabilities->find(ASTString("variables")) != _required_capabilities->children().end()) {
             _tag_map[":encodeurl"] = 1;
         }
+    }
+
+    // "ihave"
+    // RFC 5463
+    if (capability == "ihave") {
+        _command_map["error"] = 1;
+        _test_map["ihave"] = 1;
     }
 
     // "mailbox"

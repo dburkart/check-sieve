@@ -139,6 +139,23 @@ bool validateHeaderTest(const ASTNode *node) {
     return true;
 }
 
+bool validateIhaveTest(const ASTNode *node) {
+    const ASTTest *test = dynamic_cast<const ASTTest*>(node);
+    std::vector<ASTNode *> children = node->children();
+    size_t size = children.size();
+
+    if (size != 1)
+        return false;
+
+    const ASTString *string_child = dynamic_cast<const ASTString*>(children[0]);
+    const ASTStringList *stringlist_child = dynamic_cast<const ASTStringList*>(children[0]);
+
+    if (string_child == NULL && stringlist_child == NULL)
+        return false;
+    
+    return true;
+}
+
 Test::Test() {
     _usage_map["allof"]                 = "allof <tests: test-list>";
     _usage_map["anyof"]                 = "anyof <tests: test-list>";
@@ -148,6 +165,7 @@ Test::Test() {
                                           "              [:comparator <string>]\n"
                                           "              [:is / :contains / :matches]\n"
                                           "              <header-names: string-list> <key-list: string-list>\n";
+    _usage_map["ihave"]                 = "ihave <capabilities: string-list>";
     _usage_map["not"]                   = "not <test1: test>";
     _usage_map["size"]                  = "size <:over / :under> <limit: number>";
     _usage_map["valid_notify_method"]   = "valid_notify_method <notification-uris: string-list>";
@@ -156,6 +174,7 @@ Test::Test() {
     _validation_fn_map["anyof"]                 = &validateHasOnlyTestList;
     _validation_fn_map["exists"]                = &validateExists;
     _validation_fn_map["header"]                = &validateHeaderTest;
+    _validation_fn_map["ihave"]                 = &validateIhaveTest;
     _validation_fn_map["not"]                   = &validateNotTest;
     _validation_fn_map["size"]                  = &validateSizeTest;
     _validation_fn_map["valid_notify_method"]   = &validateValidNotifyMethodTest;

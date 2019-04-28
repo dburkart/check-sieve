@@ -328,6 +328,20 @@ bool validateSingleArgumentCommand(const ASTNode *node) {
         return false;
 }
 
+bool validateSingleStringArgumentCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    size_t size = command->children().size();
+
+    if (size != 1)
+        return false;
+    
+    const ASTString *argument = dynamic_cast<const ASTString*>(command->children()[0]);
+    if (argument == NULL)
+        return false;
+    
+    return true;
+}
+
 bool validateBreakCommand(const ASTNode *node) {
     const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
     size_t size = command->children().size();
@@ -420,6 +434,7 @@ Command::Command() {
     _usage_map["discard"] = "discard";
     _usage_map["enclose"] = "enclose <:subject string> <:headers string-list> string";
     _usage_map["ereject"] = "ereject <reason: string>";
+    _usage_map["error"] = "error <message: string>";
     _usage_map["extracttext"] = "extracttext [MODIFIER] [:first number] <varname: string>";
     _usage_map["fileinto"] = "fileinto [:flags <list-of-flags: string-list>][:copy] <folder: string>";
     _usage_map["foreverypart"] = "foreverypart [:name string] block";
@@ -443,7 +458,8 @@ Command::Command() {
     _validation_fn_map["deleteheader"] = &validateDeleteHeadersCommand;
     _validation_fn_map["discard"] = &validateBareCommand;
     _validation_fn_map["enclose"] = &validateEncloseCommand;
-    _validation_fn_map["ereject"] = &validateSingleArgumentCommand;
+    _validation_fn_map["ereject"] = &validateSingleStringArgumentCommand;
+    _validation_fn_map["error"] = &validateSingleStringArgumentCommand;
     _validation_fn_map["extracttext"] = &validateExtracttextCommand;
     _validation_fn_map["fileinto"] = &validateFileintoCommand;
     _validation_fn_map["foreverypart"] = &validateForeverypartCommand;
@@ -460,6 +476,7 @@ Command::Command() {
     _validation_fn_map["setflag"] = &validateIMAP4FlagsAction;
     _validation_fn_map["stop"] = &validateBareCommand;
     _validation_fn_map["vacation"] = &validateVacationCommand;
+    
 }
 
 bool Command::validate(const ASTCommand *command) {

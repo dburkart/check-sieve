@@ -10,7 +10,8 @@ namespace sieve
 ASTVerificationVisitor::ASTVerificationVisitor(struct parse_options options)
     : _verification_result()
     , _command()
-    , _options( options ) {
+    , _options( options )
+    , _required_capabilities( NULL ) {
     _init();
 }
 
@@ -75,242 +76,16 @@ void ASTVerificationVisitor::visit( ASTNumeric* node ) {
 
 void ASTVerificationVisitor::visit( ASTRequire* node ) {
     std::vector<sieve::ASTNode *> children = node->children();
-    ASTStringList *requires = NULL;
 
     // If we are requiring multiple modules, we need our grandchildren
     if (dynamic_cast<ASTStringList *>(children[0]) != NULL) {
-        requires = dynamic_cast<ASTStringList *>(children[0]);
+        _required_capabilities = dynamic_cast<ASTStringList *>(children[0]);
         children = children[0]->children();
     }
 
     for (std::vector<sieve::ASTNode *>::iterator it = children.begin(); it != children.end(); ++it) {
         sieve::ASTString *child = static_cast<ASTString *>(*it);
-
-        // "copy"
-        // RFC 3894
-        if (child->value() == "copy") {
-            _tag_map[":copy"] = 1;
-        }
-
-        // "body"
-        // RFC 5173
-        if (child->value() == "body") {
-            _test_map["body"] = 1;
-            _tag_map[":raw"] = 1;
-            _tag_map[":content"] = 1;
-            _tag_map[":text"] = 1;
-        }
-
-        // "fileinto"
-        // RFC 5228
-        if (child->value() == "fileinto") {
-            _command_map["fileinto"] = 1;
-        }
-
-        // "reject"
-        // RFC 5228
-        if (child->value() == "reject") {
-            _command_map["reject"] = 1;
-        }
-
-        // "variables"
-        // RFC 5229
-        if (child->value() == "variables") {
-            _command_map["set"] = 1;
-            _test_map["string"] = 1;
-            _tag_map[":lower"] = 1;
-            _tag_map[":upper"] = 1;
-            _tag_map[":lowerfirst"] = 1;
-            _tag_map[":upperfirst"] = 1;
-            _tag_map[":quotewildcard"] = 1;
-            _tag_map[":length"] = 1;
-        }
-
-        // "vacation"
-        // RFC 5230
-        if (child->value() == "vacation") {
-            _command_map["vacation"] = 1;
-            _tag_map[":days"] = 1;
-            _tag_map[":from"] = 1;
-            _tag_map[":subject"] = 1;
-            _tag_map[":addresses"] = 1;
-            _tag_map[":mime"] = 1;
-            _tag_map[":handle"] = 1;
-        }
-
-        // "relational"
-        // RFC 5231
-        if (child->value() == "relational") {
-            _tag_map[":count"] = 1;
-            _tag_map[":value"] = 1;
-        }
-
-        // "imap4flags"
-        // RFC 5232
-        if (child->value() == "imap4flags") {
-            _command_map["setflag"] = 1;
-            _command_map["addflag"] = 1;
-            _command_map["removeflag"] = 1;
-            _test_map["hasflag"] = 1;
-            _tag_map[":flags"] = 1;
-        }
-
-        // "subaddress"
-        // RFC 5233
-        if (child->value() == "subaddress") {
-            _tag_map[":user"] = 1;
-            _tag_map[":detail"] = 1;
-        }
-
-        // "date"
-        // RFC 5260
-        if (child->value() == "date") {
-            _test_map["date"] = 1;
-            _test_map["currentdate"] = 1;
-            _tag_map[":zone"] = 1;
-            _tag_map[":originalzone"] = 1;
-        }
-
-        // "index"
-        // RFC 5260
-        if (child->value() == "index") {
-            _tag_map[":index"] = 1;
-            _tag_map[":last"] = 1;
-        }
-
-        // "spamtest" or "spamtestplus"
-        // RFC 5235
-        if (child->value() == "spamtest" || child->value() == "spamtestplus") {
-            _test_map["spamtest"] = 1;
-            _tag_map[":percent"] = 1;
-        }
-
-        // "virustest"
-        // RFC 5235
-        if (child->value() == "virustest") {
-            _test_map["virustest"] = 1;
-        }
-
-        // "ereject"
-        // RFC 5429
-        if (child->value() == "ereject") {
-            _command_map["ereject"] = 1;
-        }
-
-        // "enotify"
-        // RFC 5435
-        if (child->value() == "enotify") {
-            _command_map["notify"] = 1;
-            _tag_map[":from"] = 1;
-            _tag_map[":importance"] = 1;
-            _tag_map[":options"] = 1;
-            _tag_map[":message"] = 1;
-            _test_map["valid_notify_method"] = 1;
-            _test_map["notify_method_capability"] = 1;
-
-            // The :encodeurl tag can only be used if both "enotify" and
-            // "variables" are required
-            if (requires != NULL &&
-                requires->find(ASTString("variables")) != requires->children().end()) {
-                _tag_map[":encodeurl"] = 1;
-            }
-        }
-
-        // "mailbox"
-        // RFC 5490
-        if (child->value() == "mailbox") {
-            _test_map["mailboxexists"] = 1;
-            _tag_map[":create"] = 1;
-        }
-
-        // "mboxmetadata"
-        // RFC 5490
-        if (child->value() == "mboxmetadata") {
-            _test_map["metadata"] = 1;
-            _test_map["metadataexists"] =1;
-        }
-
-        // "servermetadata"
-        // RFC 5490
-        if (child->value() == "servermetadata") {
-            _test_map["servermetadata"] = 1;
-            _test_map["servermetadataexists"] = 1;
-        }
-
-        // "foreverypart"
-        // RFC 5703
-        if (child->value() == "foreverypart") {
-            _command_map["foreverypart"] = 1;
-            _command_map["break"] = 1;
-            _tag_map[":name"] = 1;
-        }
-
-        // "mime"
-        // RFC 5703
-        if (child->value() == "mime") {
-            _tag_map[":mime"] = 1;
-            _tag_map[":type"] = 1;
-            _tag_map[":subtype"] = 1;
-            _tag_map[":contenttype"] = 1;
-            _tag_map[":param"] = 1;
-            _tag_map[":anychild"] = 1;
-        }
-
-        // "extracttext"
-        // RFC 5703
-        if (child->value() == "extracttext") {
-            _command_map["extracttext"] = 1;
-            _tag_map[":first"] = 1;
-        }
-
-        // "replace"
-        // RFC 5703
-        if (child->value() == "replace") {
-            _command_map["replace"] = 1;
-            _tag_map[":subject"] = 1;
-            _tag_map[":from"] = 1;
-        }
-
-        // "enclose"
-        // RFC 5703
-        if (child->value() == "enclose") {
-            _command_map["enclose"] = 1;
-            _tag_map[":subject"] = 1;
-            _tag_map[":headers"] = 1;
-        }
-
-        // "include"
-        // RFC 6609
-        if (child->value() == "include") {
-            _command_map["include"] = 1;
-            _command_map["return"] = 1;
-            _tag_map[":once"] = 1;
-            _tag_map[":optional"] = 1;
-            _tag_map[":personal"] = 1;
-            _tag_map[":global"] = 1;
-
-            // The "global" command can only be used if both "include" and
-            // "variables" are required
-            if (requires != NULL &&
-                requires->find(ASTString("variables")) != requires->children().end()) {
-                _command_map["global"] = 1;
-            }
-        }
-
-        // DRAFT RFCs
-
-        // "regex"
-        // (https://tools.ietf.org/html/draft-ietf-sieve-regex-01)
-        if (child->value() == "regex") {
-            _tag_map[":regex"] = 1;
-
-            // The ":quoteregex" command is supported if both "regex" and
-            // "variables" are required
-            if (requires != NULL &&
-                requires->find(ASTString("variables")) != requires->children().end()) {
-                _tag_map[":quoteregex"] = 1;
-            }
-        }
+        _enable_capability(child->value());
     }
 }
 
@@ -419,6 +194,234 @@ void ASTVerificationVisitor::_init() {
     // TODO: "Comparators other than "i;octet" and "i;ascii-casemap" must be
     // declared with require, as they are extensions"
     _tag_map[":comparator"] = 1;
+}
+
+void ASTVerificationVisitor::_enable_capability(std::string capability) {
+    // "copy"
+    // RFC 3894
+    if (capability == "copy") {
+        _tag_map[":copy"] = 1;
+    }
+
+    // "body"
+    // RFC 5173
+    if (capability == "body") {
+        _test_map["body"] = 1;
+        _tag_map[":raw"] = 1;
+        _tag_map[":content"] = 1;
+        _tag_map[":text"] = 1;
+    }
+
+    // "fileinto"
+    // RFC 5228
+    if (capability == "fileinto") {
+        _command_map["fileinto"] = 1;
+    }
+
+    // "reject"
+    // RFC 5228
+    if (capability == "reject") {
+        _command_map["reject"] = 1;
+    }
+
+    // "variables"
+    // RFC 5229
+    if (capability == "variables") {
+        _command_map["set"] = 1;
+        _test_map["string"] = 1;
+        _tag_map[":lower"] = 1;
+        _tag_map[":upper"] = 1;
+        _tag_map[":lowerfirst"] = 1;
+        _tag_map[":upperfirst"] = 1;
+        _tag_map[":quotewildcard"] = 1;
+        _tag_map[":length"] = 1;
+    }
+
+    // "vacation"
+    // RFC 5230
+    if (capability == "vacation") {
+        _command_map["vacation"] = 1;
+        _tag_map[":days"] = 1;
+        _tag_map[":from"] = 1;
+        _tag_map[":subject"] = 1;
+        _tag_map[":addresses"] = 1;
+        _tag_map[":mime"] = 1;
+        _tag_map[":handle"] = 1;
+    }
+
+    // "relational"
+    // RFC 5231
+    if (capability == "relational") {
+        _tag_map[":count"] = 1;
+        _tag_map[":value"] = 1;
+    }
+
+    // "imap4flags"
+    // RFC 5232
+    if (capability == "imap4flags") {
+        _command_map["setflag"] = 1;
+        _command_map["addflag"] = 1;
+        _command_map["removeflag"] = 1;
+        _test_map["hasflag"] = 1;
+        _tag_map[":flags"] = 1;
+    }
+
+    // "subaddress"
+    // RFC 5233
+    if (capability == "subaddress") {
+        _tag_map[":user"] = 1;
+        _tag_map[":detail"] = 1;
+    }
+
+    // "date"
+    // RFC 5260
+    if (capability == "date") {
+        _test_map["date"] = 1;
+        _test_map["currentdate"] = 1;
+        _tag_map[":zone"] = 1;
+        _tag_map[":originalzone"] = 1;
+    }
+
+    // "index"
+    // RFC 5260
+    if (capability == "index") {
+        _tag_map[":index"] = 1;
+        _tag_map[":last"] = 1;
+    }
+
+    // "spamtest" or "spamtestplus"
+    // RFC 5235
+    if (capability == "spamtest" || capability == "spamtestplus") {
+        _test_map["spamtest"] = 1;
+        _tag_map[":percent"] = 1;
+    }
+
+    // "virustest"
+    // RFC 5235
+    if (capability == "virustest") {
+        _test_map["virustest"] = 1;
+    }
+
+    // "ereject"
+    // RFC 5429
+    if (capability == "ereject") {
+        _command_map["ereject"] = 1;
+    }
+
+    // "enotify"
+    // RFC 5435
+    if (capability == "enotify") {
+        _command_map["notify"] = 1;
+        _tag_map[":from"] = 1;
+        _tag_map[":importance"] = 1;
+        _tag_map[":options"] = 1;
+        _tag_map[":message"] = 1;
+        _test_map["valid_notify_method"] = 1;
+        _test_map["notify_method_capability"] = 1;
+
+        // The :encodeurl tag can only be used if both "enotify" and
+        // "variables" are required
+        if (_required_capabilities != NULL &&
+            _required_capabilities->find(ASTString("variables")) != _required_capabilities->children().end()) {
+            _tag_map[":encodeurl"] = 1;
+        }
+    }
+
+    // "mailbox"
+    // RFC 5490
+    if (capability == "mailbox") {
+        _test_map["mailboxexists"] = 1;
+        _tag_map[":create"] = 1;
+    }
+
+    // "mboxmetadata"
+    // RFC 5490
+    if (capability == "mboxmetadata") {
+        _test_map["metadata"] = 1;
+        _test_map["metadataexists"] =1;
+    }
+
+    // "servermetadata"
+    // RFC 5490
+    if (capability == "servermetadata") {
+        _test_map["servermetadata"] = 1;
+        _test_map["servermetadataexists"] = 1;
+    }
+
+    // "foreverypart"
+    // RFC 5703
+    if (capability == "foreverypart") {
+        _command_map["foreverypart"] = 1;
+        _command_map["break"] = 1;
+        _tag_map[":name"] = 1;
+    }
+
+    // "mime"
+    // RFC 5703
+    if (capability == "mime") {
+        _tag_map[":mime"] = 1;
+        _tag_map[":type"] = 1;
+        _tag_map[":subtype"] = 1;
+        _tag_map[":contenttype"] = 1;
+        _tag_map[":param"] = 1;
+        _tag_map[":anychild"] = 1;
+    }
+
+    // "extracttext"
+    // RFC 5703
+    if (capability == "extracttext") {
+        _command_map["extracttext"] = 1;
+        _tag_map[":first"] = 1;
+    }
+
+    // "replace"
+    // RFC 5703
+    if (capability == "replace") {
+        _command_map["replace"] = 1;
+        _tag_map[":subject"] = 1;
+        _tag_map[":from"] = 1;
+    }
+
+    // "enclose"
+    // RFC 5703
+    if (capability == "enclose") {
+        _command_map["enclose"] = 1;
+        _tag_map[":subject"] = 1;
+        _tag_map[":headers"] = 1;
+    }
+
+    // "include"
+    // RFC 6609
+    if (capability == "include") {
+        _command_map["include"] = 1;
+        _command_map["return"] = 1;
+        _tag_map[":once"] = 1;
+        _tag_map[":optional"] = 1;
+        _tag_map[":personal"] = 1;
+        _tag_map[":global"] = 1;
+
+        // The "global" command can only be used if both "include" and
+        // "variables" are required
+        if (_required_capabilities != NULL &&
+            _required_capabilities->find(ASTString("variables")) != _required_capabilities->children().end()) {
+            _command_map["global"] = 1;
+        }
+    }
+
+    // DRAFT RFCs
+
+    // "regex"
+    // (https://tools.ietf.org/html/draft-ietf-sieve-regex-01)
+    if (capability == "regex") {
+        _tag_map[":regex"] = 1;
+
+        // The ":quoteregex" command is supported if both "regex" and
+        // "variables" are required
+        if (_required_capabilities != NULL &&
+            _required_capabilities->find(ASTString("variables")) != _required_capabilities->children().end()) {
+            _tag_map[":quoteregex"] = 1;
+        }
+    }
 }
 
 } // namespace sieve

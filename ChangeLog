@@ -1,3 +1,15 @@
+Version 0.6:
+ * Add manpage for check-sieve(1).
+ * Add a --max-list-length option to validate list length.
+ * Update python tests to use Python 3.7.
+ * Fix various small bugs in the tool.
+ * Add support for Spamtest Extension (RFC 5235).
+ * Add support for Mailbox Extension (RFC 5490).
+ * Add support for Notifications Extension (RFC 5435).
+ * Add support for Subaddress Extension (RFC 5233).
+ * Add support for Ihave Extension (RFC 5463).
+ * Add support for Environment Extension (RFC 5183).
+
 Version 0.5:
  * Implement Editheader Extension (RFC 5239).
  * Implement Regex Extension (DRAFT).

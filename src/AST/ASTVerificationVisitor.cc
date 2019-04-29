@@ -221,6 +221,12 @@ void ASTVerificationVisitor::_enable_capability(std::string capability) {
         _tag_map[":text"] = 1;
     }
 
+    // "environment"
+    // RFC 5183
+    if (capability == "environment") {
+        _test_map["environment"] = 1;
+    }
+
     // "fileinto"
     // RFC 5228
     if (capability == "fileinto") {

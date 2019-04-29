@@ -156,15 +156,52 @@ bool validateIhaveTest(const ASTNode *node) {
     return true;
 }
 
+bool validateEnvironmentTest(const ASTNode *node) {
+    const ASTTest *test = dynamic_cast<const ASTTest*>(node);
+    std::vector<ASTNode *> children = node->children();
+    size_t size = children.size();
+
+    if (size < 2)
+        return false;
+
+    const ASTString *name_node = dynamic_cast<const ASTString*>(children[size-2]);
+    const ASTString *key = dynamic_cast<const ASTString*>(children[size-1]);
+    const ASTStringList *key_list = dynamic_cast<const ASTStringList*>(children[size-1]);
+
+    // TODO: Validation for [COMPARATOR] / [MATCH-TYPE]
+
+    if (name_node == NULL || (key_list == NULL && key == NULL))
+        return false;
+
+    std::string name = name_node->value();
+
+    if (name != "domain" &&
+        name != "host" &&
+        name != "location" &&
+        name != "name" &&
+        name != "phase" &&
+        name != "remote-host" &&
+        name != "remote-ip" &&
+        name != "version") {
+            return false;
+        }
+
+    return true;
+}
+
 Test::Test() {
     _usage_map["allof"]                 = "allof <tests: test-list>";
     _usage_map["anyof"]                 = "anyof <tests: test-list>";
     _usage_map["exists"]                = "exists [:mime] [:anychild] <header-names: string-list>\n";
-    _usage_map["header"]                =        "header [:mime] [:anychild] [:regex]\n"
-                                          "              [:type / :subtype / :contenttype / :param <param-list: string-list>]\n"
-                                          "              [:comparator <string>]\n"
-                                          "              [:is / :contains / :matches]\n"
-                                          "              <header-names: string-list> <key-list: string-list>\n";
+    _usage_map["environment"]           =        "environment [COMPARATOR] [MATCH-TYPE] <name: string>                    \n"
+                                          "                   <key-list: string-list>                                     \n"
+                                          "                   Where name is one of: domain, host, location, name, phase,  \n"
+                                          "                                         remote-host, remote-ip, or version    \n";
+    _usage_map["header"]                =        "header [:mime] [:anychild] [:regex]                                     \n"
+                                          "              [:type / :subtype / :contenttype / :param <params: string-list>] \n"
+                                          "              [:comparator <string>]                                           \n"
+                                          "              [:is / :contains / :matches]                                     \n"
+                                          "              <header-names: string-list> <key-list: string-list>              \n";
     _usage_map["ihave"]                 = "ihave <capabilities: string-list>";
     _usage_map["not"]                   = "not <test1: test>";
     _usage_map["size"]                  = "size <:over / :under> <limit: number>";
@@ -172,6 +209,7 @@ Test::Test() {
 
     _validation_fn_map["allof"]                 = &validateHasOnlyTestList;
     _validation_fn_map["anyof"]                 = &validateHasOnlyTestList;
+    _validation_fn_map["environment"]           = &validateEnvironmentTest;
     _validation_fn_map["exists"]                = &validateExists;
     _validation_fn_map["header"]                = &validateHeaderTest;
     _validation_fn_map["ihave"]                 = &validateIhaveTest;

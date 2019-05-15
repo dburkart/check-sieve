@@ -1,3 +1,5 @@
+from sys import platform
+
 import unittest
 import checksieve
 
@@ -56,6 +58,7 @@ class TestVariables(unittest.TestCase):
         '''
         self.assertFalse(checksieve.parse_string(sieve, False))
 
+    @unittest.skipIf(platform == "linux", "This code path is currently compiled out on Linux")
     def test_bad_varname(self):
         sieve = '''
         require "variables";

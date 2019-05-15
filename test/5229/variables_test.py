@@ -2,14 +2,14 @@ import unittest
 import checksieve
 
 class TestVariables(unittest.TestCase):
-    
+
     def test_set(self):
         sieve = '''
         require "variables";
         set "honorific" "Mr";
         '''
         self.assertFalse(checksieve.parse_string(sieve, False))
-        
+
     def test_mod_length(self):
         sieve = '''
         require "variables";
@@ -37,7 +37,7 @@ class TestVariables(unittest.TestCase):
         set "a" "b" "c" "d";
         '''
         self.assertTrue(checksieve.parse_string(sieve, True))
-    
+
     def test_test_string(self):
         sieve = '''
         require "variables";
@@ -48,6 +48,20 @@ class TestVariables(unittest.TestCase):
         }
         '''
         self.assertFalse(checksieve.parse_string(sieve, False))
+
+    def test_numeral_varname(self):
+        sieve = '''
+        require "variables";
+        set "1" "${state} pending";
+        '''
+        self.assertFalse(checksieve.parse_string(sieve, False))
+
+    def test_bad_varname(self):
+        sieve = '''
+        require "variables";
+        set "bad-variable" "no dashes allowed!";
+        '''
+        self.assertTrue(checksieve.parse_string(sieve, True))
 
 
 if __name__ == '__main__':

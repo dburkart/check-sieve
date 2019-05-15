@@ -1,3 +1,5 @@
+#include <regex>
+
 #include "ASTBlock.hh"
 #include "ASTNumeric.hh"
 #include "ASTString.hh"
@@ -267,6 +269,16 @@ bool validateSetCommand(const ASTNode *node) {
         return false;
     }
 
+    // TODO: We blindly allow namespaces in variable names even though they are
+    //       disallowed unless the inclusion of an extension enabling that
+    //       namespace is required.
+    std::string variableName = dynamic_cast<const ASTString*>(children[size-2])->value();
+    std::regex identifierOrDigit("^([a-zA-Z0-9_\\.]+|[0-9])$");
+
+    if (!std::regex_match(variableName, identifierOrDigit)) {
+        return false;
+    }
+
     return true;
 }
 
@@ -334,11 +346,11 @@ bool validateSingleStringArgumentCommand(const ASTNode *node) {
 
     if (size != 1)
         return false;
-    
+
     const ASTString *argument = dynamic_cast<const ASTString*>(command->children()[0]);
     if (argument == NULL)
         return false;
-    
+
     return true;
 }
 
@@ -476,7 +488,7 @@ Command::Command() {
     _validation_fn_map["setflag"] = &validateIMAP4FlagsAction;
     _validation_fn_map["stop"] = &validateBareCommand;
     _validation_fn_map["vacation"] = &validateVacationCommand;
-    
+
 }
 
 bool Command::validate(const ASTCommand *command) {

@@ -49,7 +49,7 @@ int main( int argc, char *argv[] ) {
         if (argv[i][0] == '-' && argv[i][1] == '-') {
             if (strcmp(argv[i], "--max-list-length") == 0) {
                 if (i + 1 >= argc) {
-                    std::cout << "Expected a number after --max-list-length." << std::endl;
+                    std::cerr << "Expected a number after --max-list-length." << std::endl;
                     return 1;
                 }
                 options.string_list_max_length = atoi(argv[i+1]);
@@ -82,7 +82,7 @@ int main( int argc, char *argv[] ) {
                 return 0;
             }
 
-            std::cout << "Unrecognized argument \"" << argv[i] << "\"" << std::endl;
+            std::cerr << "Unrecognized argument \"" << argv[i] << "\"" << std::endl;
             return 1;
         }
         // Short argument
@@ -95,7 +95,7 @@ int main( int argc, char *argv[] ) {
         // Sieve file
         else {
             if (!file_exists(argv[i])) {
-                std::cout << "Could not find file \"" << argv[i] << "\"." << std::endl;
+                std::cerr << "Could not find file \"" << argv[i] << "\"." << std::endl;
                 result = 2;
                 break;
             }

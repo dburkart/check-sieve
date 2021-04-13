@@ -13,6 +13,8 @@ include $(BASE)/gen/Makefile.env
 include $(BASE)/src/Makefile.env
 include $(BASE)/src/AST/Makefile.env
 
+.PHONY: test
+
 all: libchecksieve.a check-sieve
 
 codegen:

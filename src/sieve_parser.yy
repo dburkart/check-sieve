@@ -76,6 +76,7 @@ typedef void* yyscan_t;
 %type <std::vector<sieve::ASTNode *>> string_list
 
 %type <sieve::ASTNode *> command
+%type <sieve::ASTNode *> atomic_command
 %type <std::vector<sieve::ASTNode *>> command_list
 %type <sieve::ASTNode *> block
 %type <sieve::ASTNode *> if_flow
@@ -102,6 +103,15 @@ sieve : END
 
 command_list : command { $$ = std::vector<sieve::ASTNode *>(1, $1); }
     | command_list command { $1.push_back($2); $$ = $1; }
+    ;
+    
+atomic_command :
+      IDENTIFIER arguments
+        {
+            sieve::ASTCommand *command = new sieve::ASTCommand(@1, $1);
+            command->push($2);
+            $$ = dynamic_cast<sieve::ASTNode *>(command);
+        }
     ;
 
 command :
@@ -228,6 +238,12 @@ test :
         }
     | TRUE { $$ = std::vector<sieve::ASTNode *>(1, new sieve::ASTBoolean(@1, $1)); }
     | FALSE { $$ = std::vector<sieve::ASTNode *>(1, new sieve::ASTBoolean(@1, $1)); }
+    | "(" atomic_command ")"
+        {
+            sieve::ASTTest *test = new sieve::ASTTest(@1, "$COMMAND_RESULT");
+            test->push($2);
+            $$ = std::vector<sieve::ASTNode *>(1, test);
+        }
     ;
 
 string_list : STRING_LITERAL {$$ = std::vector<sieve::ASTNode *>(1,  new sieve::ASTString(@1, $1)); }

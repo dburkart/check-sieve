@@ -363,6 +363,7 @@ namespace yy {
       // "number"
       char dummy2[sizeof (int)];
 
+      // atomic_command
       // command
       // block
       // if_flow
@@ -631,13 +632,14 @@ switch (yytype)
         value.template destroy< int > ();
         break;
 
-      case 27: // command
-      case 28: // block
-      case 29: // if_flow
+      case 27: // atomic_command
+      case 28: // command
+      case 29: // block
+      case 30: // if_flow
         value.template destroy< sieve::ASTNode * > ();
         break;
 
-      case 37: // numeric
+      case 38: // numeric
         value.template destroy< sieve::ASTNumeric * > ();
         break;
 
@@ -653,13 +655,13 @@ switch (yytype)
         break;
 
       case 26: // command_list
-      case 30: // arguments
-      case 31: // argument
-      case 32: // test_list
-      case 33: // tests
-      case 34: // test
-      case 35: // string_list
-      case 36: // strings
+      case 31: // arguments
+      case 32: // argument
+      case 33: // test_list
+      case 34: // tests
+      case 35: // test
+      case 36: // string_list
+      case 37: // strings
         value.template destroy< std::vector<sieve::ASTNode *> > ();
         break;
 
@@ -1211,9 +1213,9 @@ switch (yytype)
   // YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
   // positive, shift that token.  If negative, reduce the rule whose
   // number is the opposite.  If YYTABLE_NINF, syntax error.
-  static const unsigned char yytable_[];
+  static const signed char yytable_[];
 
-  static const unsigned char yycheck_[];
+  static const signed char yycheck_[];
 
   // YYSTOS[STATE-NUM] -- The (internal number of the) accessing
   // symbol of state STATE-NUM.
@@ -1234,7 +1236,7 @@ switch (yytype)
     static const char* const yytname_[];
 #if YYDEBUG
   // YYRLINE[YYN] -- Source line where rule number YYN was defined.
-  static const unsigned char yyrline_[];
+  static const unsigned short yyrline_[];
     /// Report on the debug stream that the rule \a r is going to be reduced.
     virtual void yy_reduce_print_ (int r);
     /// Print the state stack on the debug stream.
@@ -1463,9 +1465,9 @@ switch (yytype)
     enum
     {
       yyeof_ = 0,
-      yylast_ = 85,     ///< Last index in yytable_.
-      yynnts_ = 14,  ///< Number of nonterminal symbols.
-      yyfinal_ = 30, ///< Termination state number.
+      yylast_ = 115,     ///< Last index in yytable_.
+      yynnts_ = 15,  ///< Number of nonterminal symbols.
+      yyfinal_ = 31, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
       yyntokens_ = 24  ///< Number of tokens.
@@ -1546,13 +1548,14 @@ switch (yytype)
         value.move< int > (std::move (that.value));
         break;
 
-      case 27: // command
-      case 28: // block
-      case 29: // if_flow
+      case 27: // atomic_command
+      case 28: // command
+      case 29: // block
+      case 30: // if_flow
         value.move< sieve::ASTNode * > (std::move (that.value));
         break;
 
-      case 37: // numeric
+      case 38: // numeric
         value.move< sieve::ASTNumeric * > (std::move (that.value));
         break;
 
@@ -1568,13 +1571,13 @@ switch (yytype)
         break;
 
       case 26: // command_list
-      case 30: // arguments
-      case 31: // argument
-      case 32: // test_list
-      case 33: // tests
-      case 34: // test
-      case 35: // string_list
-      case 36: // strings
+      case 31: // arguments
+      case 32: // argument
+      case 33: // test_list
+      case 34: // tests
+      case 35: // test
+      case 36: // string_list
+      case 37: // strings
         value.move< std::vector<sieve::ASTNode *> > (std::move (that.value));
         break;
 
@@ -1602,13 +1605,14 @@ switch (yytype)
         value.copy< int > (YY_MOVE (that.value));
         break;
 
-      case 27: // command
-      case 28: // block
-      case 29: // if_flow
+      case 27: // atomic_command
+      case 28: // command
+      case 29: // block
+      case 30: // if_flow
         value.copy< sieve::ASTNode * > (YY_MOVE (that.value));
         break;
 
-      case 37: // numeric
+      case 38: // numeric
         value.copy< sieve::ASTNumeric * > (YY_MOVE (that.value));
         break;
 
@@ -1624,13 +1628,13 @@ switch (yytype)
         break;
 
       case 26: // command_list
-      case 30: // arguments
-      case 31: // argument
-      case 32: // test_list
-      case 33: // tests
-      case 34: // test
-      case 35: // string_list
-      case 36: // strings
+      case 31: // arguments
+      case 32: // argument
+      case 33: // test_list
+      case 34: // tests
+      case 35: // test
+      case 36: // string_list
+      case 37: // strings
         value.copy< std::vector<sieve::ASTNode *> > (YY_MOVE (that.value));
         break;
 
@@ -1665,13 +1669,14 @@ switch (yytype)
         value.move< int > (YY_MOVE (s.value));
         break;
 
-      case 27: // command
-      case 28: // block
-      case 29: // if_flow
+      case 27: // atomic_command
+      case 28: // command
+      case 29: // block
+      case 30: // if_flow
         value.move< sieve::ASTNode * > (YY_MOVE (s.value));
         break;
 
-      case 37: // numeric
+      case 38: // numeric
         value.move< sieve::ASTNumeric * > (YY_MOVE (s.value));
         break;
 
@@ -1687,13 +1692,13 @@ switch (yytype)
         break;
 
       case 26: // command_list
-      case 30: // arguments
-      case 31: // argument
-      case 32: // test_list
-      case 33: // tests
-      case 34: // test
-      case 35: // string_list
-      case 36: // strings
+      case 31: // arguments
+      case 32: // argument
+      case 33: // test_list
+      case 34: // tests
+      case 35: // test
+      case 36: // string_list
+      case 37: // strings
         value.move< std::vector<sieve::ASTNode *> > (YY_MOVE (s.value));
         break;
 
@@ -1770,7 +1775,7 @@ switch (yytype)
 
 
 } // yy
-#line 1774 "../gen/sieve_parser.tab.hh" // lalr1.cc:417
+#line 1779 "../gen/sieve_parser.tab.hh" // lalr1.cc:417
 
 
 

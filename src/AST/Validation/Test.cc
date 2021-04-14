@@ -26,7 +26,11 @@ Test::Test() {
     _usage_map["environment"]           =        "environment [COMPARATOR] [MATCH-TYPE] <name: string>                    \n"
                                           "                   <key-list: string-list>                                     \n"
                                           "                   Where name is one of: domain, host, location, name, phase,  \n"
-                                          "                                         remote-host, remote-ip, or version    \n";
+                                          "                                         remote-host, remote-ip, or version    \n"
+                                          "                                                                               \n"
+                                          "                   If using 'imapsieve' capability, name can be one of:        \n"
+                                          "                                         imap.user, imap.email, imap.cause,    \n"
+                                          "                                         imap.mailbox, imap.changedflags       \n";
     _usage_map["header"]                =        "header [:mime] [:anychild] [:regex]                                     \n"
                                           "              [:type / :subtype / :contenttype / :param <params: string-list>] \n"
                                           "              [:comparator <string>]                                           \n"

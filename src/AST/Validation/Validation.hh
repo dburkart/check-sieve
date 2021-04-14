@@ -30,6 +30,8 @@ private:
     const ASTVisitor *_visitor;
 };
 
+typedef bool (Validator::* ValidationFunctionPtr2)(const ASTNode *);
+
 }
 
 #endif

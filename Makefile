@@ -5,7 +5,7 @@ INSTALL_PREFIX := /usr/local
 endif
 
 ifdef DEBUG
-CFLAGS += -DDEBUG
+CFLAGS += -DDEBUG -g
 endif
 
 include $(BASE)/Makefile.shared

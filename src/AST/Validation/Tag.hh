@@ -10,13 +10,13 @@
 namespace sieve 
 {
 
-class Tag {
+class Tag : public Validator{
 public:
     Tag();
     ~Tag() {}
 
-    bool validate(const ASTTag *tag);
-    std::string usage(const ASTTag *tag);
+    bool validate(const ASTNode *tag);
+    std::string usage(const ASTNode *tag);
 
 private:
     std::map<std::string, ValidationFunctionPtr> _validation_fn_map;

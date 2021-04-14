@@ -183,8 +183,18 @@ bool validateEnvironmentTest(const ASTNode *node) {
         name != "remote-host" &&
         name != "remote-ip" &&
         name != "version") {
-            return false;
-        }
+        return false;
+    }
+    
+    // RFC 6785
+    // TODO: Check that imapsieve is required
+    if (name != "imap.user" &&
+        name != "imap.email" &&
+        name != "imap.cause" &&
+        name != "imap.mailbox" &&
+        name != "imap.changedflags") {
+        return false;
+    }
 
     return true;
 }
@@ -218,7 +228,9 @@ Test::Test() {
     _validation_fn_map["valid_notify_method"]   = &validateValidNotifyMethodTest;
 }
 
-bool Test::validate(const ASTTest *test) {
+bool Test::validate(const ASTNode *node) {
+    const ASTTest *test = dynamic_cast<const ASTTest*>(node);
+    
     if (!_validation_fn_map[test->value()]) {
         DEBUGLOG(test->value() + " test is missing validation.")
         return true;
@@ -227,7 +239,8 @@ bool Test::validate(const ASTTest *test) {
     return _validation_fn_map[test->value()](test);
 }
 
-std::string Test::usage(const ASTTest *test) {
+std::string Test::usage(const ASTNode *node) {
+    const ASTTest *test = dynamic_cast<const ASTTest*>(node);
     return "Usage: " + _usage_map[test->value()];
 }
 

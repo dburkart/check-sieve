@@ -10,13 +10,13 @@
 namespace sieve 
 {
 
-class Test {
+class Test : public Validator {
 public:
     Test();
     ~Test() {}
 
-    bool validate(const ASTTest *command);
-    std::string usage(const ASTTest *command);
+    bool validate(const ASTNode *command);
+    std::string usage(const ASTNode *command);
 
 private:
     std::map<std::string, ValidationFunctionPtr> _validation_fn_map;

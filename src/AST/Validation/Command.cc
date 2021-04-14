@@ -496,7 +496,9 @@ Command::Command() {
 
 }
 
-bool Command::validate(const ASTCommand *command) {
+bool Command::validate(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+
     if (!_validation_fn_map[command->value()]) {
         DEBUGLOG(command->value() + " command is missing validation.")
         return true;
@@ -505,7 +507,8 @@ bool Command::validate(const ASTCommand *command) {
     return _validation_fn_map[command->value()](command);
 }
 
-std::string Command::usage(const ASTCommand *command) {
+std::string Command::usage(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
     return "Usage: " + _usage_map[command->value()];
 }
 

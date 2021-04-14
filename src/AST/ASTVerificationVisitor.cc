@@ -10,6 +10,8 @@ namespace sieve
 ASTVerificationVisitor::ASTVerificationVisitor(struct parse_options options)
     : _verification_result()
     , _command()
+    , _test()
+    , _tag()
     , _options( options )
     , _required_capabilities( NULL ) {
     _init();
@@ -85,6 +87,7 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
 
     for (std::vector<sieve::ASTNode *>::iterator it = children.begin(); it != children.end(); ++it) {
         sieve::ASTString *child = static_cast<ASTString *>(*it);
+        _capability_map[child->value()] = 1;
         _enable_capability(child->value());
     }
 }
@@ -203,6 +206,12 @@ void ASTVerificationVisitor::_init() {
     // TODO: "Comparators other than "i;octet" and "i;ascii-casemap" must be
     // declared with require, as they are extensions"
     _tag_map[":comparator"] = 1;
+    
+    // Set up references to this visitor for introspection
+    _command.set_visitor(this);
+    _test.set_visitor(this);
+    _tag.set_visitor(this);
+    
 }
 
 void ASTVerificationVisitor::_enable_capability(std::string capability) {

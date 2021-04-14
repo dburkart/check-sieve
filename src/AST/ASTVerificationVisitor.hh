@@ -33,6 +33,8 @@ public:
     void visit( ASTTest* );
 
     parse_result result() { return _verification_result; }
+    
+    bool requires_capability( std::string capability ) { return _capability_map[capability]; }
 
 private:
     void _init();
@@ -41,7 +43,8 @@ private:
 
     struct parse_options _options;
     parse_result _verification_result;
-
+    
+    std::map<std::string, bool> _capability_map;
     std::map<std::string, bool> _command_map;
     std::map<std::string, bool> _test_map;
     std::map<std::string, bool> _tag_map;

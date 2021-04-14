@@ -48,7 +48,9 @@ Tag::Tag() {
     _validation_fn_map[":subject"] = &validateSingleString;
 }
 
-bool Tag::validate(const ASTTag *tag) {
+bool Tag::validate(const ASTNode *node) {
+    const ASTTag *tag = dynamic_cast<const ASTTag*>(node);
+    
     if (!_validation_fn_map[tag->value()]) {
         DEBUGLOG(tag->value() + " tag is missing validation.")
         return true;
@@ -57,7 +59,8 @@ bool Tag::validate(const ASTTag *tag) {
     return _validation_fn_map[tag->value()](tag);
 }
 
-std::string Tag::usage(const ASTTag *tag) {
+std::string Tag::usage(const ASTNode *node) {
+    const ASTTag *tag = dynamic_cast<const ASTTag*>(node);
     return "Usage: " + _usage_map[tag->value()];
 }
 }

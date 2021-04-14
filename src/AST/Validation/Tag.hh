@@ -19,7 +19,11 @@ public:
     std::string usage(const ASTNode *tag);
 
 private:
-    std::map<std::string, ValidationFunctionPtr> _validation_fn_map;
+    // Validation functions
+    bool _validateSingleString(const ASTNode *node);
+    bool _validateSingleNumeric(const ASTNode *node);
+    
+    std::map<std::string, bool (Tag::*)(const ASTNode *)> _validation_fn_map;
     std::map<std::string, std::string> _usage_map;
 };
 

@@ -13,436 +13,6 @@
 namespace sieve
 {
 
-bool validateAddHeadersCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
-    std::vector<sieve::ASTNode *> children = command->children();
-    size_t size = command->children().size();
-
-    if (size != 2 && size != 3)
-        return false;
-
-    int i = 0;
-    for (std::vector<ASTNode *>::const_iterator it = children.begin(); it != children.end(); ++it) {
-        const ASTTag *tagChild = dynamic_cast<ASTTag *>(*it);
-        const ASTString *stringChild = dynamic_cast<ASTString *>(*it);
-
-        // If we have 3 children, the first child must be a :last tag.
-        if (size == 3 && i == 0) {
-            if (!tagChild || tagChild->value() != ":last")
-                return false;
-        }
-        // Every other child must be a string
-        else if (!stringChild) {
-            return false;
-        }
-
-        i++;
-    }
-
-    return true;
-}
-
-bool validateDeleteHeadersCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
-    std::vector<sieve::ASTNode *> children = command->children();
-    std::vector<ASTNode *>::const_iterator it;
-    size_t size = command->children().size();
-    size_t minSize = 1;
-
-    ASTNumeric* numeric;
-    ASTTag* tag;
-
-    // :index
-    std::vector<ASTNode *>::const_iterator indexTag = command->find(ASTTag(":index"));
-    if (indexTag != command->children().end()) {
-        // Must be the first child
-        if (indexTag != command->children().begin())
-            return false;
-
-        minSize += 2;
-        it = indexTag + 1;
-
-        // Ensure that the next argument is a numeric
-        //const T* child = dynamic_cast<T*>(*it);
-        numeric = dynamic_cast<ASTNumeric*>(*it);
-        if (numeric == NULL)
-            return false;
-
-        indexTag++;
-        it = indexTag + 1;
-
-        // Allow a :last tag, but only if it's the next child
-        std::vector<ASTNode *>::const_iterator lastTag = command->find(ASTTag(":last"));
-        if (lastTag != command->children().end() && lastTag != it)
-            return false;
-
-        if (lastTag != command->children().end() && lastTag == it) {
-            indexTag++;
-            minSize += 1;
-        }
-    } else {
-        // Ensure that :last hasn't been specified since their's no :index
-        std::vector<ASTNode *>::const_iterator lastTag = command->find(ASTTag(":last"));
-
-        if (indexTag != command->children().end())
-            return false;
-    }
-
-    // TODO: Validate comparators
-    // it = indexTag + 1;
-    // tag = dynamic_cast<ASTTag*>(*it);
-    // if (tag)
-    //     minSize += 1;
-
-    if (size < minSize)
-        return false;
-
-    // TODO: Validate string-list
-
-    return true;
-}
-
-
-// Validation logic
-// TODO: Think about if this is the right way to do this
-bool validateIncludeCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
-    size_t size = command->children().size();
-
-    if (size < 5 && size > 0)
-        return true;
-    else
-        return false;
-}
-
-bool validateIMAP4FlagsAction(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
-    size_t size = command->children().size();
-
-    if (size > 0 && size < 3)
-        return true;
-    else
-        return false;
-}
-
-bool validateFileintoCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
-    std::vector<sieve::ASTNode *> children = command->children();
-    size_t size = children.size();
-
-    if (size < 1)
-        return false;
-
-    int minArguments = 1;
-
-    if (command->find(ASTTag(":flags")) != command->children().end()) {
-        minArguments += 2;
-    }
-
-    if (command->find(ASTTag(":copy")) != command->children().end()) {
-        minArguments++;
-    }
-
-    if (size < minArguments) {
-        return false;
-    }
-
-    return true;
-}
-
-bool validateKeepCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
-    std::vector<sieve::ASTNode *> children = command->children();
-    size_t size = children.size();
-
-    int numArguments = 0;
-
-    if (command->find(ASTTag(":flags")) != command->children().end()) {
-        numArguments += 2;
-    }
-
-    if (size != numArguments) {
-        return false;
-    }
-
-    return true;
-}
-
-bool validateReplaceCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
-    std::vector<sieve::ASTNode *> children = command->children();
-    size_t size = children.size();
-
-    int numArguments = 1;
-
-    if (command->find(ASTTag(":mime")) != command->children().end()) {
-        numArguments += 1;
-    }
-
-    if (command->find(ASTTag(":subject")) != command->children().end()) {
-        numArguments += 2;
-    }
-
-    if (command->find(ASTTag(":from")) != command->children().end()) {
-        numArguments += 2;
-    }
-
-    if (size != numArguments) {
-        return false;
-    }
-
-    return true;
-}
-
-bool validateEncloseCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
-    std::vector<sieve::ASTNode *> children = command->children();
-    size_t size = children.size();
-
-    int numArguments = 1;
-
-    if (command->find(ASTTag(":subject")) != command->children().end()) {
-        numArguments += 2;
-    }
-
-    if (command->find(ASTTag(":headers")) != command->children().end()) {
-        numArguments += 2;
-    }
-
-    if (size != numArguments) {
-        return false;
-    }
-
-    return true;
-}
-
-bool validateRedirectCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
-    std::vector<sieve::ASTNode *> children = command->children();
-    size_t size = children.size();
-
-    int numArguments = 1;
-
-    if (command->find(ASTTag(":copy")) != command->children().end()) {
-        numArguments += 1;
-    }
-
-    if (size != numArguments) {
-        return false;
-    }
-
-    return true;
-}
-
-bool validateSetCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
-    std::vector<sieve::ASTNode *> children = command->children();
-    size_t size = children.size();
-
-    int numArguments = 2;
-    int stringArguments = 0;
-
-    for (std::vector<ASTNode *>::const_iterator it = children.begin(); it != children.end(); ++it) {
-        const ASTTag *tagChild = dynamic_cast<ASTTag *>(*it);
-        const ASTString *stringChild = dynamic_cast<ASTString *>(*it);
-
-        if (tagChild && (
-            tagChild->value() == ":lower" ||
-            tagChild->value() == ":upper" ||
-            tagChild->value() == ":lowerfirst" ||
-            tagChild->value() == ":upperfirst" ||
-            tagChild->value() == ":quotewildcard" ||
-            tagChild->value() == ":length" ||
-            tagChild->value() == ":quoteregex" ||
-            tagChild->value() == ":encodeurl"
-           ))
-            numArguments += 1;
-        else if (tagChild)
-            return false;
-
-        if (stringChild)
-            stringArguments++;
-
-        if (stringArguments > 2)
-            return false;
-    }
-
-    if (size != numArguments || stringArguments < 2) {
-        return false;
-    }
-
-// TODO: Regex on Linux core dumps?
-#ifdef __APPLE__
-    // TODO: We blindly allow namespaces in variable names even though they are
-    //       disallowed unless the inclusion of an extension enabling that
-    //       namespace is required.
-    std::string variableName = dynamic_cast<const ASTString*>(children[size-2])->value();
-    std::regex identifierOrDigit("^([a-zA-Z0-9_\\.]+|[0-9])$");
-
-    if (!std::regex_match(variableName, identifierOrDigit)) {
-        return false;
-    }
-#endif
-
-    return true;
-}
-
-bool validateVacationCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
-    std::vector<sieve::ASTNode *> children = command->children();
-    size_t size = children.size();
-
-    int numArguments = 1;
-
-    if (command->find(ASTTag(":days")) != command->children().end()) {
-        numArguments += 2;
-    }
-
-    if (command->find(ASTTag(":subject")) != command->children().end()) {
-        numArguments += 2;
-    }
-
-    if (command->find(ASTTag(":from")) != command->children().end()) {
-        numArguments += 2;
-    }
-
-    if (command->find(ASTTag(":addresses")) != command->children().end()) {
-        numArguments += 2;
-    }
-
-    if (command->find(ASTTag(":mime")) != command->children().end()) {
-        numArguments += 1;
-    }
-
-    if (command->find(ASTTag(":handle")) != command->children().end()) {
-        numArguments += 2;
-    }
-
-    if (size != numArguments) {
-        return false;
-    }
-
-    return true;
-}
-
-bool validateBareCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
-    size_t size = command->children().size();
-
-    if (size == 0)
-        return true;
-    else
-        return false;
-}
-
-bool validateSingleArgumentCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
-    size_t size = command->children().size();
-
-    if (size == 1)
-        return true;
-    else
-        return false;
-}
-
-bool validateSingleStringArgumentCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
-    size_t size = command->children().size();
-
-    if (size != 1)
-        return false;
-
-    const ASTString *argument = dynamic_cast<const ASTString*>(command->children()[0]);
-    if (argument == NULL)
-        return false;
-
-    return true;
-}
-
-bool validateBreakCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
-    size_t size = command->children().size();
-
-    if (size == 0)
-        return true;
-
-    if (size != 2)
-        return false;
-
-    const ASTTag *tagChild = dynamic_cast<ASTTag *>(command->children()[0]);
-    const ASTString *stringChild = dynamic_cast<ASTString *>(command->children()[1]);
-
-    if (tagChild == NULL || stringChild == NULL)
-        return false;
-
-    return true;
-}
-
-bool validateForeverypartCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
-    size_t size = command->children().size();
-
-    if (size != 1 && size != 3)
-        return false;
-
-    if (!nodeIsType<ASTBlock>(command->children()[size-1]))
-        return false;
-
-    if (size == 3) {
-        const ASTTag *tagChild = dynamic_cast<ASTTag *>(command->children()[0]);
-        const ASTString *stringChild = dynamic_cast<ASTString *>(command->children()[1]);
-
-        if (tagChild == NULL || stringChild == NULL)
-            return false;
-    }
-
-    return true;
-}
-
-bool validateExtracttextCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
-    size_t size = command->children().size();
-
-    if (size < 1 && size > 4)
-        return false;
-
-    if (!nodeIsType<ASTString>(command->children()[size-1]))
-        return false;
-
-    return true;
-}
-
-bool validateNotifyCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
-    size_t size = command->children().size();
-
-    int numArguments = 1;
-
-    if (!nodeIsType<ASTString>(command->children()[size-1]))
-        return false;
-
-    if (command->find(ASTTag(":from")) != command->children().end()) {
-        numArguments += 2;
-    }
-
-    if (command->find(ASTTag(":importance")) != command->children().end()) {
-        numArguments += 2;
-    }
-
-    if (command->find(ASTTag(":options")) != command->children().end()) {
-        numArguments += 2;
-    }
-
-    if (command->find(ASTTag(":message")) != command->children().end()) {
-        numArguments += 2;
-    }
-
-    if (size != numArguments)
-        return false;
-
-    return true;
-}
-
 Command::Command() {
     _usage_map["addflag"] = "addflag [<variablename: string>] <list-of-flags: string-list>";
     _usage_map["addheader"] = "addheader [:last] <field-name: string> <value: string>";
@@ -469,30 +39,30 @@ Command::Command() {
     _usage_map["stop"] = "stop";
     _usage_map["vacation"] = "vacation [:days number] [:subject string] [:from string]\n\t[:addresses string-list] [:mime] [:handle string] <reason: string>";
 
-    _validation_fn_map["addflag"] = &validateIMAP4FlagsAction;
-    _validation_fn_map["addheader"] = &validateAddHeadersCommand;
-    _validation_fn_map["break"] = &validateBreakCommand;
-    _validation_fn_map["deleteheader"] = &validateDeleteHeadersCommand;
-    _validation_fn_map["discard"] = &validateBareCommand;
-    _validation_fn_map["enclose"] = &validateEncloseCommand;
-    _validation_fn_map["ereject"] = &validateSingleStringArgumentCommand;
-    _validation_fn_map["error"] = &validateSingleStringArgumentCommand;
-    _validation_fn_map["extracttext"] = &validateExtracttextCommand;
-    _validation_fn_map["fileinto"] = &validateFileintoCommand;
-    _validation_fn_map["foreverypart"] = &validateForeverypartCommand;
-    _validation_fn_map["global"] = &validateSingleArgumentCommand;
-    _validation_fn_map["include"] = &validateIncludeCommand;
-    _validation_fn_map["keep"] = &validateKeepCommand;
-    _validation_fn_map["notify"] = &validateNotifyCommand;
-    _validation_fn_map["redirect"] = &validateRedirectCommand;
-    _validation_fn_map["reject"] = &validateSingleArgumentCommand;
-    _validation_fn_map["removeflag"] = &validateIMAP4FlagsAction;
-    _validation_fn_map["replace"] = &validateReplaceCommand;
-    _validation_fn_map["return"] = &validateBareCommand;
-    _validation_fn_map["set"] = &validateSetCommand;
-    _validation_fn_map["setflag"] = &validateIMAP4FlagsAction;
-    _validation_fn_map["stop"] = &validateBareCommand;
-    _validation_fn_map["vacation"] = &validateVacationCommand;
+    _validation_fn_map["addflag"] = &Command::_validateIMAP4FlagsAction;
+    _validation_fn_map["addheader"] = &Command::_validateAddHeadersCommand;
+    _validation_fn_map["break"] = &Command::_validateBreakCommand;
+    _validation_fn_map["deleteheader"] = &Command::_validateDeleteHeadersCommand;
+    _validation_fn_map["discard"] = &Command::_validateBareCommand;
+    _validation_fn_map["enclose"] = &Command::_validateEncloseCommand;
+    _validation_fn_map["ereject"] = &Command::_validateSingleStringArgumentCommand;
+    _validation_fn_map["error"] = &Command::_validateSingleStringArgumentCommand;
+    _validation_fn_map["extracttext"] = &Command::_validateExtracttextCommand;
+    _validation_fn_map["fileinto"] = &Command::_validateFileintoCommand;
+    _validation_fn_map["foreverypart"] = &Command::_validateForeverypartCommand;
+    _validation_fn_map["global"] = &Command::_validateSingleArgumentCommand;
+    _validation_fn_map["include"] = &Command::_validateIncludeCommand;
+    _validation_fn_map["keep"] = &Command::_validateKeepCommand;
+    _validation_fn_map["notify"] = &Command::_validateNotifyCommand;
+    _validation_fn_map["redirect"] = &Command::_validateRedirectCommand;
+    _validation_fn_map["reject"] = &Command::_validateSingleArgumentCommand;
+    _validation_fn_map["removeflag"] = &Command::_validateIMAP4FlagsAction;
+    _validation_fn_map["replace"] = &Command::_validateReplaceCommand;
+    _validation_fn_map["return"] = &Command::_validateBareCommand;
+    _validation_fn_map["set"] = &Command::_validateSetCommand;
+    _validation_fn_map["setflag"] = &Command::_validateIMAP4FlagsAction;
+    _validation_fn_map["stop"] = &Command::_validateBareCommand;
+    _validation_fn_map["vacation"] = &Command::_validateVacationCommand;
 
 }
 
@@ -504,12 +74,442 @@ bool Command::validate(const ASTNode *node) {
         return true;
     }
 
-    return _validation_fn_map[command->value()](command);
+    return (this->*_validation_fn_map[command->value()])(command);
 }
 
 std::string Command::usage(const ASTNode *node) {
     const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
     return "Usage: " + _usage_map[command->value()];
+}
+
+//-- Private members
+bool Command::_validateAddHeadersCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    std::vector<sieve::ASTNode *> children = command->children();
+    size_t size = command->children().size();
+    
+    if (size != 2 && size != 3)
+        return false;
+    
+    int i = 0;
+    for (std::vector<ASTNode *>::const_iterator it = children.begin(); it != children.end(); ++it) {
+        const ASTTag *tagChild = dynamic_cast<ASTTag *>(*it);
+        const ASTString *stringChild = dynamic_cast<ASTString *>(*it);
+    
+        // If we have 3 children, the first child must be a :last tag.
+        if (size == 3 && i == 0) {
+            if (!tagChild || tagChild->value() != ":last")
+                return false;
+        }
+        // Every other child must be a string
+        else if (!stringChild) {
+            return false;
+        }
+    
+        i++;
+    }
+    
+    return true;
+}
+
+bool Command::_validateDeleteHeadersCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    std::vector<sieve::ASTNode *> children = command->children();
+    std::vector<ASTNode *>::const_iterator it;
+    size_t size = command->children().size();
+    size_t minSize = 1;
+    
+    ASTNumeric* numeric;
+    ASTTag* tag;
+    
+    // :index
+    std::vector<ASTNode *>::const_iterator indexTag = command->find(ASTTag(":index"));
+    if (indexTag != command->children().end()) {
+        // Must be the first child
+        if (indexTag != command->children().begin())
+            return false;
+    
+        minSize += 2;
+        it = indexTag + 1;
+    
+        // Ensure that the next argument is a numeric
+        //const T* child = dynamic_cast<T*>(*it);
+        numeric = dynamic_cast<ASTNumeric*>(*it);
+        if (numeric == NULL)
+            return false;
+    
+        indexTag++;
+        it = indexTag + 1;
+    
+        // Allow a :last tag, but only if it's the next child
+        std::vector<ASTNode *>::const_iterator lastTag = command->find(ASTTag(":last"));
+        if (lastTag != command->children().end() && lastTag != it)
+            return false;
+    
+        if (lastTag != command->children().end() && lastTag == it) {
+            indexTag++;
+            minSize += 1;
+        }
+    } else {
+        // Ensure that :last hasn't been specified since their's no :index
+        std::vector<ASTNode *>::const_iterator lastTag = command->find(ASTTag(":last"));
+    
+        if (indexTag != command->children().end())
+            return false;
+    }
+    
+    // TODO: Validate comparators
+    // it = indexTag + 1;
+    // tag = dynamic_cast<ASTTag*>(*it);
+    // if (tag)
+    //     minSize += 1;
+    
+    if (size < minSize)
+        return false;
+    
+    // TODO: Validate string-list
+    
+    return true;
+}
+
+// Validation logic
+// TODO: Think about if this is the right way to do this
+bool Command::_validateIncludeCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    size_t size = command->children().size();
+
+    if (size < 5 && size > 0)
+        return true;
+    else
+        return false;
+}
+
+bool Command::_validateIMAP4FlagsAction(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    size_t size = command->children().size();
+    
+    if (size > 0 && size < 3)
+        return true;
+    else
+        return false;
+}
+
+bool Command::_validateFileintoCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    std::vector<sieve::ASTNode *> children = command->children();
+    size_t size = children.size();
+    
+    if (size < 1)
+        return false;
+    
+    int minArguments = 1;
+    
+    if (command->find(ASTTag(":flags")) != command->children().end()) {
+        minArguments += 2;
+    }
+    
+    if (command->find(ASTTag(":copy")) != command->children().end()) {
+        minArguments++;
+    }
+    
+    if (size < minArguments) {
+        return false;
+    }
+    
+    return true;
+}
+
+bool Command::_validateKeepCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    std::vector<sieve::ASTNode *> children = command->children();
+    size_t size = children.size();
+    
+    int numArguments = 0;
+    
+    if (command->find(ASTTag(":flags")) != command->children().end()) {
+        numArguments += 2;
+    }
+    
+    if (size != numArguments) {
+        return false;
+    }
+    
+    return true;
+}
+
+bool Command::_validateReplaceCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    std::vector<sieve::ASTNode *> children = command->children();
+    size_t size = children.size();
+    
+    int numArguments = 1;
+    
+    if (command->find(ASTTag(":mime")) != command->children().end()) {
+        numArguments += 1;
+    }
+    
+    if (command->find(ASTTag(":subject")) != command->children().end()) {
+        numArguments += 2;
+    }
+    
+    if (command->find(ASTTag(":from")) != command->children().end()) {
+        numArguments += 2;
+    }
+    
+    if (size != numArguments) {
+        return false;
+    }
+    
+    return true;
+}
+
+bool Command::_validateEncloseCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    std::vector<sieve::ASTNode *> children = command->children();
+    size_t size = children.size();
+    
+    int numArguments = 1;
+    
+    if (command->find(ASTTag(":subject")) != command->children().end()) {
+        numArguments += 2;
+    }
+    
+    if (command->find(ASTTag(":headers")) != command->children().end()) {
+        numArguments += 2;
+    }
+    
+    if (size != numArguments) {
+        return false;
+    }
+    
+    return true;
+}
+
+bool Command::_validateRedirectCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    std::vector<sieve::ASTNode *> children = command->children();
+    size_t size = children.size();
+    
+    int numArguments = 1;
+    
+    if (command->find(ASTTag(":copy")) != command->children().end()) {
+        numArguments += 1;
+    }
+    
+    if (size != numArguments) {
+        return false;
+    }
+    
+    return true;
+}
+
+bool Command::_validateSetCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    std::vector<sieve::ASTNode *> children = command->children();
+    size_t size = children.size();
+    
+    int numArguments = 2;
+    int stringArguments = 0;
+    
+    for (std::vector<ASTNode *>::const_iterator it = children.begin(); it != children.end(); ++it) {
+        const ASTTag *tagChild = dynamic_cast<ASTTag *>(*it);
+        const ASTString *stringChild = dynamic_cast<ASTString *>(*it);
+    
+        if (tagChild && (
+            tagChild->value() == ":lower" ||
+            tagChild->value() == ":upper" ||
+            tagChild->value() == ":lowerfirst" ||
+            tagChild->value() == ":upperfirst" ||
+            tagChild->value() == ":quotewildcard" ||
+            tagChild->value() == ":length" ||
+            tagChild->value() == ":quoteregex" ||
+            tagChild->value() == ":encodeurl"
+           ))
+            numArguments += 1;
+        else if (tagChild)
+            return false;
+    
+        if (stringChild)
+            stringArguments++;
+    
+        if (stringArguments > 2)
+            return false;
+    }
+    
+    if (size != numArguments || stringArguments < 2) {
+        return false;
+    }
+    
+// TODO: Regex on Linux core dumps?
+#ifdef __APPLE__
+    // TODO: We blindly allow namespaces in variable names even though they are
+    //       disallowed unless the inclusion of an extension enabling that
+    //       namespace is required.
+    std::string variableName = dynamic_cast<const ASTString*>(children[size-2])->value();
+    std::regex identifierOrDigit("^([a-zA-Z0-9_\\.]+|[0-9])$");
+    
+    if (!std::regex_match(variableName, identifierOrDigit)) {
+        return false;
+    }
+#endif
+    
+    return true;
+}
+
+bool Command::_validateVacationCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    std::vector<sieve::ASTNode *> children = command->children();
+    size_t size = children.size();
+    
+    int numArguments = 1;
+    
+    if (command->find(ASTTag(":days")) != command->children().end()) {
+        numArguments += 2;
+    }
+    
+    if (command->find(ASTTag(":subject")) != command->children().end()) {
+        numArguments += 2;
+    }
+    
+    if (command->find(ASTTag(":from")) != command->children().end()) {
+        numArguments += 2;
+    }
+    
+    if (command->find(ASTTag(":addresses")) != command->children().end()) {
+        numArguments += 2;
+    }
+    
+    if (command->find(ASTTag(":mime")) != command->children().end()) {
+        numArguments += 1;
+    }
+    
+    if (command->find(ASTTag(":handle")) != command->children().end()) {
+        numArguments += 2;
+    }
+    
+    if (size != numArguments) {
+        return false;
+    }
+    
+    return true;
+}
+
+bool Command::_validateBareCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    size_t size = command->children().size();
+    
+    if (size == 0)
+        return true;
+    else
+        return false;
+}
+
+bool Command::_validateSingleArgumentCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    size_t size = command->children().size();
+    
+    if (size == 1)
+        return true;
+    else
+        return false;
+}
+
+bool Command::_validateSingleStringArgumentCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    size_t size = command->children().size();
+    
+    if (size != 1)
+        return false;
+    
+    const ASTString *argument = dynamic_cast<const ASTString*>(command->children()[0]);
+    if (argument == NULL)
+        return false;
+    
+    return true;
+}
+
+bool Command::_validateBreakCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    size_t size = command->children().size();
+    
+    if (size == 0)
+        return true;
+    
+    if (size != 2)
+        return false;
+    
+    const ASTTag *tagChild = dynamic_cast<ASTTag *>(command->children()[0]);
+    const ASTString *stringChild = dynamic_cast<ASTString *>(command->children()[1]);
+    
+    if (tagChild == NULL || stringChild == NULL)
+        return false;
+    
+    return true;
+}
+
+bool Command::_validateForeverypartCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    size_t size = command->children().size();
+    
+    if (size != 1 && size != 3)
+        return false;
+    
+    if (!nodeIsType<ASTBlock>(command->children()[size-1]))
+        return false;
+    
+    if (size == 3) {
+        const ASTTag *tagChild = dynamic_cast<ASTTag *>(command->children()[0]);
+        const ASTString *stringChild = dynamic_cast<ASTString *>(command->children()[1]);
+    
+        if (tagChild == NULL || stringChild == NULL)
+            return false;
+    }
+    
+    return true;
+}
+
+bool Command::_validateExtracttextCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    size_t size = command->children().size();
+    
+    if (size < 1 && size > 4)
+        return false;
+    
+    if (!nodeIsType<ASTString>(command->children()[size-1]))
+        return false;
+    
+    return true;
+}
+
+bool Command::_validateNotifyCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    size_t size = command->children().size();
+    
+    int numArguments = 1;
+    
+    if (!nodeIsType<ASTString>(command->children()[size-1]))
+        return false;
+    
+    if (command->find(ASTTag(":from")) != command->children().end()) {
+        numArguments += 2;
+    }
+    
+    if (command->find(ASTTag(":importance")) != command->children().end()) {
+        numArguments += 2;
+    }
+    
+    if (command->find(ASTTag(":options")) != command->children().end()) {
+        numArguments += 2;
+    }
+    
+    if (command->find(ASTTag(":message")) != command->children().end()) {
+        numArguments += 2;
+    }
+    
+    if (size != numArguments)
+        return false;
+    
+    return true;
 }
 
 }

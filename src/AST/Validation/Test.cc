@@ -9,16 +9,6 @@
 
 namespace sieve {
 
-bool validateBareTest(const ASTNode *node) {
-    const ASTTest *test = dynamic_cast<const ASTTest*>(node);
-    size_t size = test->children().size();
-
-    if (size == 0)
-        return true;
-    else
-        return false;
-}
-
 Test::Test() {
     _usage_map["allof"]                 = "allof <tests: test-list>";
     _usage_map["anyof"]                 = "anyof <tests: test-list>";

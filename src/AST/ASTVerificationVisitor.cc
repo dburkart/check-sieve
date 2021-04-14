@@ -192,6 +192,7 @@ void ASTVerificationVisitor::_init() {
     _test_map["size"] = 1;
     _test_map["not"] = 1;
     _test_map["exists"] = 1;
+    _test_map["$command_result"] = 1; // Special test indicating the result of a command
 
     _tag_map[":is"] = 1;
     _tag_map[":contains"] = 1;
@@ -437,6 +438,12 @@ void ASTVerificationVisitor::_enable_capability(std::string capability) {
             _required_capabilities->find(ASTString("variables")) != _required_capabilities->children().end()) {
             _command_map["global"] = 1;
         }
+    }
+    
+    // "convert"
+    // RFC 6658
+    if (capability == "convert") {
+        _command_map["convert"] = 1;
     }
 
     // DRAFT RFCs

@@ -38,6 +38,7 @@ private:
     bool _validateForeverypartCommand(const ASTNode *node);
     bool _validateExtracttextCommand(const ASTNode *node);
     bool _validateNotifyCommand(const ASTNode *node);
+    bool _validateConvertCommand(const ASTNode *node);
 
     std::map<std::string, bool (Command::*)(const ASTNode *)> _validation_fn_map;
     std::map<std::string, std::string> _usage_map;

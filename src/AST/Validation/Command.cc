@@ -17,6 +17,9 @@ Command::Command() {
     _usage_map["addflag"] = "addflag [<variablename: string>] <list-of-flags: string-list>";
     _usage_map["addheader"] = "addheader [:last] <field-name: string> <value: string>";
     _usage_map["break"] = "break [:name string]";
+    _usage_map["convert"]               = "convert  <quoted-from-media-type: string>                                      \n"
+                                          "         <quoted-to-media-type: string>                                        \n"
+                                          "         <transcoding-params: string-list>                                     \n";
     _usage_map["deleteheader"] = "deleteheader [:index <fieldno: number> [:last]]\n\t[COMPARATOR] [MATCH-TYPE]\n\t<field-name: string>\n\t[<value-patterns: string-list>]";
     _usage_map["discard"] = "discard";
     _usage_map["enclose"] = "enclose <:subject string> <:headers string-list> string";
@@ -63,6 +66,7 @@ Command::Command() {
     _validation_fn_map["setflag"] = &Command::_validateIMAP4FlagsAction;
     _validation_fn_map["stop"] = &Command::_validateBareCommand;
     _validation_fn_map["vacation"] = &Command::_validateVacationCommand;
+    _validation_fn_map["convert"] = &Command::_validateConvertCommand;
 
 }
 
@@ -507,6 +511,24 @@ bool Command::_validateNotifyCommand(const ASTNode *node) {
     }
     
     if (size != numArguments)
+        return false;
+    
+    return true;
+}
+
+bool Command::_validateConvertCommand(const ASTNode *node) {
+    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    size_t size = command->children().size();
+    
+    if (size != 3)
+        return false;
+    
+    // TODO: We need to verify that the strings are quoted
+    const ASTString *fromMediaType = dynamic_cast<ASTString *>(command->children()[0]);
+    const ASTString *toMediaType = dynamic_cast<ASTString *>(command->children()[1]);
+    const ASTStringList *transcodingParams = dynamic_cast<ASTStringList *>(command->children()[2]);
+    
+    if (fromMediaType == NULL || toMediaType == NULL || transcodingParams == NULL)
         return false;
     
     return true;

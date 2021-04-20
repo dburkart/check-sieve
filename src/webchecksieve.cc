@@ -18,6 +18,7 @@ EMSCRIPTEN_BINDINGS(sieve) {
         .field("location", &sieve::parse_result::location)
         .field("status", &sieve::parse_result::status)
         .field("error", &sieve::parse_result::error)
+        .field("hint", &sieve::parse_result::hint)
         ;
     class_<sieve::parse_options>("parse_options")
         .constructor<>()

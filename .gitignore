@@ -8,3 +8,7 @@ build
 *~
 xcuserdata
 __pycache__
+
+# Web-related binaries
+*.js
+*.wasm

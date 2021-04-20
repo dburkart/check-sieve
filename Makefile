@@ -42,6 +42,9 @@ install: all
 	install libchecksieve.a $(INSTALL_PREFIX)/lib
 	install ./docs/man1/check-sieve.1 $(INSTALL_PREFIX)/share/man/man1
 
+wasm:
+	emcc --bind -o checksieve.js $(CFLAGS) $(GENERATED_SRC) $(LIBCHECKSIEVE_SRC) $(AST_SRC) $(BASE)/src/webchecksieve.cc
+
 clean:
 	make -C $(BASE)/gen clean
 	make -C $(BASE)/src clean

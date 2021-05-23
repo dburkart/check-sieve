@@ -16,6 +16,8 @@ for developing on the project:
 * Python >= 3.7
 * Python development headers (for testing)
 
+Additionally, if you want to generate a javascript library, you'll need emscripten installed.
+
 #### Compiling
 
 At the moment, there are three targets for this project:
@@ -23,6 +25,7 @@ At the moment, there are three targets for this project:
 1. `check-sieve` -- This is a command-line program you can use to verify sieves.
 2. `libchecksieve.a` -- A statically linked library for embedding in other programs (like `check-sieve`).
 3. `checksieve.so` -- This is a python extension created for use by the unit tests in the test directory
+4. `wasm` -- This builds a webassembly javascript library using emscripten.
 
 To build `check-sieve` simply run `make`. This will also build the static library.
 Running `make test` will compile `checksieve.so` and run the python tests in the tests directory.

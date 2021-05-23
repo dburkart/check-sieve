@@ -1,6 +1,4 @@
-#ifdef __APPLE__
 #include <regex>
-#endif
 
 #include "ASTBlock.hh"
 #include "ASTNumeric.hh"
@@ -344,8 +342,6 @@ bool Command::_validateSetCommand(const ASTNode *node) {
         return false;
     }
     
-// TODO: Regex on Linux core dumps?
-#ifdef __APPLE__
     // TODO: We blindly allow namespaces in variable names even though they are
     //       disallowed unless the inclusion of an extension enabling that
     //       namespace is required.
@@ -355,7 +351,6 @@ bool Command::_validateSetCommand(const ASTNode *node) {
     if (!std::regex_match(variableName, identifierOrDigit)) {
         return false;
     }
-#endif
     
     return true;
 }

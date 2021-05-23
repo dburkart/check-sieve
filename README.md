@@ -20,7 +20,7 @@ Additionally, if you want to generate a javascript library, you'll need emscript
 
 #### Compiling
 
-At the moment, there are three targets for this project:
+At the moment, there are four targets for this project:
 
 1. `check-sieve` -- This is a command-line program you can use to verify sieves.
 2. `libchecksieve.a` -- A statically linked library for embedding in other programs (like `check-sieve`).

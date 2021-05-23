@@ -4,6 +4,8 @@
 
 This project aims to make checking mail sieve syntax easy and painless. Because breaking your sieve in production sucks.
 
+For a web-based demonstration of check-sieve which is entirely browser-based, visit https://checksieve.com.
+
 #### Dependencies
 
 `check-sieve` minimally depends on having a modern C++ compiler, however there are some requirements

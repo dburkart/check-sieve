@@ -1,3 +1,12 @@
+Version 0.7:
+ * Fix core dump which allowed enabling regex support on Linux.
+ * Many small improvements to validation and RFC conformance.
+ * Add support for Internet Message Access Protocol (IMAP) Events (RFC 6785).
+ * Add support for Converting Messages Before Delivery (RFC 6558).
+ * Adds emscripten support for check-sieve to allow for embedding
+ libchecksieve on webpages (see checksieve.com).
+ * Adds support for FreeBSD to the build system.
+
 Version 0.6:
  * Add manpage for check-sieve(1).
  * Add a --max-list-length option to validate list length.

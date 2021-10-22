@@ -14,6 +14,8 @@ const char *usage_string  =
 "Options:                                                                       \n"
 "  -h, --help               Show this message                                   \n"
 "  --max-list-length N      Flag lists over a certain length (default: none)    \n"
+"  --server <host>:<port>   Only allow capabilities advertised by the specified \n"
+"                           server.                                             \n"
 "  --trace-parser           Trace the operation of the parser                   \n"
 "  --trace-scanner          Trace the operation of the scanner                  \n"
 "  --trace-tree             Trace the abstract-syntax-tree                      \n"

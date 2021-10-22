@@ -18,15 +18,15 @@ include $(BASE)/src/AST/Makefile.env
 all: libchecksieve.a check-sieve
 
 codegen:
-	make -C $(BASE)/src codegen
+	$(MAKE) -C $(BASE)/src codegen
 
 check-sieve: $(BINARY_SRC) libchecksieve.a
-	make -C $(BASE)/src binary
+	$(MAKE) -C $(BASE)/src binary
 	$(CXX) $(CFLAGS) -o check-sieve $(BINARY_OBJ) libchecksieve.a
 
 libchecksieve.a: $(GENERATED_SRC) $(LIBCHECKSIEVE_SRC) $(AST_SRC)
-	make -C $(BASE)/gen
-	make -C $(BASE)/src lib
+	$(MAKE) -C $(BASE)/gen
+	$(MAKE) -C $(BASE)/src lib
 	ar rc libchecksieve.a $(GENERATED_OBJ) $(LIBCHECKSIEVE_OBJ) $(AST_OBJ)
 
 test: libchecksieve.a check-sieve
@@ -46,6 +46,6 @@ wasm:
 	emcc --bind -o checksieve.js $(CFLAGS) $(GENERATED_SRC) $(LIBCHECKSIEVE_SRC) $(AST_SRC) $(BASE)/src/webchecksieve.cc
 
 clean:
-	make -C $(BASE)/gen clean
-	make -C $(BASE)/src clean
+	$(MAKE) -C $(BASE)/gen clean
+	$(MAKE) -C $(BASE)/src clean
 	rm -f libchecksieve.a checksieve.so check-sieve

@@ -6,10 +6,14 @@ This project aims to make checking mail sieve syntax easy and painless. Because 
 
 For a web-based demonstration of check-sieve which is entirely browser-based, visit https://checksieve.com.
 
-#### Dependencies
+#### Build Dependencies
 
-`check-sieve` minimally depends on having a modern C++ compiler, however there are some requirements
-for developing on the project:
+`check-sieve` minimally depends on having a modern C++ compiler. On BSD-like systems such as FreeBSD, you'll
+also need gmake installed. 
+
+#### Development Dependencies
+
+The following dependencies are required in order to develop check-sieve:
 
 * bison >= v3.0.4
 * flex >= v2.5.35

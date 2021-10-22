@@ -6,6 +6,7 @@
 #include "checksieve.h"
 #include "diagnostic.hh"
 #include "sieve_driver.hh"
+#include "MailServer.hh"
 
 const char *usage_string  =
 "Usage: check-sieve [options] file1 [file2 ...]                                 \n"
@@ -79,6 +80,12 @@ int main( int argc, char *argv[] ) {
 
             if (strcmp(argv[i], "--version") == 0) {
                 print_version();
+                return 0;
+            }
+
+            if (strcmp(argv[i], "--server") == 0) {
+                auto server = sieve::MailServer("mail.gandi.net", 4190);
+                server.capabilities();
                 return 0;
             }
 

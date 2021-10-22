@@ -3,6 +3,7 @@
 #include <string>
 
 #include <arpa/inet.h>
+#include <ctype.h>
 #include <netdb.h>
 #include <sys/socket.h>
 #include <string.h>
@@ -59,7 +60,7 @@ std::map<std::string, bool> MailServer::capabilities()
     auto hello_dictionary = this->_parse_response(_greeting);
 
     std::string capability = "";
-    for (char const &c: hello_dictionary["SIEVE"])
+    for (char const &c: hello_dictionary["sieve"])
     {
         if (c == ' ')
         {
@@ -163,7 +164,7 @@ std::map<std::string, std::string> MailServer::_parse_response(std::string respo
                     break;
                 default:
                     if (in_key)
-                        key = key + c;
+                        key = key + tolower(c);
 
                     if (in_value)
                         value = value + c;

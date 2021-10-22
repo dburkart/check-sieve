@@ -10,7 +10,7 @@ YACC = bison -d
 MAKE = make
 
 CXX ?= clang++ -DYYDEBUG=1
-CFLAGS += -I$(BASE)/gen/ -I$(BASE)/src/ -I$(BASE)/src/AST -std=c++0x -fPIC -Wno-deprecated-register -DPLATFORM=\"$(ARCH)-$(PLATFORM)\"
+CFLAGS += -I$(BASE)/gen/ -I$(BASE)/src/ -I$(BASE)/src/AST -I$(BASE)/src/Server -std=c++11 -fPIC -Wno-deprecated-register -DPLATFORM=\"$(ARCH)-$(PLATFORM)\"
 
 ifeq ($(PLATFORM), Darwin)
 CFLAGS += -mmacosx-version-min=10.9

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+PLATFORM=$(uname -s)
+MAKECMD=make
+
+if [ "$PLATFORM" == "FreeBSD" ]; then
+    MAKECMD=gmake
+fi
+
+$MAKECMD test

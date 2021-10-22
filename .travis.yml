@@ -13,7 +13,6 @@ script: ./scripts/travis-build
 branches:
     only: 
         - master
-        - freebsd-travis
 
 notifications:
     email: false

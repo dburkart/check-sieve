@@ -1,11 +1,16 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <sys/socket.h>
 #include <string.h>
 #include <unistd.h>
+
+#ifdef __FreeBSD__
+#include <netinet/in.h>
+#endif
 
 #include "MailServer.hh"
 

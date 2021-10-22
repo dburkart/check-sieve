@@ -13,6 +13,7 @@ script: make test
 branches:
     only: 
         - master
+        - freebsd-travis
 
 notifications:
     email: false
@@ -20,3 +21,4 @@ notifications:
 os:
     - linux
     - osx
+    - freebsd

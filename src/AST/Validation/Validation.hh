@@ -25,7 +25,7 @@ public:
     const ASTVisitor *visitor() { return _visitor; }
 
 private:
-    const ASTVisitor *_visitor{};
+    const ASTVisitor *_visitor;
 };
 
 }

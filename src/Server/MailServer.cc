@@ -11,6 +11,28 @@
 
 namespace sieve {
 
+MailServer MailServer::create(std::string host_with_port)
+{
+    bool in_port = false;
+    std::string hostname, port;
+
+    for (char const &c: host_with_port)
+    {
+        if (c == ':')
+        {
+            in_port = true;
+            continue;
+        }
+
+        if (in_port)
+            port += c;
+        else
+            hostname += c;
+    }
+
+    return MailServer(hostname, atoi(port.c_str()));
+}
+
 MailServer::MailServer(std::string hostname, uint32_t port)
     : _hostname(hostname)
     , _port(port)
@@ -23,21 +45,28 @@ MailServer::~MailServer()
     close(_socket);
 }
 
-std::vector<std::string> MailServer::capabilities()
+std::map<std::string, bool> MailServer::capabilities()
 {
+    auto capabilities = std::map<std::string, bool>();
+
     this->_connect();
 
-    std::istringstream greeting_string(_greeting);
-    for (std::string line; std::getline(greeting_string, line);)
+    auto hello_dictionary = this->_parse_response(_greeting);
+
+    std::string capability = "";
+    for (char const &c: hello_dictionary["SIEVE"])
     {
-        if (line.rfind("\"SIEVE\"", 0) == 0)
+        if (c == ' ')
         {
-            std::cout << line << std::endl;
+            capabilities[capability] = true;
+            capability = "";
+            continue;
         }
 
+        capability += c;
     }
 
-    return {};
+    return capabilities;
 }
 
 void MailServer::_connect()
@@ -90,5 +119,59 @@ void MailServer::_connect()
 
     _greeting = std::string(buffer);
 }
+
+std::map<std::string, std::string> MailServer::_parse_response(std::string response)
+{
+    auto dictionary = std::map<std::string, std::string>();
+
+    std::istringstream response_stream(response);
+    for (std::string line; std::getline(response_stream, line);)
+    {
+        bool in_key = false, in_value = false;
+        bool key_found = false, value_found = false;
+        std::string key, value;
+        for (char const &c: line)
+        {
+            switch (c) {
+                case '"':
+                    if (!in_key && !key_found) {
+                        in_key = true;
+                        break;
+                    }
+
+                    if (in_key) {
+                        in_key = false;
+                        key_found = true;
+                        break;
+                    }
+
+                    if (!in_value && !value_found) {
+                        in_value = true;
+                        break;
+                    }
+
+                    if (in_value) {
+                        in_value = false;
+                        value_found = true;
+                        break;
+                    }
+                    break;
+                default:
+                    if (in_key)
+                        key = key + c;
+
+                    if (in_value)
+                        value = value + c;
+
+                    break;
+            }
+        }
+
+        dictionary[key] = value;
+    }
+
+    return dictionary;
+}
+
 
 } //-- namespace sieve

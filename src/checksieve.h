@@ -14,6 +14,7 @@
 #endif
 
 #include <string>
+#include <map>
 #include <utility>
 #include "location.hh"
 
@@ -39,8 +40,10 @@ struct parse_result {
 };
 
 struct parse_options {
-    parse_options() : string_list_max_length(0) {}
+    parse_options() : string_list_max_length(0), capabilities(), all_supported_capabilities(true) {}
     int string_list_max_length;
+    bool all_supported_capabilities;
+    std::map<std::string, bool> capabilities;
 };
 
 struct parse_result sieve_parse_file( const char *filename, struct parse_options options );

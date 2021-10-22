@@ -84,9 +84,17 @@ int main( int argc, char *argv[] ) {
             }
 
             if (strcmp(argv[i], "--server") == 0) {
-                auto server = sieve::MailServer("mail.gandi.net", 4190);
-                server.capabilities();
-                return 0;
+                if (i + 1 >= argc)
+                {
+                    std::cerr << "Expected a connection string after --server" << std::endl;
+                    return 1;
+                }
+
+                auto server = sieve::MailServer::create(argv[i+1]);
+                options.all_supported_capabilities = false;
+                options.capabilities = server.capabilities();
+                i++;
+                continue;
             }
 
             std::cerr << "Unrecognized argument \"" << argv[i] << "\"" << std::endl;

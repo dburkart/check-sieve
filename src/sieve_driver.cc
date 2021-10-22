@@ -15,14 +15,18 @@ driver::driver()
     , trace_parsing( false )
     , trace_tree( false )
     , _options()
-    , result( 0 ) {}
+    , result( 0 )
+    , yyscanner()
+    , _sieve() {}
 
 driver::driver( struct parse_options options )
     : trace_scanning( false )
     , trace_parsing( false )
     , trace_tree( false )
     , _options( options )
-    , result( 0 ) {}
+    , result( 0 )
+    , yyscanner()
+    , _sieve() {}
 
 driver::~driver() = default;
 

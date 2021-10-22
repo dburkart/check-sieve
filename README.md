@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/dburkart/check-sieve.svg?branch=master)](https://travis-ci.org/dburkart/check-sieve)
+[![Build Status](https://app.travis-ci.com/dburkart/check-sieve.svg?branch=master)](https://app.travis-ci.com/dburkart/check-sieve)
 
 ### check-sieve
 

@@ -13,10 +13,10 @@ namespace sieve
 class Command : public Validator {
 public:
     Command();
-    ~Command() {}
+    ~Command() = default;
 
-    bool validate(const ASTNode *command);
-    std::string usage(const ASTNode *command);
+    bool validate(const ASTNode *command) override;
+    std::string usage(const ASTNode *command) override;
 
 private:
     // Validation functions

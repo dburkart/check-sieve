@@ -5,7 +5,7 @@
 
 namespace sieve {
 
-std::string Diagnostic::describe( parse_result result, std::ifstream &input ) {
+std::string Diagnostic::describe( parse_result result, std::ifstream &input ) const {
     std::string line;
     std::ostringstream output;
 
@@ -30,7 +30,7 @@ std::string Diagnostic::describe( parse_result result, std::ifstream &input ) {
            << std::string(result.location.end.column - result.location.begin.column, '^')
            << std::endl;
 
-    if (result.hint != "") {
+    if (!result.hint.empty()) {
         output << result.hint << std::endl;
     }
 

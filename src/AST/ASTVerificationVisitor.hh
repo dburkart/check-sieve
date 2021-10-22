@@ -39,7 +39,7 @@ public:
 private:
     void _init();
     void _traverse_tree(sieve::ASTNode *node);
-    void _enable_capability(std::string capability);
+    void _enable_capability(const std::string& capability);
 
     struct parse_options _options;
     parse_result _verification_result;

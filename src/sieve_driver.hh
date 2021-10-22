@@ -49,9 +49,9 @@ public:
 private:
     struct parse_options _options;
     std::istringstream _input_stream;
-    yyscan_t yyscanner;
+    yyscan_t yyscanner{};
     
-    ASTSieve *_sieve;
+    ASTSieve *_sieve{};
 
     std::vector<parse_result> _errors;
 };

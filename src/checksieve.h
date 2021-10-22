@@ -14,6 +14,7 @@
 #endif
 
 #include <string>
+#include <utility>
 #include "location.hh"
 
 namespace sieve 
@@ -27,12 +28,12 @@ struct parse_result {
 
     void set_error( std::string err ) {
         status = 1;
-        error = err;
+        error = std::move(err);
     }
 
     void set_error( std::string err, yy::location loc ) {
         status = 1;
-        error = err;
+        error = std::move(err);
         location = loc;
     }
 };

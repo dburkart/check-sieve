@@ -15,7 +15,7 @@ Tag::Tag() {
 }
 
 bool Tag::validate(const ASTNode *node) {
-    const ASTTag *tag = dynamic_cast<const ASTTag*>(node);
+    const auto *tag = dynamic_cast<const ASTTag*>(node);
     
     if (!_validation_fn_map[tag->value()]) {
         DEBUGLOG(tag->value() + " tag is missing validation.")
@@ -26,22 +26,22 @@ bool Tag::validate(const ASTNode *node) {
 }
 
 std::string Tag::usage(const ASTNode *node) {
-    const ASTTag *tag = dynamic_cast<const ASTTag*>(node);
+    const auto *tag = dynamic_cast<const ASTTag*>(node);
     return "Usage: " + _usage_map[tag->value()];
 }
 
 //-- Private members
 bool Tag::_validateSingleString(const ASTNode *node) {
-    const ASTTag *tag = dynamic_cast<const ASTTag*>(node);
+    const auto *tag = dynamic_cast<const ASTTag*>(node);
     const ASTNode *parent = tag->parent();
     const ASTNode *next = parent->nextChild(tag);
     
-    if (next == NULL) {
+    if (next == nullptr) {
         return false;
     }
     
-    const ASTString *nextString = dynamic_cast<const ASTString *>(next) ;
-    if (nextString == NULL) {
+    const auto *nextString = dynamic_cast<const ASTString *>(next) ;
+    if (nextString == nullptr) {
         return false;
     }
     
@@ -49,16 +49,16 @@ bool Tag::_validateSingleString(const ASTNode *node) {
 }
 
 bool Tag::_validateSingleNumeric(const ASTNode *node) {
-    const ASTTag *tag = dynamic_cast<const ASTTag*>(node);
+    const auto *tag = dynamic_cast<const ASTTag*>(node);
     const ASTNode *parent = tag->parent();
     const ASTNode *next = parent->nextChild(tag);
     
-    if (next == NULL) {
+    if (next == nullptr) {
         return false;
     }
     
-    const ASTNumeric *nextString = dynamic_cast<const ASTNumeric *>(next) ;
-    if (nextString == NULL) {
+    const auto *nextString = dynamic_cast<const ASTNumeric *>(next) ;
+    if (nextString == nullptr) {
         return false;
     }
     

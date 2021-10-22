@@ -13,10 +13,10 @@ namespace sieve
 class Tag : public Validator{
 public:
     Tag();
-    ~Tag() {}
+    ~Tag() = default;
 
-    bool validate(const ASTNode *tag);
-    std::string usage(const ASTNode *tag);
+    bool validate(const ASTNode *tag) override;
+    std::string usage(const ASTNode *tag) override;
 
 private:
     // Validation functions

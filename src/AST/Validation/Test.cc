@@ -43,7 +43,7 @@ Test::Test() {
 }
 
 bool Test::validate(const ASTNode *node) {
-    const ASTTest *test = dynamic_cast<const ASTTest*>(node);
+    const auto *test = dynamic_cast<const ASTTest*>(node);
     
     if (!_validation_fn_map[test->value()]) {
         DEBUGLOG(test->value() + " test is missing validation.")
@@ -54,27 +54,27 @@ bool Test::validate(const ASTNode *node) {
 }
 
 std::string Test::usage(const ASTNode *node) {
-    const ASTTest *test = dynamic_cast<const ASTTest*>(node);
+    const auto *test = dynamic_cast<const ASTTest*>(node);
     return "Usage: " + _usage_map[test->value()];
 }
 
 //-- Private Members
 bool Test::_validateExists(const ASTNode *node) {
-    const ASTTest *test = dynamic_cast<const ASTTest*>(node);
+    const auto *test = dynamic_cast<const ASTTest*>(node);
     size_t size = test->children().size();
     
     if (size < 1 || size > 3)
         return false;
     
-    const ASTString *stringChild = dynamic_cast<const ASTString*>(test->children()[size - 1]);
-    const ASTStringList *stringListChild = dynamic_cast<const ASTStringList*>(test->children()[size - 1]);
-    if (stringChild == NULL && stringListChild == NULL)
+    const auto *stringChild = dynamic_cast<const ASTString*>(test->children()[size - 1]);
+    const auto *stringListChild = dynamic_cast<const ASTStringList*>(test->children()[size - 1]);
+    if (stringChild == nullptr && stringListChild == nullptr)
         return false;
     
     // If we have more than 1 child, check that they are either :mime or :anychild
     if (size > 1) {
-        const ASTTag *firstTag = dynamic_cast<const ASTTag*>(test->children()[0]);
-        if (firstTag == NULL)
+        const auto *firstTag = dynamic_cast<const ASTTag*>(test->children()[0]);
+        if (firstTag == nullptr)
             return false;
     
         if (firstTag->value() != ":mime" && firstTag->value() != ":anychild")
@@ -82,8 +82,8 @@ bool Test::_validateExists(const ASTNode *node) {
     }
     
     if (size > 2) {
-        const ASTTag *secondTag = dynamic_cast<const ASTTag*>(test->children()[1]);
-        if (secondTag == NULL)
+        const auto *secondTag = dynamic_cast<const ASTTag*>(test->children()[1]);
+        if (secondTag == nullptr)
             return false;
     
         if (secondTag->value() != ":mime" && secondTag->value() != ":anychild")
@@ -94,13 +94,13 @@ bool Test::_validateExists(const ASTNode *node) {
 }
 
 bool Test::_validateHasOnlyTestList(const ASTNode *node) {
-    const ASTTest *test = dynamic_cast<const ASTTest*>(node);
+    const auto *test = dynamic_cast<const ASTTest*>(node);
     std::vector<sieve::ASTNode *> children = test->children();
     
-    for (std::vector<ASTNode *>::iterator it = children.begin(); it != children.end(); ++it) {
-        const ASTTest *child = dynamic_cast<ASTTest*>(*it);
+    for (auto & it : children) {
+        const ASTTest *child = dynamic_cast<ASTTest*>(it);
     
-        if (child == NULL)
+        if (child == nullptr)
             return false;
     }
     
@@ -108,7 +108,7 @@ bool Test::_validateHasOnlyTestList(const ASTNode *node) {
 }
 
 bool Test::_validateNotTest(const ASTNode *node) {
-    const ASTTest *test = dynamic_cast<const ASTTest*>(node);
+    const auto *test = dynamic_cast<const ASTTest*>(node);
     size_t size = test->children().size();
     
     if (size != 1)
@@ -118,21 +118,21 @@ bool Test::_validateNotTest(const ASTNode *node) {
 }
 
 bool Test::_validateSizeTest(const ASTNode *node) {
-    const ASTTest *test = dynamic_cast<const ASTTest*>(node);
+    const auto *test = dynamic_cast<const ASTTest*>(node);
     size_t size = test->children().size();
     
     if (size != 2)
         return false;
     
-    const ASTTag *tag = dynamic_cast<const ASTTag*>(test->children()[0]);
-    if (tag == NULL || (tag->value() != ":over" && tag->value() != ":under"))
+    const auto *tag = dynamic_cast<const ASTTag*>(test->children()[0]);
+    if (tag == nullptr || (tag->value() != ":over" && tag->value() != ":under"))
         return false;
     
     return true;
 }
 
 bool Test::_validateValidNotifyMethodTest(const ASTNode *node) {
-    const ASTTest *test = dynamic_cast<const ASTTest*>(node);
+    const auto *test = dynamic_cast<const ASTTest*>(node);
     size_t size = test->children().size();
     
     if (size != 1)
@@ -145,17 +145,17 @@ bool Test::_validateValidNotifyMethodTest(const ASTNode *node) {
 }
 
 bool Test::_validateHeaderTest(const ASTNode *node) {
-    const ASTTest *test = dynamic_cast<const ASTTest*>(node);
+    const auto *test = dynamic_cast<const ASTTest*>(node);
     std::vector<ASTNode *> children = node->children();
     size_t size = children.size();
     
     if (size < 2)
         return false;
     
-    for (std::vector<ASTNode *>::iterator it = children.begin(); it != children.end(); ++it) {
-        const ASTTag *tag = dynamic_cast<const ASTTag*>(*it);
+    for (auto & it : children) {
+        const auto *tag = dynamic_cast<const ASTTag*>(it);
     
-        if (tag != NULL) {
+        if (tag != nullptr) {
             std::string tagValue;
             tagValue = tag->value();
     
@@ -181,37 +181,35 @@ bool Test::_validateHeaderTest(const ASTNode *node) {
 }
 
 bool Test::_validateIhaveTest(const ASTNode *node) {
-    const ASTTest *test = dynamic_cast<const ASTTest*>(node);
     std::vector<ASTNode *> children = node->children();
     size_t size = children.size();
     
     if (size != 1)
         return false;
     
-    const ASTString *string_child = dynamic_cast<const ASTString*>(children[0]);
-    const ASTStringList *stringlist_child = dynamic_cast<const ASTStringList*>(children[0]);
+    const auto *string_child = dynamic_cast<const ASTString*>(children[0]);
+    const auto *stringlist_child = dynamic_cast<const ASTStringList*>(children[0]);
     
-    if (string_child == NULL && stringlist_child == NULL)
+    if (string_child == nullptr && stringlist_child == nullptr)
         return false;
     
     return true;
 }
 
 bool Test::_validateEnvironmentTest(const ASTNode *node) {
-    const ASTTest *test = dynamic_cast<const ASTTest*>(node);
     std::vector<ASTNode *> children = node->children();
     size_t size = children.size();
     
     if (size < 2)
         return false;
     
-    const ASTString *name_node = dynamic_cast<const ASTString*>(children[size-2]);
-    const ASTString *key = dynamic_cast<const ASTString*>(children[size-1]);
-    const ASTStringList *key_list = dynamic_cast<const ASTStringList*>(children[size-1]);
+    const auto *name_node = dynamic_cast<const ASTString*>(children[size-2]);
+    const auto *key = dynamic_cast<const ASTString*>(children[size-1]);
+    const auto *key_list = dynamic_cast<const ASTStringList*>(children[size-1]);
     
     // TODO: Validation for [COMPARATOR] / [MATCH-TYPE]
     
-    if (name_node == NULL || (key_list == NULL && key == NULL))
+    if (name_node == nullptr || (key_list == nullptr && key == nullptr))
         return false;
     
     std::string name = name_node->value();

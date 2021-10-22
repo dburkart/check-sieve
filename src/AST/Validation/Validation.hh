@@ -14,8 +14,8 @@ bool nodeIsType(const ASTNode *node) {
 
 class Validator {
 public:
-    Validator() { }
-    ~Validator() {}
+    Validator() = default;
+    ~Validator() = default;
     
     void set_visitor( const ASTVisitor *v ) { _visitor = v; }
     
@@ -25,7 +25,7 @@ public:
     const ASTVisitor *visitor() { return _visitor; }
 
 private:
-    const ASTVisitor *_visitor;
+    const ASTVisitor *_visitor{};
 };
 
 }

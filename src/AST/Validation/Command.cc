@@ -69,7 +69,7 @@ Command::Command() {
 }
 
 bool Command::validate(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
 
     if (!_validation_fn_map[command->value()]) {
         DEBUGLOG(command->value() + " command is missing validation.")
@@ -80,13 +80,13 @@ bool Command::validate(const ASTNode *node) {
 }
 
 std::string Command::usage(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     return "Usage: " + _usage_map[command->value()];
 }
 
 //-- Private members
 bool Command::_validateAddHeadersCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
     size_t size = command->children().size();
     
@@ -94,9 +94,9 @@ bool Command::_validateAddHeadersCommand(const ASTNode *node) {
         return false;
     
     int i = 0;
-    for (std::vector<ASTNode *>::const_iterator it = children.begin(); it != children.end(); ++it) {
-        const ASTTag *tagChild = dynamic_cast<ASTTag *>(*it);
-        const ASTString *stringChild = dynamic_cast<ASTString *>(*it);
+    for (auto it : children) {
+        const ASTTag *tagChild = dynamic_cast<ASTTag *>(it);
+        const ASTString *stringChild = dynamic_cast<ASTString *>(it);
     
         // If we have 3 children, the first child must be a :last tag.
         if (size == 3 && i == 0) {
@@ -115,17 +115,16 @@ bool Command::_validateAddHeadersCommand(const ASTNode *node) {
 }
 
 bool Command::_validateDeleteHeadersCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
     std::vector<ASTNode *>::const_iterator it;
     size_t size = command->children().size();
     size_t minSize = 1;
     
     ASTNumeric* numeric;
-    ASTTag* tag;
     
     // :index
-    std::vector<ASTNode *>::const_iterator indexTag = command->find(ASTTag(":index"));
+    auto indexTag = command->find(ASTTag(":index"));
     if (indexTag != command->children().end()) {
         // Must be the first child
         if (indexTag != command->children().begin())
@@ -137,14 +136,14 @@ bool Command::_validateDeleteHeadersCommand(const ASTNode *node) {
         // Ensure that the next argument is a numeric
         //const T* child = dynamic_cast<T*>(*it);
         numeric = dynamic_cast<ASTNumeric*>(*it);
-        if (numeric == NULL)
+        if (numeric == nullptr)
             return false;
     
         indexTag++;
         it = indexTag + 1;
     
         // Allow a :last tag, but only if it's the next child
-        std::vector<ASTNode *>::const_iterator lastTag = command->find(ASTTag(":last"));
+        auto lastTag = command->find(ASTTag(":last"));
         if (lastTag != command->children().end() && lastTag != it)
             return false;
     
@@ -153,18 +152,12 @@ bool Command::_validateDeleteHeadersCommand(const ASTNode *node) {
             minSize += 1;
         }
     } else {
-        // Ensure that :last hasn't been specified since their's no :index
-        std::vector<ASTNode *>::const_iterator lastTag = command->find(ASTTag(":last"));
-    
+        // TODO: Ensure that :last hasn't been specified since their's no :index
         if (indexTag != command->children().end())
             return false;
     }
     
     // TODO: Validate comparators
-    // it = indexTag + 1;
-    // tag = dynamic_cast<ASTTag*>(*it);
-    // if (tag)
-    //     minSize += 1;
     
     if (size < minSize)
         return false;
@@ -177,7 +170,7 @@ bool Command::_validateDeleteHeadersCommand(const ASTNode *node) {
 // Validation logic
 // TODO: Think about if this is the right way to do this
 bool Command::_validateIncludeCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     size_t size = command->children().size();
 
     if (size < 5 && size > 0)
@@ -187,7 +180,7 @@ bool Command::_validateIncludeCommand(const ASTNode *node) {
 }
 
 bool Command::_validateIMAP4FlagsAction(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     size_t size = command->children().size();
     
     if (size > 0 && size < 3)
@@ -197,7 +190,7 @@ bool Command::_validateIMAP4FlagsAction(const ASTNode *node) {
 }
 
 bool Command::_validateFileintoCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
     size_t size = children.size();
     
@@ -222,7 +215,7 @@ bool Command::_validateFileintoCommand(const ASTNode *node) {
 }
 
 bool Command::_validateKeepCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
     size_t size = children.size();
     
@@ -240,7 +233,7 @@ bool Command::_validateKeepCommand(const ASTNode *node) {
 }
 
 bool Command::_validateReplaceCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
     size_t size = children.size();
     
@@ -266,7 +259,7 @@ bool Command::_validateReplaceCommand(const ASTNode *node) {
 }
 
 bool Command::_validateEncloseCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
     size_t size = children.size();
     
@@ -288,7 +281,7 @@ bool Command::_validateEncloseCommand(const ASTNode *node) {
 }
 
 bool Command::_validateRedirectCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
     size_t size = children.size();
     
@@ -306,16 +299,16 @@ bool Command::_validateRedirectCommand(const ASTNode *node) {
 }
 
 bool Command::_validateSetCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
     size_t size = children.size();
     
     int numArguments = 2;
     int stringArguments = 0;
     
-    for (std::vector<ASTNode *>::const_iterator it = children.begin(); it != children.end(); ++it) {
-        const ASTTag *tagChild = dynamic_cast<ASTTag *>(*it);
-        const ASTString *stringChild = dynamic_cast<ASTString *>(*it);
+    for (auto it : children) {
+        const ASTTag *tagChild = dynamic_cast<ASTTag *>(it);
+        const ASTString *stringChild = dynamic_cast<ASTString *>(it);
     
         if (tagChild && (
             tagChild->value() == ":lower" ||
@@ -356,7 +349,7 @@ bool Command::_validateSetCommand(const ASTNode *node) {
 }
 
 bool Command::_validateVacationCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
     size_t size = children.size();
     
@@ -394,7 +387,7 @@ bool Command::_validateVacationCommand(const ASTNode *node) {
 }
 
 bool Command::_validateBareCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     size_t size = command->children().size();
     
     if (size == 0)
@@ -404,7 +397,7 @@ bool Command::_validateBareCommand(const ASTNode *node) {
 }
 
 bool Command::_validateSingleArgumentCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     size_t size = command->children().size();
     
     if (size == 1)
@@ -414,21 +407,21 @@ bool Command::_validateSingleArgumentCommand(const ASTNode *node) {
 }
 
 bool Command::_validateSingleStringArgumentCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     size_t size = command->children().size();
     
     if (size != 1)
         return false;
     
-    const ASTString *argument = dynamic_cast<const ASTString*>(command->children()[0]);
-    if (argument == NULL)
+    const auto *argument = dynamic_cast<const ASTString*>(command->children()[0]);
+    if (argument == nullptr)
         return false;
     
     return true;
 }
 
 bool Command::_validateBreakCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     size_t size = command->children().size();
     
     if (size == 0)
@@ -440,14 +433,14 @@ bool Command::_validateBreakCommand(const ASTNode *node) {
     const ASTTag *tagChild = dynamic_cast<ASTTag *>(command->children()[0]);
     const ASTString *stringChild = dynamic_cast<ASTString *>(command->children()[1]);
     
-    if (tagChild == NULL || stringChild == NULL)
+    if (tagChild == nullptr || stringChild == nullptr)
         return false;
     
     return true;
 }
 
 bool Command::_validateForeverypartCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     size_t size = command->children().size();
     
     if (size != 1 && size != 3)
@@ -460,7 +453,7 @@ bool Command::_validateForeverypartCommand(const ASTNode *node) {
         const ASTTag *tagChild = dynamic_cast<ASTTag *>(command->children()[0]);
         const ASTString *stringChild = dynamic_cast<ASTString *>(command->children()[1]);
     
-        if (tagChild == NULL || stringChild == NULL)
+        if (tagChild == nullptr || stringChild == nullptr)
             return false;
     }
     
@@ -468,12 +461,9 @@ bool Command::_validateForeverypartCommand(const ASTNode *node) {
 }
 
 bool Command::_validateExtracttextCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     size_t size = command->children().size();
-    
-    if (size < 1 && size > 4)
-        return false;
-    
+
     if (!nodeIsType<ASTString>(command->children()[size-1]))
         return false;
     
@@ -481,7 +471,7 @@ bool Command::_validateExtracttextCommand(const ASTNode *node) {
 }
 
 bool Command::_validateNotifyCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     size_t size = command->children().size();
     
     int numArguments = 1;
@@ -512,7 +502,7 @@ bool Command::_validateNotifyCommand(const ASTNode *node) {
 }
 
 bool Command::_validateConvertCommand(const ASTNode *node) {
-    const ASTCommand *command = dynamic_cast<const ASTCommand*>(node);
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
     size_t size = command->children().size();
     
     if (size != 3)
@@ -523,7 +513,7 @@ bool Command::_validateConvertCommand(const ASTNode *node) {
     const ASTString *toMediaType = dynamic_cast<ASTString *>(command->children()[1]);
     const ASTStringList *transcodingParams = dynamic_cast<ASTStringList *>(command->children()[2]);
     
-    if (fromMediaType == NULL || toMediaType == NULL || transcodingParams == NULL)
+    if (fromMediaType == nullptr || toMediaType == nullptr || transcodingParams == nullptr)
         return false;
     
     return true;

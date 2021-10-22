@@ -24,7 +24,7 @@ driver::driver( struct parse_options options )
     , _options( options )
     , result( 0 ) {}
 
-driver::~driver() {}
+driver::~driver() = default;
 
 parse_result driver::parse_file( const std::string &fp ) {
     std::string line;
@@ -38,7 +38,7 @@ parse_result driver::parse_file( const std::string &fp ) {
         buffer += line + "\n";
     }
 
-    file.seekg(0, file.beg);
+    file.seekg(0, std::ifstream::beg);
 
     return parse_string(buffer);
 }

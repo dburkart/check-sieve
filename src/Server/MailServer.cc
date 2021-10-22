@@ -164,7 +164,7 @@ std::map<std::string, std::string> MailServer::_parse_response(std::string respo
                     break;
                 default:
                     if (in_key)
-                        key = key + tolower(c);
+                        key = key + (char)tolower(c);
 
                     if (in_value)
                         value = value + c;

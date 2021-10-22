@@ -28,12 +28,12 @@ struct parse_result {
 
     void set_error( std::string err ) {
         status = 1;
-        error = std::move(err);
+        error = err;
     }
 
     void set_error( std::string err, yy::location loc ) {
         status = 1;
-        error = std::move(err);
+        error = err;
         location = loc;
     }
 };

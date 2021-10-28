@@ -1,5 +1,4 @@
-#ifndef __AST_VISITOR_H__
-#define __AST_VISITOR_H__
+#pragma once
 
 #include "ASTBlock.hh"
 #include "ASTBoolean.hh"
@@ -38,5 +37,3 @@ public:
 };
 
 } // namespace sieve
-
-#endif

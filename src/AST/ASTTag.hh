@@ -1,6 +1,4 @@
-#ifndef __ASTTAG_HH__
-#define __ASTTAG_HH__
-
+#pragma once
 
 #include "ASTNode.hh"
 
@@ -40,5 +38,3 @@ private:
 };
 
 } // namespace sieve
-
-#endif

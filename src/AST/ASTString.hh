@@ -1,5 +1,4 @@
-#ifndef __ASTSTRING_HH__
-#define __ASTSTRING_HH__
+#pragma once
 
 #include <string>
 
@@ -41,5 +40,3 @@ private:
 };
 
 } // namespace sieve
-
-#endif

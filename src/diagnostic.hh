@@ -1,5 +1,4 @@
-#ifndef __DIAGNOSTIC_H__
-#define __DIAGNOSTIC_H__
+#pragma once
 
 #include <fstream>
 #include <string>
@@ -21,4 +20,3 @@ private:
 
 } // namespace sieve
 
-#endif

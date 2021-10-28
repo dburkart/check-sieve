@@ -1,5 +1,4 @@
-#ifndef __MAILSERVER_H__
-#define __MAILSERVER_H__
+#pragma once
 
 #include <string>
 #include <map>
@@ -30,4 +29,3 @@ private:
 
 }
 
-#endif //__MAILSERVER_H__

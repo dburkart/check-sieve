@@ -1,5 +1,4 @@
-#ifndef __CHECKSIEVE_H__
-#define __CHECKSIEVE_H__
+#pragma once
 
 #ifndef PLATFORM
 #if defined __APPLE__ && defined __MACH__
@@ -52,5 +51,3 @@ struct parse_result sieve_parse_string( const char *sieve, struct parse_options 
 const char *version();
 
 } // namespace sieve
-
-#endif

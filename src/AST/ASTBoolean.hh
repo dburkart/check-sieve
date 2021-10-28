@@ -1,6 +1,4 @@
-#ifndef __ASTBOOLEAN_HH__
-#define __ASTBOOLEAN_HH__
-
+#pragma once
 
 #include "ASTTest.hh"
 
@@ -41,4 +39,3 @@ private:
 
 } // namespace sieve
 
-#endif

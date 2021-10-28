@@ -1,6 +1,4 @@
-#ifndef __ASTREQUIRE_HH__
-#define __ASTREQUIRE_HH__
-
+#pragma once
 
 #include "ASTCommand.hh"
 
@@ -37,5 +35,3 @@ private:
 };
 
 } // namespace sieve
-
-#endif

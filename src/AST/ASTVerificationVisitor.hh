@@ -1,5 +1,4 @@
-#ifndef __AST_VERIFICATION_VISITOR_H__
-#define __AST_VERIFICATION_VISITOR_H__
+#pragma once
 
 #include <map>
 #include <string>
@@ -59,5 +58,3 @@ private:
 };
 
 } // namespace sieve
-
-#endif

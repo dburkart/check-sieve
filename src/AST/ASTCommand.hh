@@ -1,6 +1,4 @@
-#ifndef __ASTCOMMAND_HH__
-#define __ASTCOMMAND_HH__
-
+#pragma once
 
 #include "ASTNode.hh"
 
@@ -41,4 +39,3 @@ private:
 
 } // namespace sieve
 
-#endif

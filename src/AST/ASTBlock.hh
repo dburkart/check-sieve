@@ -1,6 +1,4 @@
-#ifndef __ASTBLOCK_HH__
-#define __ASTBLOCK_HH__
-
+#pragma once
 
 #include "ASTNode.hh"
 
@@ -38,4 +36,3 @@ private:
 
 } // namespace sieve
 
-#endif

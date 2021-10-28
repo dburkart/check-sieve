@@ -1,5 +1,4 @@
-#ifndef __SIEVE_DRIVER_HH__
-#define __SIEVE_DRIVER_HH__
+#pragma once
 
 #include <fstream>
 #include <map>
@@ -57,5 +56,3 @@ private:
 };
 
 } // namespace sieve
-
-#endif

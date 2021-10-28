@@ -1,5 +1,4 @@
-#ifndef __AST_NODE_HH__
-#define __AST_NODE_HH__
+#pragma once
 
 #include <vector>
 #include <typeinfo>
@@ -57,4 +56,3 @@ private:
 
 } // namespace sieve
 
-#endif

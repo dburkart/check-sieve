@@ -1,6 +1,4 @@
-#ifndef __ASTTEST_HH__
-#define __ASTTEST_HH__
-
+#pragma once
 
 #include "ASTCommand.hh"
 
@@ -40,5 +38,3 @@ private:
 };
 
 } // namespace sieve
-
-#endif

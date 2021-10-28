@@ -1,5 +1,4 @@
-#ifndef __AST_HH__
-#define __AST_HH__
+#pragma once
 
 #include "ASTBlock.hh"
 #include "ASTBoolean.hh"
@@ -16,5 +15,3 @@
 #include "ASTTest.hh"
 #include "ASTTraceVisitor.hh"
 #include "ASTVerificationVisitor.hh"
-
-#endif

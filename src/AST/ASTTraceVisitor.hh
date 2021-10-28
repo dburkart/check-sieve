@@ -1,5 +1,4 @@
-#ifndef __AST_TRACE_VISITOR_H__
-#define __AST_TRACE_VISITOR_H__
+#pragma once
 
 #include "ASTVisitor.hh"
 
@@ -29,5 +28,3 @@ private:
 };
 
 } // namespace sieve
-
-#endif

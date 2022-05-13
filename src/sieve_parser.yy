@@ -76,7 +76,6 @@ typedef void* yyscan_t;
 %type <std::vector<sieve::ASTNode *>> string_list
 
 %type <sieve::ASTNode *> command
-%type <sieve::ASTNode *> atomic_command
 %type <std::vector<sieve::ASTNode *>> command_list
 %type <sieve::ASTNode *> block
 %type <sieve::ASTNode *> if_flow
@@ -86,7 +85,7 @@ typedef void* yyscan_t;
 %%
 %start sieve;
 
-sieve : END 
+sieve : END
         {
             sieve::ASTSieve *sieve = new sieve::ASTSieve(@1);
             driver.syntax_tree(sieve);
@@ -103,15 +102,6 @@ sieve : END
 
 command_list : command { $$ = std::vector<sieve::ASTNode *>(1, $1); }
     | command_list command { $1.push_back($2); $$ = $1; }
-    ;
-    
-atomic_command :
-      IDENTIFIER arguments
-        {
-            sieve::ASTCommand *command = new sieve::ASTCommand(@1, $1);
-            command->push($2);
-            $$ = dynamic_cast<sieve::ASTNode *>(command);
-        }
     ;
 
 command :
@@ -166,7 +156,7 @@ block : "{" command_list "}"
             block->push($2);
             $$ = dynamic_cast<sieve::ASTNode *>( block );
         }
-    | "{" "}" 
+    | "{" "}"
         {
             sieve::ASTNoOp *noop = new sieve::ASTNoOp( @1 );
             $$ = noop;
@@ -181,7 +171,17 @@ if_flow : IF test block
             branch->push(condition);
             branch->push($3);
             $$ = dynamic_cast<sieve::ASTNode *>(branch);
-            
+
+        }
+    | IF "(" test ")" block
+        {
+            sieve::ASTBranch *branch = new sieve::ASTBranch( @1 );
+            sieve::ASTCondition *condition = new sieve::ASTCondition( @3 );
+            condition->push($3);
+            branch->push(condition);
+            branch->push($5);
+            $$ = dynamic_cast<sieve::ASTNode *>(branch);
+
         }
     | if_flow ELSIF test block
         {
@@ -201,7 +201,7 @@ arguments : argument { $$ = $1; }
     | test_list { $$ = $1; }
     ;
 
-argument : string_list 
+argument : string_list
         {
             if ($1.size() > 1) {
                 sieve::ASTStringList *stringList = new sieve::ASTStringList(@1);
@@ -230,7 +230,7 @@ tests : test { $$ = $1; }
     ;
 
 test :
-    IDENTIFIER arguments 
+    IDENTIFIER arguments
         {
             sieve::ASTTest *test = new sieve::ASTTest(@1, $1);
             test->push($2);
@@ -238,12 +238,6 @@ test :
         }
     | TRUE { $$ = std::vector<sieve::ASTNode *>(1, new sieve::ASTBoolean(@1, $1)); }
     | FALSE { $$ = std::vector<sieve::ASTNode *>(1, new sieve::ASTBoolean(@1, $1)); }
-    | "(" atomic_command ")"
-        {
-            sieve::ASTTest *test = new sieve::ASTTest(@1, "$COMMAND_RESULT");
-            test->push($2);
-            $$ = std::vector<sieve::ASTNode *>(1, test);
-        }
     ;
 
 string_list : STRING_LITERAL {$$ = std::vector<sieve::ASTNode *>(1,  new sieve::ASTString(@1, $1)); }
@@ -259,7 +253,7 @@ numeric :
         {
             $$ = new sieve::ASTNumeric(@1, $1);
         }
-    | NUMBER QUANTIFIER 
+    | NUMBER QUANTIFIER
         {
             // TODO: Somehow incorporate the quantifier in here
             $$ = new sieve::ASTNumeric(@1, $1);

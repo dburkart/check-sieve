@@ -206,12 +206,12 @@ void ASTVerificationVisitor::_init() {
     // TODO: "Comparators other than "i;octet" and "i;ascii-casemap" must be
     // declared with require, as they are extensions"
     _tag_map[":comparator"] = true;
-    
+
     // Set up references to this visitor for introspection
     _command.set_visitor(this);
     _test.set_visitor(this);
     _tag.set_visitor(this);
-    
+
 }
 
 void ASTVerificationVisitor::_enable_capability(const std::string& capability) {
@@ -448,11 +448,12 @@ void ASTVerificationVisitor::_enable_capability(const std::string& capability) {
             _command_map["global"] = true;
         }
     }
-    
+
     // "convert"
     // RFC 6658
     if (capability == "convert") {
         _command_map["convert"] = true;
+        _test_map["convert"] = true;
     }
 
     // DRAFT RFCs

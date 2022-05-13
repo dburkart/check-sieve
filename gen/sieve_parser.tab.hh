@@ -1,8 +1,8 @@
-// A Bison parser, made by GNU Bison 3.7.4.
+// A Bison parser, made by GNU Bison 3.8.1.
 
 // Skeleton interface for Bison LALR(1) parsers in C++
 
-// Copyright (C) 2002-2015, 2018-2020 Free Software Foundation, Inc.
+// Copyright (C) 2002-2015, 2018-2021 Free Software Foundation, Inc.
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // As a special exception, you may create a larger work that contains
 // part or all of the Bison parser skeleton and distribute that work
@@ -126,17 +126,23 @@ typedef void* yyscan_t;
 
 /* Suppress unused-variable warnings by "using" E.  */
 #if ! defined lint || defined __GNUC__
-# define YYUSE(E) ((void) (E))
+# define YY_USE(E) ((void) (E))
 #else
-# define YYUSE(E) /* empty */
+# define YY_USE(E) /* empty */
 #endif
 
-#if defined __GNUC__ && ! defined __ICC && 407 <= __GNUC__ * 100 + __GNUC_MINOR__
 /* Suppress an incorrect diagnostic about yylval being uninitialized.  */
-# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                            \
+#if defined __GNUC__ && ! defined __ICC && 406 <= __GNUC__ * 100 + __GNUC_MINOR__
+# if __GNUC__ * 100 + __GNUC_MINOR__ < 407
+#  define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                           \
+    _Pragma ("GCC diagnostic push")                                     \
+    _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")
+# else
+#  define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                           \
     _Pragma ("GCC diagnostic push")                                     \
     _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")              \
     _Pragma ("GCC diagnostic ignored \"-Wmaybe-uninitialized\"")
+# endif
 # define YY_IGNORE_MAYBE_UNINITIALIZED_END      \
     _Pragma ("GCC diagnostic pop")
 #else
@@ -189,7 +195,7 @@ typedef void* yyscan_t;
 #endif
 
 namespace yy {
-#line 193 "../gen/sieve_parser.tab.hh"
+#line 199 "../gen/sieve_parser.tab.hh"
 
 
 
@@ -198,39 +204,44 @@ namespace yy {
   class sieve_parser
   {
   public:
-#ifndef YYSTYPE
+#ifdef YYSTYPE
+# ifdef __GNUC__
+#  pragma GCC message "bison: do not #define YYSTYPE in C++, use %define api.value.type"
+# endif
+    typedef YYSTYPE value_type;
+#else
   /// A buffer to store and retrieve objects.
   ///
   /// Sort of a variant, but does not keep track of the nature
   /// of the stored data, since that knowledge is available
   /// via the current parser state.
-  class semantic_type
+  class value_type
   {
   public:
     /// Type of *this.
-    typedef semantic_type self_type;
+    typedef value_type self_type;
 
     /// Empty construction.
-    semantic_type () YY_NOEXCEPT
-      : yybuffer_ ()
+    value_type () YY_NOEXCEPT
+      : yyraw_ ()
     {}
 
     /// Construct and fill.
     template <typename T>
-    semantic_type (YY_RVREF (T) t)
+    value_type (YY_RVREF (T) t)
     {
       new (yyas_<T> ()) T (YY_MOVE (t));
     }
 
 #if 201103L <= YY_CPLUSPLUS
     /// Non copyable.
-    semantic_type (const self_type&) = delete;
+    value_type (const self_type&) = delete;
     /// Non copyable.
     self_type& operator= (const self_type&) = delete;
 #endif
 
     /// Destruction, allowed only if empty.
-    ~semantic_type () YY_NOEXCEPT
+    ~value_type () YY_NOEXCEPT
     {}
 
 # if 201103L <= YY_CPLUSPLUS
@@ -354,7 +365,7 @@ namespace yy {
   private:
 #if YY_CPLUSPLUS < 201103L
     /// Non copyable.
-    semantic_type (const self_type&);
+    value_type (const self_type&);
     /// Non copyable.
     self_type& operator= (const self_type&);
 #endif
@@ -364,7 +375,7 @@ namespace yy {
     T*
     yyas_ () YY_NOEXCEPT
     {
-      void *yyp = yybuffer_.yyraw;
+      void *yyp = yyraw_;
       return static_cast<T*> (yyp);
      }
 
@@ -373,7 +384,7 @@ namespace yy {
     const T*
     yyas_ () const YY_NOEXCEPT
     {
-      const void *yyp = yybuffer_.yyraw;
+      const void *yyp = yyraw_;
       return static_cast<const T*> (yyp);
      }
 
@@ -387,7 +398,6 @@ namespace yy {
       // "number"
       char dummy2[sizeof (int)];
 
-      // atomic_command
       // command
       // block
       // if_flow
@@ -423,15 +433,15 @@ namespace yy {
     union
     {
       /// Strongest alignment constraints.
-      long double yyalign_me;
+      long double yyalign_me_;
       /// A buffer large enough to store any of the semantic values.
-      char yyraw[size];
-    } yybuffer_;
+      char yyraw_[size];
+    };
   };
 
-#else
-    typedef YYSTYPE semantic_type;
 #endif
+    /// Backward compatibility (Bison 3.8).
+    typedef value_type semantic_type;
     /// Symbol locations.
     typedef location location_type;
 
@@ -528,18 +538,17 @@ namespace yy {
         S_YYACCEPT = 24,                         // $accept
         S_sieve = 25,                            // sieve
         S_command_list = 26,                     // command_list
-        S_atomic_command = 27,                   // atomic_command
-        S_command = 28,                          // command
-        S_block = 29,                            // block
-        S_if_flow = 30,                          // if_flow
-        S_arguments = 31,                        // arguments
-        S_argument = 32,                         // argument
-        S_test_list = 33,                        // test_list
-        S_tests = 34,                            // tests
-        S_test = 35,                             // test
-        S_string_list = 36,                      // string_list
-        S_strings = 37,                          // strings
-        S_numeric = 38                           // numeric
+        S_command = 27,                          // command
+        S_block = 28,                            // block
+        S_if_flow = 29,                          // if_flow
+        S_arguments = 30,                        // arguments
+        S_argument = 31,                         // argument
+        S_test_list = 32,                        // test_list
+        S_tests = 33,                            // tests
+        S_test = 34,                             // test
+        S_string_list = 35,                      // string_list
+        S_strings = 36,                          // strings
+        S_numeric = 37                           // numeric
       };
     };
 
@@ -585,7 +594,6 @@ namespace yy {
         value.move< int > (std::move (that.value));
         break;
 
-      case symbol_kind::S_atomic_command: // atomic_command
       case symbol_kind::S_command: // command
       case symbol_kind::S_block: // block
       case symbol_kind::S_if_flow: // if_flow
@@ -746,7 +754,7 @@ namespace yy {
       }
 
       /// Destroy contents, and record that is empty.
-      void clear ()
+      void clear () YY_NOEXCEPT
       {
         // User destructor.
         symbol_kind_type yykind = this->kind ();
@@ -770,7 +778,6 @@ switch (yykind)
         value.template destroy< int > ();
         break;
 
-      case symbol_kind::S_atomic_command: // atomic_command
       case symbol_kind::S_command: // command
       case symbol_kind::S_block: // block
       case symbol_kind::S_if_flow: // if_flow
@@ -826,7 +833,7 @@ switch (yykind)
       void move (basic_symbol& s);
 
       /// The semantic value.
-      semantic_type value;
+      value_type value;
 
       /// The location.
       location_type location;
@@ -859,7 +866,7 @@ switch (yykind)
       by_kind (kind_type t);
 
       /// Record that this symbol is empty.
-      void clear ();
+      void clear () YY_NOEXCEPT;
 
       /// Steal the symbol kind from \a that.
       void move (by_kind& that);
@@ -891,34 +898,34 @@ switch (yykind)
       /// Constructor for valueless symbols, and symbols from each type.
 #if 201103L <= YY_CPLUSPLUS
       symbol_type (int tok, location_type l)
-        : super_type(token_type (tok), std::move (l))
+        : super_type (token_type (tok), std::move (l))
 #else
       symbol_type (int tok, const location_type& l)
-        : super_type(token_type (tok), l)
+        : super_type (token_type (tok), l)
 #endif
       {}
 #if 201103L <= YY_CPLUSPLUS
       symbol_type (int tok, bool v, location_type l)
-        : super_type(token_type (tok), std::move (v), std::move (l))
+        : super_type (token_type (tok), std::move (v), std::move (l))
 #else
       symbol_type (int tok, const bool& v, const location_type& l)
-        : super_type(token_type (tok), v, l)
+        : super_type (token_type (tok), v, l)
 #endif
       {}
 #if 201103L <= YY_CPLUSPLUS
       symbol_type (int tok, int v, location_type l)
-        : super_type(token_type (tok), std::move (v), std::move (l))
+        : super_type (token_type (tok), std::move (v), std::move (l))
 #else
       symbol_type (int tok, const int& v, const location_type& l)
-        : super_type(token_type (tok), v, l)
+        : super_type (token_type (tok), v, l)
 #endif
       {}
 #if 201103L <= YY_CPLUSPLUS
       symbol_type (int tok, std::string v, location_type l)
-        : super_type(token_type (tok), std::move (v), std::move (l))
+        : super_type (token_type (tok), std::move (v), std::move (l))
 #else
       symbol_type (int tok, const std::string& v, const location_type& l)
-        : super_type(token_type (tok), v, l)
+        : super_type (token_type (tok), v, l)
 #endif
       {}
     };
@@ -968,7 +975,7 @@ switch (yykind)
     /// YYSYMBOL.  No bounds checking.
     static std::string symbol_name (symbol_kind_type yysymbol);
 
-    // Implementation of make_symbol for each symbol type.
+    // Implementation of make_symbol for each token kind.
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
@@ -1335,9 +1342,9 @@ switch (yykind)
     {
     public:
       context (const sieve_parser& yyparser, const symbol_type& yyla);
-      const symbol_type& lookahead () const { return yyla_; }
-      symbol_kind_type token () const { return yyla_.kind (); }
-      const location_type& location () const { return yyla_.location; }
+      const symbol_type& lookahead () const YY_NOEXCEPT { return yyla_; }
+      symbol_kind_type token () const YY_NOEXCEPT { return yyla_.kind (); }
+      const location_type& location () const YY_NOEXCEPT { return yyla_.location; }
 
       /// Put in YYARG at most YYARGN of the expected tokens, and return the
       /// number of tokens stored in YYARG.  If YYARG is null, return the
@@ -1419,14 +1426,14 @@ switch (yykind)
 
     static const signed char yycheck_[];
 
-    // YYSTOS[STATE-NUM] -- The (internal number of the) accessing
-    // symbol of state STATE-NUM.
+    // YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
+    // state STATE-NUM.
     static const signed char yystos_[];
 
-    // YYR1[YYN] -- Symbol number of symbol that rule YYN derives.
+    // YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.
     static const signed char yyr1_[];
 
-    // YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.
+    // YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.
     static const signed char yyr2_[];
 
 
@@ -1659,8 +1666,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 115,     ///< Last index in yytable_.
-      yynnts_ = 15,  ///< Number of nonterminal symbols.
+      yylast_ = 92,     ///< Last index in yytable_.
+      yynnts_ = 14,  ///< Number of nonterminal symbols.
       yyfinal_ = 31 ///< Termination state number.
     };
 
@@ -1716,7 +1723,7 @@ switch (yykind)
     if (t <= 0)
       return symbol_kind::S_YYEOF;
     else if (t <= code_max)
-      return YY_CAST (symbol_kind_type, translate_table[t]);
+      return static_cast <symbol_kind_type> (translate_table[t]);
     else
       return symbol_kind::S_YYUNDEF;
   }
@@ -1739,7 +1746,6 @@ switch (yykind)
         value.copy< int > (YY_MOVE (that.value));
         break;
 
-      case symbol_kind::S_atomic_command: // atomic_command
       case symbol_kind::S_command: // command
       case symbol_kind::S_block: // block
       case symbol_kind::S_if_flow: // if_flow
@@ -1810,7 +1816,6 @@ switch (yykind)
         value.move< int > (YY_MOVE (s.value));
         break;
 
-      case symbol_kind::S_atomic_command: // atomic_command
       case symbol_kind::S_command: // command
       case symbol_kind::S_block: // block
       case symbol_kind::S_if_flow: // if_flow
@@ -1877,7 +1882,7 @@ switch (yykind)
 
   inline
   void
-  sieve_parser::by_kind::clear ()
+  sieve_parser::by_kind::clear () YY_NOEXCEPT
   {
     kind_ = symbol_kind::S_YYEMPTY;
   }
@@ -1905,7 +1910,7 @@ switch (yykind)
   }
 
 } // yy
-#line 1909 "../gen/sieve_parser.tab.hh"
+#line 1914 "../gen/sieve_parser.tab.hh"
 
 
 

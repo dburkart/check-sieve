@@ -1,3 +1,9 @@
+Version 0.8:
+ * Support compiling on FreeBSD.
+ * Adds a --server flag to check-sieve, enabling the tool to check capabilities specific to your server.
+ * Fix bug preventing some test-lists from having a single item.
+ * Addition of explicit test-list AST object, allowing for improved validation.
+
 Version 0.7:
  * Fix core dump which allowed enabling regex support on Linux.
  * Many small improvements to validation and RFC conformance.

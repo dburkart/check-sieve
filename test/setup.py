@@ -8,7 +8,7 @@ module = Extension('checksieve',
                     library_dirs = ['./'] );
 
 setup (name = 'CheckSieve',
-        version = '0.8',
+        version = '0.9-dev',
         description = 'Python interface to libchecksieve',
         author = 'Dana Burkart',
         author_email = 'dana.burkart@gmail.com',

@@ -83,5 +83,9 @@ void ASTTraceVisitor::visit( ASTTest* node ) {
     std::cout << "Test (" << node->value() << ")" << std::endl;
 }
 
+void ASTTraceVisitor::visit( ASTTestList* node ) {
+    std::cout << "Test-List" << std::endl;
+}
+
 } // namespace sieve
 

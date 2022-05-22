@@ -222,7 +222,12 @@ argument : string_list
         }
     ;
 
-test_list : "(" tests ")" { $$ = $2; }
+test_list : "(" tests ")" 
+    {
+        sieve::ASTTestList *testList = new sieve::ASTTestList( @1 );
+        testList->push($2);
+        $$ = std::vector<sieve::ASTNode *>(1, testList);
+    }
     ;
 
 tests : test { $$ = $1; }

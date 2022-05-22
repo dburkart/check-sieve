@@ -13,5 +13,6 @@
 #include "ASTStringList.hh"
 #include "ASTTag.hh"
 #include "ASTTest.hh"
+#include "ASTTestList.hh"
 #include "ASTTraceVisitor.hh"
 #include "ASTVerificationVisitor.hh"

@@ -98,7 +98,7 @@ bool Test::_validateHasOnlyTestList(const ASTNode *node) {
     std::vector<sieve::ASTNode *> children = test->children();
     
     for (auto & it : children) {
-        const ASTTest *child = dynamic_cast<ASTTest*>(it);
+        const ASTTestList *child = dynamic_cast<ASTTestList*>(it);
     
         if (child == nullptr)
             return false;
@@ -110,6 +110,10 @@ bool Test::_validateHasOnlyTestList(const ASTNode *node) {
 bool Test::_validateNotTest(const ASTNode *node) {
     const auto *test = dynamic_cast<const ASTTest*>(node);
     size_t size = test->children().size();
+
+    // Child should be a single test, no test-list allowed
+    if (!nodeIsType<ASTTest>(test->children()[0]))
+        return false;
     
     if (size != 1)
         return false;

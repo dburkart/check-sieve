@@ -30,6 +30,7 @@ public:
     void visit( ASTStringList* );
     void visit( ASTTag* );
     void visit( ASTTest* );
+    void visit( ASTTestList* );
 
     parse_result result() { return _verification_result; }
     

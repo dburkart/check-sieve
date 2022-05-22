@@ -174,6 +174,10 @@ void ASTVerificationVisitor::visit( ASTTest* node ) {
     }
 }
 
+void ASTVerificationVisitor::visit( ASTTestList* node ) {
+    
+}
+
 //-- Private methods
 void ASTVerificationVisitor::_init() {
     _command_map["addheader"] = true;

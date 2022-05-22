@@ -22,6 +22,7 @@ public:
     void visit( ASTStringList* );
     void visit( ASTTag* );
     void visit( ASTTest* );
+    void visit( ASTTestList* );
 
 private:
     void _traverse_tree(sieve::ASTNode *node, int indent_level);

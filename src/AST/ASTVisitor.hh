@@ -13,6 +13,7 @@
 #include "ASTStringList.hh"
 #include "ASTTag.hh"
 #include "ASTTest.hh"
+#include "ASTTestList.hh"
 
 namespace sieve
 {
@@ -34,6 +35,7 @@ public:
     virtual void visit( ASTStringList* ) =0;
     virtual void visit( ASTTag* ) =0;
     virtual void visit( ASTTest* ) =0;
+    virtual void visit( ASTTestList* ) =0;
 };
 
 } // namespace sieve

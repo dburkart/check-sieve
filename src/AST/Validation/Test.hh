@@ -6,6 +6,7 @@
 
 #include "Validation.hh"
 #include "ASTTest.hh"
+#include "ASTTestList.hh"
 
 namespace sieve 
 {

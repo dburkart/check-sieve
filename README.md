@@ -48,7 +48,7 @@ to the desired location.
 
 ##### Packages
 
-Archlinux: https://aur.archlinux.org/packages/check-sieve/
+* Arch Linux ([community](https://archlinux.org/packages/community/x86_64/check-sieve/) repository)
 
 #### Supported RFCs
 

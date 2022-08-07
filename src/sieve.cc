@@ -1,6 +1,5 @@
-#include <string.h>
+#include <cstring>
 #include <iostream>
-#include <fstream>
 
 #include "AST.hh"
 #include "checksieve.h"

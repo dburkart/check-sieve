@@ -28,12 +28,12 @@ struct parse_result {
 
     void set_error( std::string err ) {
         status = 1;
-        error = err;
+        error = std::move(err);
     }
 
     void set_error( std::string err, yy::location loc ) {
         status = 1;
-        error = err;
+        error = std::move(err);
         location = loc;
     }
 };
@@ -41,8 +41,8 @@ struct parse_result {
 struct parse_options {
     parse_options() : string_list_max_length(0), capabilities(), all_supported_capabilities(true) {}
     int string_list_max_length;
-    bool all_supported_capabilities;
     std::map<std::string, bool> capabilities;
+    bool all_supported_capabilities;
 };
 
 struct parse_result sieve_parse_file( const char *filename, struct parse_options options );

@@ -40,6 +40,17 @@ class TestRelational(unittest.TestCase):
         '''
         self.assertFalse(checksieve.parse_string(sieve, False))
 
+    def test_header_test_value(self):
+        sieve = '''
+          require ["relational", "comparator-i;ascii-numeric", "fileinto"];
+          if header :value "lt" :comparator "i;ascii-numeric"
+             ["x-priority"] ["3"]
+          {
+             fileinto "Priority";
+          }
+        '''
+        self.assertFalse(checksieve.parse_string(sieve, False))
+
     def test_value_no_require(self):
         sieve = '''
            require ["fileinto"];

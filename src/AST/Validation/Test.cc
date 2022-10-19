@@ -173,7 +173,9 @@ bool Test::_validateHeaderTest(const ASTNode *node) {
                 tagValue == ":subtype" ||
                 tagValue == ":contenttype" ||
                 tagValue == ":param" ||
-                tagValue == ":regex") {
+                tagValue == ":regex" ||
+                tagValue == ":value" ||
+                tagValue == ":count") {
                     continue;
                 }
             

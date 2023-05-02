@@ -16,7 +16,7 @@ codegen: $(BASE)/src/sieve_parser.yy $(BASE)/src/sieve_scanner.l
 	$(LEX) --header-file=$(BASE)/gen/sieve_scanner.hh --outfile $(BASE)/gen/sieve_scanner.cc $(BASE)/src/sieve_scanner.l
 
 clean:
-	rm -f $(BINARY_OBJ) $(LIBCHECKSIEVE_OBJ) $(AST_OBJ)
+	rm -f $(BINARY_OBJ) $(LIBCHECKSIEVE_OBJ) $(AST_OBJ) $(SERVER_OBJ)
 
 $(BINARY_OBJ): %.o: %.cc
 	$(CXX) -c $(CFLAGS) $< -o $@

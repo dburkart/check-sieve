@@ -602,7 +602,7 @@ extern int yylex (yyscan_t yyscanner);
 #undef yyTABLES_NAME
 #endif
 
-#line 92 "../src/sieve_scanner.l"
+#line 91 "../src/sieve_scanner.l"
 
 
 #line 608 "../gen/sieve_scanner.hh"

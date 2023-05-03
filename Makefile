@@ -31,7 +31,7 @@ libchecksieve.a: $(GENERATED_SRC) $(LIBCHECKSIEVE_SRC) $(AST_SRC) $(SERVER_SRC)
 	ar rc libchecksieve.a $(GENERATED_OBJ) $(LIBCHECKSIEVE_OBJ) $(AST_OBJ) $(SERVER_OBJ)
 
 test: libchecksieve.a check-sieve
-	rm checksieve.*.so || true
+	rm -Rf checksieve.*.so build || true
 	python3 $(BASE)/test/setup.py build_ext -i
 	python3 -m unittest discover -s test -p '*_test.py'
 
@@ -49,4 +49,5 @@ wasm:
 clean:
 	$(MAKE) -C $(BASE)/gen clean
 	$(MAKE) -C $(BASE)/src clean
-	rm -f libchecksieve.a checksieve.so check-sieve
+	rm -f libchecksieve.a checksieve*.so check-sieve
+	rm -Rf build

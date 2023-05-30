@@ -15,6 +15,7 @@
 #include <string>
 #include <map>
 #include <utility>
+#include <cstdint>
 #include "location.hh"
 
 namespace sieve 

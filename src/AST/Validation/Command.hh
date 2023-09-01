@@ -37,6 +37,7 @@ private:
     bool _validateBreakCommand(const ASTNode *node);
     bool _validateForeverypartCommand(const ASTNode *node);
     bool _validateExtracttextCommand(const ASTNode *node);
+    bool _validateExpireCommand(const ASTNode *node);
     bool _validateNotifyCommand(const ASTNode *node);
     bool _validateConvertCommand(const ASTNode *node);
 

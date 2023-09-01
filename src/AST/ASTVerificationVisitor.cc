@@ -359,8 +359,7 @@ void ASTVerificationVisitor::_enable_capability(const std::string& capability) {
 
         // The :encodeurl tag can only be used if both "enotify" and
         // "variables" are required
-        if (_required_capabilities != nullptr &&
-            _required_capabilities->find(ASTString("variables")) != _required_capabilities->children().end()) {
+        if (requires_capability("variables")) {
             _tag_map[":encodeurl"] = true;
         }
     }
@@ -447,8 +446,7 @@ void ASTVerificationVisitor::_enable_capability(const std::string& capability) {
 
         // The "global" command can only be used if both "include" and
         // "variables" are required
-        if (_required_capabilities != nullptr &&
-            _required_capabilities->find(ASTString("variables")) != _required_capabilities->children().end()) {
+        if (requires_capability("variables")) {
             _command_map["global"] = true;
         }
     }
@@ -469,8 +467,7 @@ void ASTVerificationVisitor::_enable_capability(const std::string& capability) {
 
         // The ":quoteregex" command is supported if both "regex" and
         // "variables" are required
-        if (_required_capabilities != nullptr &&
-            _required_capabilities->find(ASTString("variables")) != _required_capabilities->children().end()) {
+        if (requires_capability("variables")) {
             _tag_map[":quoteregex"] = true;
         }
     }
@@ -486,8 +483,7 @@ void ASTVerificationVisitor::_enable_capability(const std::string& capability) {
 
         // The "expiration" test is supported if both "vnd.proton.expire" and
         // "comparator-i;ascii-numeric" are required.
-        if (_required_capabilities != nullptr &&
-            _required_capabilities->find(ASTString("comparator-i;ascii-numeric")) != _required_capabilities->children().end()) {
+        if (requires_capability("variables")) {
             _test_map["expiration"] = true;
         }
     }
@@ -495,9 +491,7 @@ void ASTVerificationVisitor::_enable_capability(const std::string& capability) {
     // "vnd.proton.eval"
     // (https://proton.me/support/sieve-advanced-custom-filters#transforming-variables)
     // depends on "variables"
-    if (capability == "vnd.proton.eval" &&
-        _required_capabilities != nullptr &&
-        _required_capabilities->find(ASTString("variables")) != _required_capabilities->children().end()) {
+    if (capability == "vnd.proton.eval" && requires_capability("variables")) {
         _tag_map[":eval"] = true;
     }
 }

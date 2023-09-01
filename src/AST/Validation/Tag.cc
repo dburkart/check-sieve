@@ -8,10 +8,12 @@ Tag::Tag() {
     _usage_map[":comparator"] = ":comparator string";
     _usage_map[":days"] = ":days number";
     _usage_map[":subject"] = ":subject string";
+    _usage_map[":eval"] = ":eval string";
 
     _validation_fn_map[":comparator"] = &Tag::_validateSingleString; // TODO: Validate comparator string
     _validation_fn_map[":days"] = &Tag::_validateSingleNumeric;
     _validation_fn_map[":subject"] = &Tag::_validateSingleString;
+    _validation_fn_map[":eval"] = &Tag::_validateSingleString;
 }
 
 bool Tag::validate(const ASTNode *node) {

@@ -483,7 +483,7 @@ void ASTVerificationVisitor::_enable_capability(const std::string& capability) {
 
         // The "expiration" test is supported if both "vnd.proton.expire" and
         // "comparator-i;ascii-numeric" are required.
-        if (has_required("variables")) {
+        if (has_required("comparator-i;ascii-numeric")) {
             _test_map["expiration"] = true;
         }
     }

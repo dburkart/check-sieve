@@ -38,8 +38,8 @@ class TestProtonExpire(unittest.TestCase):
 
     def test_expiration(self):
         sieve = '''
-            require "vnd.proton.expire";
             require "comparator-i;ascii-numeric";
+            require "vnd.proton.expire";
             
             if expiration :comparator "i;ascii-numeric" "ge" "day" "5"  {
                 stop;

@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 
+#include "ASTString.hh"
 #include "checksieve.h"
 #include "ASTVisitor.hh"
 #include "Validation/Command.hh"
@@ -35,6 +36,11 @@ public:
     parse_result result() { return _verification_result; }
     
     bool requires_capability( std::string capability ) { return _capability_map[capability]; }
+    bool has_required( std::string require ) {
+        return requires_capability(require) || (
+            _required_capabilities != nullptr &&
+            _required_capabilities->find(ASTString(require)) != _required_capabilities->children().end());
+    }
 
 private:
     void _init();

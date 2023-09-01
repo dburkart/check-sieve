@@ -4,6 +4,20 @@
 
 This project aims to make checking mail sieve syntax easy and painless. Because breaking your sieve in production sucks.
 
+Particular attention is paid to the quality of errors generated. For example:
+
+```
+Errors found in "testsieve":
+
+Incorrect syntax for command "convert".
+On line 2:
+convert image image ["pix-x=320","pix-y=240"];
+^^^^^^^
+Usage: convert  <quoted-from-media-type: string>                                      
+         <quoted-to-media-type: string>                                        
+         <transcoding-params: string-list>  
+```
+
 For a web-based demonstration of check-sieve which is entirely browser-based, visit https://checksieve.com.
 
 #### Build Dependencies

@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		871871A32AA246BA00189927 /* ASTTestList.cc in Sources */ = {isa = PBXBuildFile; fileRef = 871871A12AA246BA00189927 /* ASTTestList.cc */; };
+		871871A42AA246BA00189927 /* ASTTestList.hh in Headers */ = {isa = PBXBuildFile; fileRef = 871871A22AA246BA00189927 /* ASTTestList.hh */; };
+		871871AC2AA2471A00189927 /* MailServer.hh in Headers */ = {isa = PBXBuildFile; fileRef = 871871A52AA2471A00189927 /* MailServer.hh */; };
+		871871AD2AA2471A00189927 /* Tag.cc in Sources */ = {isa = PBXBuildFile; fileRef = 871871A62AA2471A00189927 /* Tag.cc */; };
+		871871AE2AA2471A00189927 /* MailServer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 871871A72AA2471A00189927 /* MailServer.cc */; };
+		871871AF2AA2471A00189927 /* Test.hh in Headers */ = {isa = PBXBuildFile; fileRef = 871871A82AA2471A00189927 /* Test.hh */; };
+		871871B02AA2471A00189927 /* Validation.hh in Headers */ = {isa = PBXBuildFile; fileRef = 871871A92AA2471A00189927 /* Validation.hh */; };
+		871871B12AA2471A00189927 /* Tag.hh in Headers */ = {isa = PBXBuildFile; fileRef = 871871AA2AA2471A00189927 /* Tag.hh */; };
+		871871B22AA2471A00189927 /* Test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 871871AB2AA2471A00189927 /* Test.cc */; };
 		87C852852066DE8100B5ABE1 /* ASTCondition.hh in Headers */ = {isa = PBXBuildFile; fileRef = 87C852642066DE8100B5ABE1 /* ASTCondition.hh */; };
 		87C852862066DE8100B5ABE1 /* ASTSieve.hh in Headers */ = {isa = PBXBuildFile; fileRef = 87C852652066DE8100B5ABE1 /* ASTSieve.hh */; };
 		87C852872066DE8100B5ABE1 /* ASTBoolean.hh in Headers */ = {isa = PBXBuildFile; fileRef = 87C852662066DE8100B5ABE1 /* ASTBoolean.hh */; };
@@ -73,6 +82,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		871871A12AA246BA00189927 /* ASTTestList.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ASTTestList.cc; path = src/AST/ASTTestList.cc; sourceTree = "<group>"; };
+		871871A22AA246BA00189927 /* ASTTestList.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ASTTestList.hh; path = src/AST/ASTTestList.hh; sourceTree = "<group>"; };
+		871871A52AA2471A00189927 /* MailServer.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MailServer.hh; path = src/Server/MailServer.hh; sourceTree = "<group>"; };
+		871871A62AA2471A00189927 /* Tag.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tag.cc; path = src/AST/Validation/Tag.cc; sourceTree = "<group>"; };
+		871871A72AA2471A00189927 /* MailServer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MailServer.cc; path = src/Server/MailServer.cc; sourceTree = "<group>"; };
+		871871A82AA2471A00189927 /* Test.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Test.hh; path = src/AST/Validation/Test.hh; sourceTree = "<group>"; };
+		871871A92AA2471A00189927 /* Validation.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Validation.hh; path = src/AST/Validation/Validation.hh; sourceTree = "<group>"; };
+		871871AA2AA2471A00189927 /* Tag.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Tag.hh; path = src/AST/Validation/Tag.hh; sourceTree = "<group>"; };
+		871871AB2AA2471A00189927 /* Test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Test.cc; path = src/AST/Validation/Test.cc; sourceTree = "<group>"; };
 		87C8523A2066DD5900B5ABE1 /* liblibchecksieve.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liblibchecksieve.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		87C852642066DE8100B5ABE1 /* ASTCondition.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ASTCondition.hh; path = src/AST/ASTCondition.hh; sourceTree = "<group>"; };
 		87C852652066DE8100B5ABE1 /* ASTSieve.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ASTSieve.hh; path = src/AST/ASTSieve.hh; sourceTree = "<group>"; };
@@ -148,14 +166,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		871871B32AA2476200189927 /* Server */ = {
+			isa = PBXGroup;
+			children = (
+				871871A72AA2471A00189927 /* MailServer.cc */,
+				871871A52AA2471A00189927 /* MailServer.hh */,
+			);
+			name = Server;
+			sourceTree = "<group>";
+		};
 		87414DFB2066DD2B002BB510 = {
 			isa = PBXGroup;
 			children = (
 				87C852CB2066DF7700B5ABE1 /* Tools */,
 				87C852BC2066DF1200B5ABE1 /* Generated Source */,
 				87C852AB2066DEAB00B5ABE1 /* Library */,
-				87C852A62066DE8E00B5ABE1 /* Validation */,
-				87C852632066DE6300B5ABE1 /* Abstract Syntax Tree */,
 				87C8523B2066DD5900B5ABE1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -200,6 +225,8 @@
 				87C8526A2066DE8100B5ABE1 /* ASTTag.hh */,
 				87C8527C2066DE8100B5ABE1 /* ASTTest.cc */,
 				87C852842066DE8100B5ABE1 /* ASTTest.hh */,
+				871871A12AA246BA00189927 /* ASTTestList.cc */,
+				871871A22AA246BA00189927 /* ASTTestList.hh */,
 				87C8527F2066DE8100B5ABE1 /* ASTTraceVisitor.cc */,
 				87C852672066DE8100B5ABE1 /* ASTTraceVisitor.hh */,
 				87C852832066DE8100B5ABE1 /* ASTVerificationVisitor.cc */,
@@ -214,6 +241,11 @@
 			children = (
 				87C852A82066DEA100B5ABE1 /* Command.cc */,
 				87C852A72066DEA100B5ABE1 /* Command.hh */,
+				871871A62AA2471A00189927 /* Tag.cc */,
+				871871AA2AA2471A00189927 /* Tag.hh */,
+				871871AB2AA2471A00189927 /* Test.cc */,
+				871871A82AA2471A00189927 /* Test.hh */,
+				871871A92AA2471A00189927 /* Validation.hh */,
 			);
 			name = Validation;
 			sourceTree = "<group>";
@@ -221,6 +253,9 @@
 		87C852AB2066DEAB00B5ABE1 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				871871B32AA2476200189927 /* Server */,
+				87C852632066DE6300B5ABE1 /* Abstract Syntax Tree */,
+				87C852A62066DE8E00B5ABE1 /* Validation */,
 				87C852ED2066E36800B5ABE1 /* python.cc */,
 				87C852B02066DEFD00B5ABE1 /* checksieve.cc */,
 				87C852B22066DEFD00B5ABE1 /* checksieve.h */,
@@ -263,10 +298,14 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				871871B12AA2471A00189927 /* Tag.hh in Headers */,
 				87C852B42066DEFD00B5ABE1 /* sieve_driver.hh in Headers */,
+				871871B02AA2471A00189927 /* Validation.hh in Headers */,
 				87C852902066DE8100B5ABE1 /* ASTStringList.hh in Headers */,
 				87C852852066DE8100B5ABE1 /* ASTCondition.hh in Headers */,
+				871871AF2AA2471A00189927 /* Test.hh in Headers */,
 				87C852A22066DE8100B5ABE1 /* ASTNoOp.hh in Headers */,
+				871871AC2AA2471A00189927 /* MailServer.hh in Headers */,
 				87C852962066DE8100B5ABE1 /* AST.hh in Headers */,
 				87C852A52066DE8100B5ABE1 /* ASTTest.hh in Headers */,
 				87C852C82066DF2500B5ABE1 /* location.hh in Headers */,
@@ -279,6 +318,7 @@
 				87C852C62066DF2500B5ABE1 /* sieve_scanner.hh in Headers */,
 				87C852B92066DEFD00B5ABE1 /* checksieve.h in Headers */,
 				87C8528F2066DE8100B5ABE1 /* ASTVerificationVisitor.hh in Headers */,
+				871871A42AA246BA00189927 /* ASTTestList.hh in Headers */,
 				87C852C72066DF2500B5ABE1 /* sieve_parser.tab.hh in Headers */,
 				87C852872066DE8100B5ABE1 /* ASTBoolean.hh in Headers */,
 				87C8528B2066DE8100B5ABE1 /* ASTTag.hh in Headers */,
@@ -377,16 +417,20 @@
 				87C8529C2066DE8100B5ABE1 /* ASTSieve.cc in Sources */,
 				87C852972066DE8100B5ABE1 /* ASTBoolean.cc in Sources */,
 				87C8529F2066DE8100B5ABE1 /* ASTBlock.cc in Sources */,
+				871871A32AA246BA00189927 /* ASTTestList.cc in Sources */,
 				87C852982066DE8100B5ABE1 /* ASTRequire.cc in Sources */,
 				87C852892066DE8100B5ABE1 /* ASTNumeric.cc in Sources */,
 				87C852BA2066DEFD00B5ABE1 /* sieve_driver.cc in Sources */,
 				87C852A02066DE8100B5ABE1 /* ASTTraceVisitor.cc in Sources */,
 				87C852B82066DEFD00B5ABE1 /* diagnostic.cc in Sources */,
+				871871B22AA2471A00189927 /* Test.cc in Sources */,
 				87C852D82066DF9E00B5ABE1 /* sieve.cc in Sources */,
+				871871AD2AA2471A00189927 /* Tag.cc in Sources */,
 				87C852B72066DEFD00B5ABE1 /* checksieve.cc in Sources */,
 				87C852A32066DE8100B5ABE1 /* ASTBranch.cc in Sources */,
 				87C852A12066DE8100B5ABE1 /* ASTCommand.cc in Sources */,
 				87C8529D2066DE8100B5ABE1 /* ASTTest.cc in Sources */,
+				871871AE2AA2471A00189927 /* MailServer.cc in Sources */,
 				87C852AA2066DEA100B5ABE1 /* Command.cc in Sources */,
 				87C852CA2066DF2500B5ABE1 /* sieve_parser.tab.cc in Sources */,
 				87C852A42066DE8100B5ABE1 /* ASTVerificationVisitor.cc in Sources */,

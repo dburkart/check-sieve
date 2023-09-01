@@ -36,6 +36,17 @@ class TestProtonExpire(unittest.TestCase):
         '''
         self.assertTrue(checksieve.parse_string(sieve, True))
 
+    def test_expiration(self):
+        sieve = '''
+            require "vnd.proton.expire";
+            require "comparator-i;ascii-numeric";
+            
+            if expiration :comparator "i;ascii-numeric" "ge" "day" "5"  {
+                stop;
+            }
+        '''
+        self.assertFalse(checksieve.parse_string(sieve, False))
+
 
 if __name__ == '__main__':
     unittest.main()

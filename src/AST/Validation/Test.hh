@@ -27,6 +27,7 @@ private:
     bool _validateSizeTest(const ASTNode *node);
     bool _validateValidNotifyMethodTest(const ASTNode *node);
     bool _validateHasExpirationTest(const ASTNode *node);
+    bool _validateExpirationTest(const ASTNode *node);
     bool _validateHeaderTest(const ASTNode *node);
     bool _validateIhaveTest(const ASTNode *node);
     bool _validateEnvironmentTest (const ASTNode *node);

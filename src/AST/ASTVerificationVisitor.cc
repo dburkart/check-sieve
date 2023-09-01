@@ -483,15 +483,21 @@ void ASTVerificationVisitor::_enable_capability(const std::string& capability) {
         _command_map["expire"] = true;
         _command_map["unexpire"] = true;
         _test_map["hasexpiration"] = true;
-        _test_map["expiration"] = true;
+
+        // The "expiration" test is supported if both "vnd.proton.expire" and
+        // "comparator-i;ascii-numeric" are required.
+        //if (_required_capabilities != nullptr &&
+        //    _required_capabilities->find(ASTString("comparator-i;ascii-numeric")) != _required_capabilities->children().end()) {
+            _test_map["expiration"] = true;
+        //}
     }
 
     // "vnd.proton.eval"
     // (https://proton.me/support/sieve-advanced-custom-filters#transforming-variables)
     // depends on "variables"
-    if (capability == "vnd.proton.eval" &&
-        _required_capabilities != nullptr &&
-        _required_capabilities->find(ASTString("variables")) != _required_capabilities->children().end()) {
+    if (capability == "vnd.proton.eval") { //&&
+        //_required_capabilities != nullptr &&
+        //_required_capabilities->find(ASTString("variables")) != _required_capabilities->children().end()) {
         _tag_map[":eval"] = true;
     }
 }

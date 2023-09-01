@@ -21,6 +21,7 @@ Test::Test() {
                                           "                   If using 'imapsieve' capability, name can be one of:        \n"
                                           "                                         imap.user, imap.email, imap.cause,    \n"
                                           "                                         imap.mailbox, imap.changedflags       \n";
+    _usage_map["hasexpiration"]         = "hasexpiration";
     _usage_map["header"]                =        "header [:mime] [:anychild] [:regex]                                     \n"
                                           "              [:type / :subtype / :contenttype / :param <params: string-list>] \n"
                                           "              [:comparator <string>]                                           \n"
@@ -35,6 +36,7 @@ Test::Test() {
     _validation_fn_map["anyof"]                 = &Test::_validateHasOnlyTestList;
     _validation_fn_map["environment"]           = &Test::_validateEnvironmentTest;
     _validation_fn_map["exists"]                = &Test::_validateExists;
+    _validation_fn_map["hasexpiration"]         = &Test::_validateHasExpirationTest;
     _validation_fn_map["header"]                = &Test::_validateHeaderTest;
     _validation_fn_map["ihave"]                 = &Test::_validateIhaveTest;
     _validation_fn_map["not"]                   = &Test::_validateNotTest;
@@ -146,6 +148,11 @@ bool Test::_validateValidNotifyMethodTest(const ASTNode *node) {
         return false;
     
     return true;
+}
+
+bool Test::_validateHasExpirationTest(const ASTNode *node) {
+    const auto *test = dynamic_cast<const ASTTest *>(node);
+    return test->children().size() == 0;
 }
 
 bool Test::_validateHeaderTest(const ASTNode *node) {

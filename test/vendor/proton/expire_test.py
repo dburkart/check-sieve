@@ -18,6 +18,24 @@ class TestProtonExpire(unittest.TestCase):
         '''
         self.assertTrue(checksieve.parse_string(sieve, True))
 
+    def test_hasexpiration(self):
+        sieve = '''
+            require "vnd.proton.expire";
+            
+            if hasexpiration {
+                stop;
+            }
+        '''
+        self.assertFalse(checksieve.parse_string(sieve, False))
+
+    def test_hasexpiration_no_require(self):
+        sieve = '''
+            if hasexpiration {
+                stop;
+            }
+        '''
+        self.assertTrue(checksieve.parse_string(sieve, True))
+
 
 if __name__ == '__main__':
     unittest.main()

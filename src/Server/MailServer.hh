@@ -8,7 +8,7 @@ namespace sieve{
 
 class MailServer {
 public:
-    static MailServer create(std::string host_with_port);
+    static MailServer create(const std::string& host_with_port);
     ~MailServer();
 
     std::map<std::string, bool> capabilities();
@@ -18,7 +18,7 @@ protected:
 
 private:
     void _connect();
-    std::map<std::string, std::string> _parse_response(std::string response);
+    static std::map<std::string, std::string> _parse_response(const std::string& response);
 
     std::string _hostname;
     uint32_t _port;

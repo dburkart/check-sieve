@@ -1,12 +1,13 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <utility>
 
 #include <arpa/inet.h>
-#include <ctype.h>
+#include <cctype>
 #include <netdb.h>
 #include <sys/socket.h>
-#include <string.h>
+#include <cstring>
 #include <unistd.h>
 
 #ifdef __FreeBSD__
@@ -17,7 +18,7 @@
 
 namespace sieve {
 
-MailServer MailServer::create(std::string host_with_port)
+MailServer MailServer::create(const std::string& host_with_port)
 {
     bool in_port = false;
     std::string hostname, port;
@@ -36,11 +37,11 @@ MailServer MailServer::create(std::string host_with_port)
             hostname += c;
     }
 
-    return MailServer(hostname, atoi(port.c_str()));
+    return {hostname, static_cast<uint32_t>(atoi(port.c_str()))};
 }
 
 MailServer::MailServer(std::string hostname, uint32_t port)
-    : _hostname(hostname)
+    : _hostname(std::move(hostname))
     , _port(port)
     , _socket(-1)
 {
@@ -57,9 +58,9 @@ std::map<std::string, bool> MailServer::capabilities()
 
     this->_connect();
 
-    auto hello_dictionary = this->_parse_response(_greeting);
+    auto hello_dictionary = sieve::MailServer::_parse_response(_greeting);
 
-    std::string capability = "";
+    std::string capability;
     for (char const &c: hello_dictionary["sieve"])
     {
         if (c == ' ')
@@ -85,7 +86,7 @@ void MailServer::_connect()
         abort();
     }
 
-    struct sockaddr_in server_address;
+    struct sockaddr_in server_address{};
     server_address.sin_family = AF_INET;
     server_address.sin_port = htons(this->_port);
 
@@ -126,7 +127,7 @@ void MailServer::_connect()
     _greeting = std::string(buffer);
 }
 
-std::map<std::string, std::string> MailServer::_parse_response(std::string response)
+std::map<std::string, std::string> MailServer::_parse_response(const std::string& response)
 {
     auto dictionary = std::map<std::string, std::string>();
 
@@ -138,38 +139,35 @@ std::map<std::string, std::string> MailServer::_parse_response(std::string respo
         std::string key, value;
         for (char const &c: line)
         {
-            switch (c) {
-                case '"':
-                    if (!in_key && !key_found) {
-                        in_key = true;
-                        break;
-                    }
+            if (c == '"')
+            {
+                if (!in_key && !key_found) {
+                    in_key = true;
+                    continue;
+                }
 
-                    if (in_key) {
-                        in_key = false;
-                        key_found = true;
-                        break;
-                    }
+                if (in_key) {
+                    in_key = false;
+                    key_found = true;
+                    continue;
+                }
 
-                    if (!in_value && !value_found) {
-                        in_value = true;
-                        break;
-                    }
+                if (!in_value && !value_found) {
+                    in_value = true;
+                    continue;
+                }
 
-                    if (in_value) {
-                        in_value = false;
-                        value_found = true;
-                        break;
-                    }
-                    break;
-                default:
-                    if (in_key)
-                        key = key + (char)tolower(c);
+                if (in_value) {
+                    in_value = false;
+                    value_found = true;
+                    continue;
+                }
+            } else {
+                if (in_key)
+                    key += (char)tolower(c);
 
-                    if (in_value)
-                        value = value + c;
-
-                    break;
+                if (in_value)
+                    value += c;
             }
         }
 

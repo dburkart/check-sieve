@@ -30,7 +30,6 @@
 [url-last-release]: https://github.com/dburkart/check-sieve/releases/latest
 
 
-
 This project aims to make checking mail [Sieve][wiki-sieve] syntax easy and painless.
 _Because breaking your sieve in production sucks._
 
@@ -52,23 +51,68 @@ Usage: convert  <quoted-from-media-type: string>
 
 For a web-based demonstration of check-sieve which is entirely browser-based, visit https://checksieve.com.
 
-#### Build Dependencies
+## Development
+### Dependencies
+`check-sieve` minimally depends on having a modern C++ compiler and the
+[Make][make] build automation software.
 
-`check-sieve` minimally depends on having a modern C++ compiler. On BSD-like systems such as FreeBSD, you'll
-also need gmake installed. 
+On BSD-like systems such as FreeBSD, the [`gmake`][gnu-make] tool is required.
 
-#### Development Dependencies
+[make]: https://en.wikipedia.org/wiki/Make_(software)
+[gnu-make]: https://www.gnu.org/software/make/
 
-The following dependencies are required in order to develop check-sieve:
+Building `check-sieve` only depends on those aforementioned tools. Developing
+`check-sieve` requires addition dependencies:
 
-* bison >= v3.0.4
-* flex >= v2.5.35
-* Python >= 3.7
+* [GNU Bison][bison] >= v3.0.4
+* [Flex][flex] >= v2.5.35
+* [Python][python] >= 3.7
 * Python development headers (for testing)
 
-Additionally, if you want to generate a javascript library, you'll need emscripten installed.
+Additionally, [Emscripten][emscripten] is required to generate the Check Sieve JavaScript library.
 
-#### Compiling
+[bison]: https://www.gnu.org/software/bison/
+[flex]: https://github.com/westes/flex
+[python]: https://www.python.org/
+[emscripten]: https://emscripten.org/
+
+#### Installing dependencies
+<details>
+<summary><strong>Ubuntu and Debian-based distributions</strong></summary>
+<p>
+
+```bash
+# Synchronize mirrors
+sudo apt-get update
+
+# Core development dependencies
+sudo apt-get install make gcc g++ bison flex python3 libpython3-dev 
+
+# JavaScript dependencies
+sudo apt-get install emscripten
+```
+
+</p>
+</details>
+
+<details>
+<summary><strong>Arch Linux</strong></summary>
+<p>
+
+```bash
+# Synchronize mirrors, and
+# Core development dependencies
+sudo pacman -Syu make gcc bison flex python 
+
+# JavaScript dependencies
+sudo pacman -Sy emscripten
+```
+
+</p>
+</details>
+
+
+### Compiling
 
 At the moment, there are four targets for this project:
 

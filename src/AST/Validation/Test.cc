@@ -1,4 +1,5 @@
 #include <string>
+#include <unordered_set>
 
 #include "ASTString.hh"
 #include "ASTStringList.hh"
@@ -21,6 +22,9 @@ Test::Test() {
                                           "                   If using 'imapsieve' capability, name can be one of:        \n"
                                           "                                         imap.user, imap.email, imap.cause,    \n"
                                           "                                         imap.mailbox, imap.changedflags       \n";
+    _usage_map["expiration"]            =        "expiration :comparator i;ascii-numeric [MATCH-TYPE]                     \n"
+                                          "                   <unit: day / minute / second> <key-list: string-list>       \n";
+    _usage_map["hasexpiration"]         = "hasexpiration";
     _usage_map["header"]                =        "header [:mime] [:anychild] [:regex]                                     \n"
                                           "              [:type / :subtype / :contenttype / :param <params: string-list>] \n"
                                           "              [:comparator <string>]                                           \n"
@@ -35,6 +39,8 @@ Test::Test() {
     _validation_fn_map["anyof"]                 = &Test::_validateHasOnlyTestList;
     _validation_fn_map["environment"]           = &Test::_validateEnvironmentTest;
     _validation_fn_map["exists"]                = &Test::_validateExists;
+    _validation_fn_map["hasexpiration"]         = &Test::_validateHasExpirationTest;
+    _validation_fn_map["expiration"]            = &Test::_validateExpirationTest;
     _validation_fn_map["header"]                = &Test::_validateHeaderTest;
     _validation_fn_map["ihave"]                 = &Test::_validateIhaveTest;
     _validation_fn_map["not"]                   = &Test::_validateNotTest;
@@ -145,6 +151,39 @@ bool Test::_validateValidNotifyMethodTest(const ASTNode *node) {
     if (!nodeIsType<ASTStringList>(test->children()[0]) && !nodeIsType<ASTString>(test->children()[0]))
         return false;
     
+    return true;
+}
+
+bool Test::_validateHasExpirationTest(const ASTNode *node) {
+    const auto *test = dynamic_cast<const ASTTest *>(node);
+    return test->children().size() == 0;
+}
+
+bool Test::_validateExpirationTest(const ASTNode *node) {
+    const auto *test = dynamic_cast<const ASTTest *>(node);
+    std::vector<ASTNode *> children = node->children();
+    size_t size = children.size();
+
+    if (size < 4) return false;
+
+    const auto *tag = dynamic_cast<const ASTTag *>(children[0]);
+    const auto *asciinumeric = dynamic_cast<const ASTString *>(children[1]);
+    const auto *match = dynamic_cast<const ASTString *>(children[2]);
+    const auto *unit = dynamic_cast<const ASTString *>(children[3]);
+
+    if (tag == nullptr || 
+        asciinumeric == nullptr || 
+        match == nullptr || 
+        unit == nullptr) {
+            return false;
+    }
+
+    if (tag->value() != ":comparator") return false;
+    if (asciinumeric->value() != "i;ascii-numeric") return false;
+
+    const std::unordered_set<std::string> units = {"day", "minute", "second"};
+    if (units.find(unit->value()) == units.end()) return false;
+
     return true;
 }
 

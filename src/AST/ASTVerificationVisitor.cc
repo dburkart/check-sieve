@@ -359,8 +359,7 @@ void ASTVerificationVisitor::_enable_capability(const std::string& capability) {
 
         // The :encodeurl tag can only be used if both "enotify" and
         // "variables" are required
-        if (_required_capabilities != nullptr &&
-            _required_capabilities->find(ASTString("variables")) != _required_capabilities->children().end()) {
+        if (has_required("variables")) {
             _tag_map[":encodeurl"] = true;
         }
     }
@@ -447,8 +446,7 @@ void ASTVerificationVisitor::_enable_capability(const std::string& capability) {
 
         // The "global" command can only be used if both "include" and
         // "variables" are required
-        if (_required_capabilities != nullptr &&
-            _required_capabilities->find(ASTString("variables")) != _required_capabilities->children().end()) {
+        if (has_required("variables")) {
             _command_map["global"] = true;
         }
     }
@@ -469,10 +467,32 @@ void ASTVerificationVisitor::_enable_capability(const std::string& capability) {
 
         // The ":quoteregex" command is supported if both "regex" and
         // "variables" are required
-        if (_required_capabilities != nullptr &&
-            _required_capabilities->find(ASTString("variables")) != _required_capabilities->children().end()) {
+        if (has_required("variables")) {
             _tag_map[":quoteregex"] = true;
         }
+    }
+
+    // VENDORED
+
+    // "vnd.proton.expire"
+    // (https://proton.me/support/sieve-advanced-custom-filters#managing-expiration)
+    if (capability == "vnd.proton.expire") {
+        _command_map["expire"] = true;
+        _command_map["unexpire"] = true;
+        _test_map["hasexpiration"] = true;
+
+        // The "expiration" test is supported if both "vnd.proton.expire" and
+        // "comparator-i;ascii-numeric" are required.
+        if (has_required("comparator-i;ascii-numeric")) {
+            _test_map["expiration"] = true;
+        }
+    }
+
+    // "vnd.proton.eval"
+    // (https://proton.me/support/sieve-advanced-custom-filters#transforming-variables)
+    // depends on "variables"
+    if (capability == "vnd.proton.eval" && has_required("variables")) {
+        _tag_map[":eval"] = true;
     }
 }
 

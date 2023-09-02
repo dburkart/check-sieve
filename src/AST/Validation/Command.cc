@@ -1,4 +1,5 @@
 #include <regex>
+#include <unordered_set>
 
 #include "ASTBlock.hh"
 #include "ASTNumeric.hh"
@@ -24,6 +25,7 @@ Command::Command() {
     _usage_map["ereject"] = "ereject <reason: string>";
     _usage_map["error"] = "error <message: string>";
     _usage_map["extracttext"] = "extracttext [MODIFIER] [:first number] <varname: string>";
+    _usage_map["expire"] = "expire <unit: day / minute / second> <value: string>";
     _usage_map["fileinto"] = "fileinto [:flags <list-of-flags: string-list>][:copy] <folder: string>";
     _usage_map["foreverypart"] = "foreverypart [:name string] block";
     _usage_map["global"] = "global <value: string-list>";
@@ -38,6 +40,7 @@ Command::Command() {
     _usage_map["set"] = "set [:modifier] <name: string> <value: string>";
     _usage_map["setflag"] = "setflag [<variablename: string>] <list-of-flags: string-list>";
     _usage_map["stop"] = "stop";
+    _usage_map["unexpire"] = "unexpire";
     _usage_map["vacation"] = "vacation [:days number] [:subject string] [:from string]\n\t[:addresses string-list] [:mime] [:handle string] <reason: string>";
 
     _validation_fn_map["addflag"] = &Command::_validateIMAP4FlagsAction;
@@ -49,6 +52,7 @@ Command::Command() {
     _validation_fn_map["ereject"] = &Command::_validateSingleStringArgumentCommand;
     _validation_fn_map["error"] = &Command::_validateSingleStringArgumentCommand;
     _validation_fn_map["extracttext"] = &Command::_validateExtracttextCommand;
+    _validation_fn_map["expire"] = &Command::_validateExpireCommand;
     _validation_fn_map["fileinto"] = &Command::_validateFileintoCommand;
     _validation_fn_map["foreverypart"] = &Command::_validateForeverypartCommand;
     _validation_fn_map["global"] = &Command::_validateSingleArgumentCommand;
@@ -63,6 +67,7 @@ Command::Command() {
     _validation_fn_map["set"] = &Command::_validateSetCommand;
     _validation_fn_map["setflag"] = &Command::_validateIMAP4FlagsAction;
     _validation_fn_map["stop"] = &Command::_validateBareCommand;
+    _validation_fn_map["unexpire"] = &Command::_validateBareCommand;
     _validation_fn_map["vacation"] = &Command::_validateVacationCommand;
     _validation_fn_map["convert"] = &Command::_validateConvertCommand;
 
@@ -280,6 +285,33 @@ bool Command::_validateEncloseCommand(const ASTNode *node) {
     return true;
 }
 
+bool Command::_validateExpireCommand(const ASTNode *node) {
+    const auto *command = dynamic_cast<const ASTCommand *>(node);
+    std::vector<sieve::ASTNode *> children = command->children();
+    size_t size = children.size();
+
+    if (size != 2) {
+        return false;
+    }
+
+    const ASTString *unitChild = dynamic_cast<ASTString *>(command->children()[0]);
+    const ASTString *valueChild = dynamic_cast<ASTString *>(command->children()[1]);
+    if (unitChild == nullptr || valueChild == nullptr) {
+        return false;
+    }
+
+    const std::unordered_set<std::string> units = {"day", "minute", "second"};
+    if (units.find(unitChild->value()) == units.end()) {
+        return false;
+    }
+
+    if (valueChild->value().find_first_not_of("0123456789") != std::string::npos) {
+        return false;
+    }
+
+    return true;
+}
+
 bool Command::_validateRedirectCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
@@ -318,7 +350,8 @@ bool Command::_validateSetCommand(const ASTNode *node) {
             tagChild->value() == ":quotewildcard" ||
             tagChild->value() == ":length" ||
             tagChild->value() == ":quoteregex" ||
-            tagChild->value() == ":encodeurl"
+            tagChild->value() == ":encodeurl" ||
+            tagChild->value() == ":eval"
            ))
             numArguments += 1;
         else if (tagChild)
@@ -330,7 +363,7 @@ bool Command::_validateSetCommand(const ASTNode *node) {
         if (stringArguments > 2)
             return false;
     }
-    
+
     if (size != numArguments || stringArguments < 2) {
         return false;
     }

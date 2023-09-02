@@ -241,6 +241,7 @@ test :
             test->push($2);
             $$ = std::vector<sieve::ASTNode *>(1, test);
         }
+    | IDENTIFIER { $$ = std::vector<sieve::ASTNode *>(1, new sieve::ASTTest(@1, $1)); }
     | TRUE { $$ = std::vector<sieve::ASTNode *>(1, new sieve::ASTBoolean(@1, $1)); }
     | FALSE { $$ = std::vector<sieve::ASTNode *>(1, new sieve::ASTBoolean(@1, $1)); }
     ;

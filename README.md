@@ -1,8 +1,40 @@
-[![Build Status](https://app.travis-ci.com/dburkart/check-sieve.svg?branch=master)](https://app.travis-ci.com/dburkart/check-sieve)
+<div align="center">
+    <h1>
+        Check SIEVE
+        <br>
+        <em><sup><sub>
+            Because breaking your sieve in production sucks.
+        </sub></sup></em>
+    </h1>
+</div>
 
-### check-sieve
+<div align="center">
 
-This project aims to make checking mail sieve syntax easy and painless. Because breaking your sieve in production sucks.
+[![badge-license]][url-license]
+[![badge-contributors]][url-contributors]
+![badge-language]
+[![badge-tests]][url-tests]
+[![badge-last-release]][url-last-release]
+
+</div>
+
+[badge-license]: https://img.shields.io/github/license/dburkart/check-sieve?style=for-the-badge
+[badge-contributors]: https://img.shields.io/github/contributors/dburkart/check-sieve?style=for-the-badge
+[badge-language]: https://img.shields.io/github/languages/top/dburkart/check-sieve?style=for-the-badge
+[badge-tests]: https://img.shields.io/github/actions/workflow/status/dburkart/check-sieve/c-cpp.yml?style=for-the-badge&label=Tests
+[badge-last-release]: https://img.shields.io/github/release-date/dburkart/check-sieve?style=for-the-badge&label=Last%20Release
+
+[url-license]: ./LICENSE
+[url-contributors]: https://github.com/dburkart/check-sieve/graphs/contributors
+[url-tests]: https://github.com/dburkart/check-sieve/actions
+[url-last-release]: https://github.com/dburkart/check-sieve/releases/latest
+
+
+
+This project aims to make checking mail [Sieve][wiki-sieve] syntax easy and painless.
+_Because breaking your sieve in production sucks._
+
+[wiki-sieve]: https://en.wikipedia.org/wiki/Sieve_(mail_filtering_language)
 
 Particular attention is paid to the quality of errors generated. For example:
 

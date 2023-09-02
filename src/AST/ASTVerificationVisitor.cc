@@ -462,6 +462,7 @@ void ASTVerificationVisitor::_enable_capability(const std::string& capability) {
     // RFC 6134
     if (capability == "extlists") {
         _tag_map[":list"] = true;
+        _test_map["valid_ext_list"] = true;
     }
 
     // DRAFT RFCs

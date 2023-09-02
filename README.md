@@ -51,6 +51,54 @@ Usage: convert  <quoted-from-media-type: string>
 
 For a web-based demonstration of check-sieve which is entirely browser-based, visit https://checksieve.com.
 
+## Features
+### Supported RFCs
+* Sieve: An Email Filtering Language ([RFC 5228](https://tools.ietf.org/html/rfc5228))
+* Variables Extension ([RFC 5229](https://tools.ietf.org/html/rfc5229))
+* Date and Index Extensions ([RFC 5260](https://tools.ietf.org/html/rfc5260))
+* Vacation Extension ([RFC 5230](https://tools.ietf.org/html/rfc5230))
+* Include Extension ([RFC 6609](https://tools.ietf.org/html/rfc6609))
+* Copying Without Side Effects ([RFC 3894](https://tools.ietf.org/html/rfc3894))
+* Reject and Extended Reject Extensions ([RFC 5429](https://tools.ietf.org/html/rfc5429))
+* Body Extension ([RFC 5173](https://tools.ietf.org/html/rfc5173))
+* Relational Extension ([RFC 5231](https://tools.ietf.org/html/rfc5231))
+* MIME Part Tests, Iteration, Extraction, Replacement, and Enclosure ([RFC 5703](https://tools.ietf.org/html/rfc5703))
+* Imap4flags Extension ([RFC 5232](https://tools.ietf.org/html/rfc5232))
+* Editheader Extension ([RFC 5293](https://tools.ietf.org/html/rfc5293))
+* Regex Extension ([DRAFT](https://tools.ietf.org/html/draft-ietf-sieve-regex-01))
+* Spamtest and Virustest Extensions ([RFC 5235](https://tools.ietf.org/html/rfc5235))
+* Extensions for Notifications ([RFC 5435](https://tools.ietf.org/html/rfc5435))
+* Subaddress Extension ([RFC 5233](https://tools.ietf.org/html/rfc5233))
+* Ihave Extension ([RFC 5463](https://tools.ietf.org/html/rfc5463))
+* Environment Extension ([RFC 5183](https://tools.ietf.org/html/rfc5183))
+* Sieve Notification Mechanism: mailto ([RFC 5436](https://tools.ietf.org/html/rfc5436))
+* Internet Message Access Protocol (IMAP) Events ([RFC 6785](https://tools.ietf.org/html/rfc6785))
+* Converting Messages before Delivery ([RFC 6558](https://tools.ietf.org/html/rfc6558))
+* Proton Expiration Extension ([vnd.proton.expire](https://proton.me/support/sieve-advanced-custom-filters#managing-expiration))
+* Proton Eval Extension ([vnd.proton.eval](https://proton.me/support/sieve-advanced-custom-filters#transforming-variables))
+
+If you find any discrepancies with these RFCs,
+have a request for an RFC not included,
+or have test-cases that should work but don't,
+please [file an issue][file-issue].
+
+[file-issue]: https://github.com/dburkart/check-sieve/issues
+
+## Usage
+```
+Usage: check-sieve [options] file1 [file2 ...]                                 
+                                                                               
+Options:                                                                       
+  -h, --help               Show this message                                   
+  --max-list-length N      Flag lists over a certain length (default: none)    
+  --server <host>:<port>   Only allow capabilities advertised by the specified 
+                           server.                                             
+  --trace-parser           Trace the operation of the parser                   
+  --trace-scanner          Trace the operation of the scanner                  
+  --trace-tree             Trace the abstract-syntax-tree                      
+  --version                Print out version information 
+```
+
 ## Development
 ### Dependencies
 `check-sieve` minimally depends on having a modern C++ compiler and the
@@ -140,42 +188,10 @@ to the desired location.
 
 * Arch Linux ([community](https://archlinux.org/packages/community/x86_64/check-sieve/) repository)
 
-
 ##### Snap
-To build the snap, run `snapcraft`.
-Installation of the locally-built snap requires the following:
+
+Installation of the latest edge snap from snapcraft can be done with the following command:
 ```
-sudo snap install --dangerous --devmode check-sieve_X.X_amd64.snap
+snap install --edge check-sieve
 ```
 
-#### Supported RFCs
-
-Currently, the supported RFCs are:
-
-* Sieve: An Email Filtering Language ([RFC 5228](https://tools.ietf.org/html/rfc5228))
-* Variables Extension ([RFC 5229](https://tools.ietf.org/html/rfc5229))
-* Date and Index Extensions ([RFC 5260](https://tools.ietf.org/html/rfc5260))
-* Vacation Extension ([RFC 5230](https://tools.ietf.org/html/rfc5230))
-* Include Extension ([RFC 6609](https://tools.ietf.org/html/rfc6609))
-* Copying Without Side Effects ([RFC 3894](https://tools.ietf.org/html/rfc3894))
-* Reject and Extended Reject Extensions ([RFC 5429](https://tools.ietf.org/html/rfc5429))
-* Body Extension ([RFC 5173](https://tools.ietf.org/html/rfc5173))
-* Relational Extension ([RFC 5231](https://tools.ietf.org/html/rfc5231))
-* MIME Part Tests, Iteration, Extraction, Replacement, and Enclosure ([RFC 5703](https://tools.ietf.org/html/rfc5703))
-* Imap4flags Extension ([RFC 5232](https://tools.ietf.org/html/rfc5232))
-* Editheader Extension ([RFC 5293](https://tools.ietf.org/html/rfc5293))
-* Regex Extension ([DRAFT](https://tools.ietf.org/html/draft-ietf-sieve-regex-01))
-* Spamtest and Virustest Extensions ([RFC 5235](https://tools.ietf.org/html/rfc5235))
-* Extensions for Notifications ([RFC 5435](https://tools.ietf.org/html/rfc5435))
-* Subaddress Extension ([RFC 5233](https://tools.ietf.org/html/rfc5233))
-* Ihave Extension ([RFC 5463](https://tools.ietf.org/html/rfc5463))
-* Environment Extension ([RFC 5183](https://tools.ietf.org/html/rfc5183))
-* Sieve Notification Mechanism: mailto ([RFC 5436](https://tools.ietf.org/html/rfc5436))
-* Internet Message Access Protocol (IMAP) Events ([RFC 6785](https://tools.ietf.org/html/rfc6785))
-* Converting Messages before Delivery ([RFC 6558](https://tools.ietf.org/html/rfc6558))
-* Externally Stored Lists ([RFC 6134](https://tools.ietf.org/html/rfc6134))
-* Proton Expiration Extension ([vnd.proton.expire](https://proton.me/support/sieve-advanced-custom-filters#managing-expiration))
-* Proton Eval Extension ([vnd.proton.eval](https://proton.me/support/sieve-advanced-custom-filters#transforming-variables))
-
-If you find any discrepancies with these RFCs, or have reduced test-cases that should work but don't, please file an
-issue. If there's an RFC that isn't supported that you want, file an issue!

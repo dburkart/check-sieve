@@ -74,28 +74,28 @@ class TestExamples(unittest.TestCase):
 
     def test_example_5(self):
         sieve = """
-            require [ "extlists", "foreverypart", "mime", "enclose" ];
+require [ "extlists", "foreverypart", "mime", "enclose" ];
 
-            foreverypart
-            {
-                if header :mime :param "filename"
-                    :list ["Content-Type", "Content-Disposition"]
-                    "tag:example.com,2011-04-10:BadFileNameExts"
-                {
-                # these attachment types are executable
-                enclose :subject "Warning" :text
-            WARNING! The enclosed message has attachments that might be unsafe.
-            These attachment types may contain a computer virus program
-            that can infect your computer and potentially damage your data.
+foreverypart
+{
+    if header :mime :param "filename"
+        :list ["Content-Type", "Content-Disposition"]
+        "tag:example.com,2011-04-10:BadFileNameExts"
+    {
+    # these attachment types are executable
+    enclose :subject "Warning" text:
+WARNING! The enclosed message has attachments that might be unsafe.
+These attachment types may contain a computer virus program
+that can infect your computer and potentially damage your data.
 
-            Before clicking on these message attachments, you should verify
-            with the sender that this message was sent intentionally, and
-            that the attachments are safe to open.
-            .
-            ;
-                break;
-                }
-            }
+Before clicking on these message attachments, you should verify
+with the sender that this message was sent intentionally, and
+that the attachments are safe to open.
+.
+;
+    break;
+    }
+}
         """
         self.assertFalse(checksieve.parse_string(sieve, False))
 

@@ -32,7 +32,7 @@ Command::Command() {
     _usage_map["include"] = "include [:global / :personal] [:once] [:optional] <value: string>";
     _usage_map["keep"] = "keep [:flags <list-of-flags: string-list>]";
     _usage_map["notify"] = "notify [:from string] [:importance <1 / 2 / 3>] [:options string-list] [:message string] <method: string>";
-    _usage_map["redirect"] = "redirect [:copy] <address: string>";
+    _usage_map["redirect"] = "redirect [:copy / :list] <address: string>";
     _usage_map["reject"] = "reject <reason: string>";
     _usage_map["removeflag"] = "removeflag [<variablename: string>] <list-of-flags: string-list>";
     _usage_map["replace"] = "replace [:mime] [:subject string] [:from string] <replacement: string>";
@@ -319,7 +319,8 @@ bool Command::_validateRedirectCommand(const ASTNode *node) {
     
     int numArguments = 1;
     
-    if (command->find(ASTTag(":copy")) != command->children().end()) {
+    if (command->find(ASTTag(":copy")) != command->children().end() ||
+        command->find(ASTTag(":list")) != command->children().end()) {
         numArguments += 1;
     }
     

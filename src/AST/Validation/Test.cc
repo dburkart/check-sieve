@@ -214,7 +214,9 @@ bool Test::_validateHeaderTest(const ASTNode *node) {
                 tagValue == ":param" ||
                 tagValue == ":regex" ||
                 tagValue == ":value" ||
-                tagValue == ":count") {
+                tagValue == ":count" ||
+                tagValue == ":index" ||
+                tagValue == ":list") {
                     continue;
                 }
             

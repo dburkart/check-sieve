@@ -1,0 +1,50 @@
+name: check-sieve
+license: MIT
+version: "0.8" # automatically updated during pull
+summary: Syntax checker for mail sieves
+description: |
+  Makes checking mail sieve syntax easy and painless.
+  Because breaking your sieve in production sucks.
+
+type: app
+base: core22
+grade: stable
+compression: xz
+
+confinement: strict
+adopt-info: check-sieve
+
+parts:
+  check-sieve:
+    plugin: make
+    source: https://github.com/dburkart/check-sieve.git
+    build-packages:
+      - g++
+      - gcc
+      - make
+    override-pull: |
+      craftctl default
+      last_committed_tag="$(git describe --tags --abbrev=0)"
+      last_committed_version="$(echo "${last_committed_tag}" | grep -Eo '[[:digit:]]+\.[[:digit:]]+')"
+      last_released_version="$(snap info $CRAFT_PROJECT_NAME | awk '$1 == "latest/beta:" { print $2 }' || true)"
+      
+      # If the latest tag from the upstream project has not been released to
+      # beta, build that tag instead of master.
+      if [ "${last_committed_version}" != "${last_released_version}" ]; then
+        git fetch
+        git checkout "${last_committed_tag}"
+        echo "Setting version to ${last_committed_version}"
+        craftctl set version="${last_committed_version}"
+      else
+        echo "Setting version to $(git rev-parse --short HEAD)"
+        craftctl set version="$(git rev-parse --short HEAD)"
+      fi
+    override-build: |
+      CFLAGS='-O3 -pipe' make -j4
+      cp check-sieve $CRAFT_PART_INSTALL
+
+apps:
+  check-sieve:
+    command: check-sieve
+    plugs:
+      - home # access to user's /home directory

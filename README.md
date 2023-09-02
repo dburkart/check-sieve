@@ -77,10 +77,11 @@ For a web-based demonstration of check-sieve which is entirely browser-based, vi
 * Proton Expiration Extension ([vnd.proton.expire](https://proton.me/support/sieve-advanced-custom-filters#managing-expiration))
 * Proton Eval Extension ([vnd.proton.eval](https://proton.me/support/sieve-advanced-custom-filters#transforming-variables))
 
-If you find any discrepancies with these RFCs,
-have a request for an RFC not included,
-or have test-cases that should work but don't,
-please [file an issue][file-issue].
+> [!NOTE]
+> If you find any discrepancies with these RFCs,
+> have a request for an RFC not included,
+> or have test-cases that should work but don't,
+> please [file an issue][file-issue].
 
 [file-issue]: https://github.com/dburkart/check-sieve/issues
 

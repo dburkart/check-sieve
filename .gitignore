@@ -12,3 +12,7 @@ __pycache__
 # Web-related binaries
 *.js
 *.wasm
+
+# Snaps
+*.snap
+*.snap.bak

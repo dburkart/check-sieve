@@ -62,7 +62,7 @@ to the desired location.
 
 ##### Packages
 
-* Arch Linux ([community](https://archlinux.org/packages/community/x86_64/check-sieve/) repository)
+* Arch Linux ([community](https://archlinux.org/packages/extra/x86_64/check-sieve/) repository)
 
 
 ##### Snap

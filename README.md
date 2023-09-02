@@ -51,6 +51,21 @@ Usage: convert  <quoted-from-media-type: string>
 
 For a web-based demonstration of check-sieve which is entirely browser-based, visit https://checksieve.com.
 
+## Usage
+```
+Usage: check-sieve [options] file1 [file2 ...]                                 
+                                                                               
+Options:                                                                       
+  -h, --help               Show this message                                   
+  --max-list-length N      Flag lists over a certain length (default: none)    
+  --server <host>:<port>   Only allow capabilities advertised by the specified 
+                           server.                                             
+  --trace-parser           Trace the operation of the parser                   
+  --trace-scanner          Trace the operation of the scanner                  
+  --trace-tree             Trace the abstract-syntax-tree                      
+  --version                Print out version information 
+```
+
 ## Features
 ### Supported RFCs
 * Sieve: An Email Filtering Language ([RFC 5228](https://tools.ietf.org/html/rfc5228))
@@ -84,21 +99,6 @@ For a web-based demonstration of check-sieve which is entirely browser-based, vi
 > please [file an issue][file-issue].
 
 [file-issue]: https://github.com/dburkart/check-sieve/issues
-
-## Usage
-```
-Usage: check-sieve [options] file1 [file2 ...]                                 
-                                                                               
-Options:                                                                       
-  -h, --help               Show this message                                   
-  --max-list-length N      Flag lists over a certain length (default: none)    
-  --server <host>:<port>   Only allow capabilities advertised by the specified 
-                           server.                                             
-  --trace-parser           Trace the operation of the parser                   
-  --trace-scanner          Trace the operation of the scanner                  
-  --trace-tree             Trace the abstract-syntax-tree                      
-  --version                Print out version information 
-```
 
 ## Development
 ### Dependencies

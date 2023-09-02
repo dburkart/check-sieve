@@ -74,7 +74,8 @@ Currently, the supported RFCs are:
 * Environment Extension ([RFC 5183](https://tools.ietf.org/html/rfc5183))
 * Sieve Notification Mechanism: mailto ([RFC 5436](https://tools.ietf.org/html/rfc5436))
 * Internet Message Access Protocol (IMAP) Events ([RFC 6785](https://tools.ietf.org/html/rfc6785))
-* Converting Messages before Delivery ([6558](https://tools.ietf.org/html/rfc6558))
+* Converting Messages before Delivery ([RFC 6558](https://tools.ietf.org/html/rfc6558))
+* Externally Stored Lists ([RFC 6134](https://tools.ietf.org/html/rfc6134))
 * Proton Expiration Extension ([vnd.proton.expire](https://proton.me/support/sieve-advanced-custom-filters#managing-expiration))
 * Proton Eval Extension ([vnd.proton.eval](https://proton.me/support/sieve-advanced-custom-filters#transforming-variables))
 

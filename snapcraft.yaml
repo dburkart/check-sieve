@@ -1,6 +1,6 @@
 name: check-sieve
 license: MIT
-version: "0.6"
+version: "0.8" # automatically updated during pull
 summary: Syntax checker for mail sieves
 description: |
   Makes checking mail sieve syntax easy and painless.
@@ -22,9 +22,6 @@ parts:
       - g++
       - gcc
       - make
-      - bison
-      - flex
-      - python3-dev
     override-pull: |
       craftctl default
       last_committed_tag="$(git describe --tags --abbrev=0)"

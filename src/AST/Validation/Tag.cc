@@ -1,3 +1,4 @@
+#include "ASTNode.hh"
 #include "ASTNumeric.hh"
 #include "ASTString.hh"
 #include "Tag.hh"
@@ -9,11 +10,13 @@ Tag::Tag() {
     _usage_map[":days"] = ":days number";
     _usage_map[":subject"] = ":subject string";
     _usage_map[":eval"] = ":eval string";
+    _usage_map[":list"] = ":list string";
 
     _validation_fn_map[":comparator"] = &Tag::_validateSingleString; // TODO: Validate comparator string
     _validation_fn_map[":days"] = &Tag::_validateSingleNumeric;
     _validation_fn_map[":subject"] = &Tag::_validateSingleString;
     _validation_fn_map[":eval"] = &Tag::_validateSingleString;
+    _validation_fn_map[":list"] = &Tag::_validateList;
 }
 
 bool Tag::validate(const ASTNode *node) {
@@ -65,6 +68,22 @@ bool Tag::_validateSingleNumeric(const ASTNode *node) {
     }
     
     return true;
+}
+
+bool Tag::_validateList(const ASTNode *node) {
+    const auto *tag = dynamic_cast<const ASTTag*>(node);
+    const ASTNode *parent = tag->parent();
+    const ASTNode *next = parent->nextChild(tag);
+
+    if (dynamic_cast<const ASTString *>(next) != nullptr) {
+        return true;
+    }
+
+    if (dynamic_cast<const ASTStringList *>(next) != nullptr) {
+        return true;
+    }
+
+    return false;
 }
 
 }

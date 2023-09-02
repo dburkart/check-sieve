@@ -34,6 +34,7 @@ Test::Test() {
     _usage_map["not"]                   = "not <test1: test>";
     _usage_map["size"]                  = "size <:over / :under> <limit: number>";
     _usage_map["valid_notify_method"]   = "valid_notify_method <notification-uris: string-list>";
+    _usage_map["valid_ext_list"]        = "valid_ext_list <ext-list-names: string-list>";
 
     _validation_fn_map["allof"]                 = &Test::_validateHasOnlyTestList;
     _validation_fn_map["anyof"]                 = &Test::_validateHasOnlyTestList;
@@ -46,6 +47,7 @@ Test::Test() {
     _validation_fn_map["not"]                   = &Test::_validateNotTest;
     _validation_fn_map["size"]                  = &Test::_validateSizeTest;
     _validation_fn_map["valid_notify_method"]   = &Test::_validateValidNotifyMethodTest;
+    _validation_fn_map["valid_ext_list"]        = &Test::_validateValidExtListTest;
 }
 
 bool Test::validate(const ASTNode *node) {
@@ -214,7 +216,9 @@ bool Test::_validateHeaderTest(const ASTNode *node) {
                 tagValue == ":param" ||
                 tagValue == ":regex" ||
                 tagValue == ":value" ||
-                tagValue == ":count") {
+                tagValue == ":count" ||
+                tagValue == ":index" ||
+                tagValue == ":list") {
                     continue;
                 }
             
@@ -283,5 +287,16 @@ bool Test::_validateEnvironmentTest(const ASTNode *node) {
     
     return false;
 }
+
+bool Test::_validateValidExtListTest(const ASTNode *node) {
+    const auto *test = dynamic_cast<const ASTTest*>(node);
+    size_t size = test->children().size();
+    
+    if (!nodeIsType<ASTStringList>(test->children()[0]) && !nodeIsType<ASTString>(test->children()[0]))
+        return false;
+    
+    return true;
+}
+
 
 }

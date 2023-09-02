@@ -50,6 +50,14 @@ to the desired location.
 
 * Arch Linux ([community](https://archlinux.org/packages/community/x86_64/check-sieve/) repository)
 
+
+##### Snap
+To build the snap, run `snapcraft`.
+Installation of the locally-built snap requires the following:
+```
+sudo snap install --dangerous --devmode check-sieve_X.X_amd64.snap
+```
+
 #### Supported RFCs
 
 Currently, the supported RFCs are:

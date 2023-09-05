@@ -1,3 +1,12 @@
+Version 0.9:
+ * Fixed Xcode project files.
+ * Add support for Externally Stored Lists (RFC 6134). (@johnlettman)
+ * Snapcraft support. (@johnlettman)
+ * Support Proton mail-specific extensions. (@johnlettman)
+ * Support GCC 13+. (@grawlinson)
+ * Support CR/LF-style line-endings.
+ * Fix bug to accept relational operators in header tests. (@fischerling)
+
 Version 0.8:
  * Support compiling on FreeBSD.
  * Adds a --server flag to check-sieve, enabling the tool to check capabilities specific to your server.

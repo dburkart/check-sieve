@@ -1,6 +1,6 @@
 <div align="center">
     <h1>
-        Check SIEVE
+        check-sieve
         <br>
         <em><sup><sub>
             Because breaking your sieve in production sucks.
@@ -98,7 +98,7 @@ Options:
 > or have test-cases that should work but don't,
 > please [file an issue][file-issue].
 
-[file-issue]: https://github.com/dburkart/check-sieve/issues
+[file-issue]: https://github.com/dburkart/check-sieve/issues/new
 
 ## Development
 ### Dependencies

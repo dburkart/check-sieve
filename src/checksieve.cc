@@ -1,8 +1,6 @@
 #include "checksieve.h"
 #include "sieve_driver.hh"
 
-#include <utility>
-
 namespace sieve
 {
 

@@ -87,6 +87,7 @@ Options:
 * Ihave Extension ([RFC 5463](https://tools.ietf.org/html/rfc5463))
 * Environment Extension ([RFC 5183](https://tools.ietf.org/html/rfc5183))
 * Sieve Notification Mechanism: mailto ([RFC 5436](https://tools.ietf.org/html/rfc5436))
+* Extensions for Checking Mailbox Status and Accessing Mailbox Metadata ([RFC 5490](https://tools.ietf.org/html/rfc5490))
 * Internet Message Access Protocol (IMAP) Events ([RFC 6785](https://tools.ietf.org/html/rfc6785))
 * Converting Messages before Delivery ([RFC 6558](https://tools.ietf.org/html/rfc6558))
 * Proton Expiration Extension ([vnd.proton.expire](https://proton.me/support/sieve-advanced-custom-filters#managing-expiration))

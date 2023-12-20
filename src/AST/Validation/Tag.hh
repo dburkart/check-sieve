@@ -1,11 +1,9 @@
-#ifndef __TAG_H__
-#define __TAG_H__
+#pragma once
 
 #include <map>
 #include <string>
 
 #include "Validation.hh"
-#include "ASTTag.hh"
 
 namespace sieve 
 {
@@ -29,5 +27,3 @@ private:
 };
 
 }
-
-#endif

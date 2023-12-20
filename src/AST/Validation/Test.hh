@@ -1,12 +1,9 @@
-#ifndef __TEST_H__
-#define __TEST_H__
+#pragma once
 
 #include <map>
 #include <string>
 
 #include "Validation.hh"
-#include "ASTTest.hh"
-#include "ASTTestList.hh"
 
 namespace sieve 
 {
@@ -38,5 +35,3 @@ private:
 };
 
 }
-
-#endif

@@ -2,6 +2,7 @@
 #include <unordered_set>
 
 #include "ASTBlock.hh"
+#include "ASTCommand.hh"
 #include "ASTNumeric.hh"
 #include "ASTString.hh"
 #include "ASTStringList.hh"

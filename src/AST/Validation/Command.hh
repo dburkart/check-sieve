@@ -1,11 +1,9 @@
-#ifndef __COMMAND_HH__
-#define __COMMAND_HH__
+#pragma once
 
 #include <map>
 #include <string>
 
 #include "Validation.hh"
-#include "ASTCommand.hh"
 
 namespace sieve 
 {
@@ -46,5 +44,3 @@ private:
 };
 
 }
-
-#endif

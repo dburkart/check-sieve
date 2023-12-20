@@ -162,7 +162,6 @@ bool Test::_validateHasExpirationTest(const ASTNode *node) {
 }
 
 bool Test::_validateExpirationTest(const ASTNode *node) {
-    const auto *test = dynamic_cast<const ASTTest *>(node);
     std::vector<ASTNode *> children = node->children();
     size_t size = children.size();
 
@@ -190,7 +189,6 @@ bool Test::_validateExpirationTest(const ASTNode *node) {
 }
 
 bool Test::_validateHeaderTest(const ASTNode *node) {
-    const auto *test = dynamic_cast<const ASTTest*>(node);
     std::vector<ASTNode *> children = node->children();
     size_t size = children.size();
     
@@ -290,7 +288,6 @@ bool Test::_validateEnvironmentTest(const ASTNode *node) {
 
 bool Test::_validateValidExtListTest(const ASTNode *node) {
     const auto *test = dynamic_cast<const ASTTest*>(node);
-    size_t size = test->children().size();
     
     if (!nodeIsType<ASTStringList>(test->children()[0]) && !nodeIsType<ASTString>(test->children()[0]))
         return false;

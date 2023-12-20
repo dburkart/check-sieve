@@ -1,6 +1,8 @@
 #include "ASTNode.hh"
 #include "ASTNumeric.hh"
 #include "ASTString.hh"
+#include "ASTStringList.hh"
+#include "ASTTag.hh"
 #include "Tag.hh"
 
 namespace sieve {

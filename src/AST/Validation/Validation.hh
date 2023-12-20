@@ -1,8 +1,6 @@
-#ifndef __VALIDATION_H__
-#define __VALIDATION_H__
+#pragma once
 
 #include "ASTNode.hh"
-#include "ASTVisitor.hh"
 
 namespace sieve {
 
@@ -29,5 +27,3 @@ private:
 };
 
 }
-
-#endif

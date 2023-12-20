@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -14,8 +13,8 @@ driver::driver()
     : trace_scanning( false )
     , trace_parsing( false )
     , trace_tree( false )
-    , _options()
     , result( 0 )
+    , _options()
     , yyscanner()
     , _sieve() {}
 
@@ -23,8 +22,8 @@ driver::driver( struct parse_options options )
     : trace_scanning( false )
     , trace_parsing( false )
     , trace_tree( false )
-    , _options( options )
     , result( 0 )
+    , _options( options )
     , yyscanner()
     , _sieve() {}
 

@@ -8,11 +8,8 @@ namespace sieve
 {
 
 ASTVerificationVisitor::ASTVerificationVisitor(struct parse_options options)
-    : _verification_result()
-    , _command()
-    , _test()
-    , _tag()
-    , _options( options )
+    : _options( options )
+    , _verification_result()
     , _required_capabilities( nullptr ) {
     _init();
 }

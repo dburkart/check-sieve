@@ -30,8 +30,6 @@ public:
 
         return this->children().end();
     }
-    
-private:
 };
 
 } // namespace sieve

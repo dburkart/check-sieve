@@ -318,7 +318,7 @@ bool Command::_validateRedirectCommand(const ASTNode *node) {
     std::vector<sieve::ASTNode *> children = command->children();
     const size_t size = children.size();
     
-    int numArguments = 1;
+    size_t numArguments = 1;
     
     if (command->find(ASTTag(":copy")) != command->children().end() ||
         command->find(ASTTag(":list")) != command->children().end()) {
@@ -337,8 +337,8 @@ bool Command::_validateSetCommand(const ASTNode *node) {
     std::vector<sieve::ASTNode *> children = command->children();
     const size_t size = children.size();
     
-    int numArguments = 2;
-    int stringArguments = 0;
+    size_t numArguments = 2;
+    size_t stringArguments = 0;
     
     for (auto it : children) {
         const ASTTag *tagChild = dynamic_cast<ASTTag *>(it);
@@ -388,7 +388,7 @@ bool Command::_validateVacationCommand(const ASTNode *node) {
     std::vector<sieve::ASTNode *> children = command->children();
     const size_t size = children.size();
     
-    int numArguments = 1;
+    size_t numArguments = 1;
     
     if (command->find(ASTTag(":days")) != command->children().end()) {
         numArguments += 2;
@@ -509,7 +509,7 @@ bool Command::_validateNotifyCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const size_t size = command->children().size();
     
-    int numArguments = 1;
+    size_t numArguments = 1;
     
     if (!nodeIsType<ASTString>(command->children()[size-1]))
         return false;

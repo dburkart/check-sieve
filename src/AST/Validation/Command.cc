@@ -177,12 +177,12 @@ bool Command::_validateDeleteHeadersCommand(const ASTNode *node) {
 // TODO: Think about if this is the right way to do this
 bool Command::_validateIncludeCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
-    size_t size = command->children().size();
+    const size_t size = command->children().size();
 
     if (size < 5 && size > 0)
         return true;
-    else
-        return false;
+
+    return false;
 }
 
 bool Command::_validateIMAP4FlagsAction(const ASTNode *node) {
@@ -191,19 +191,19 @@ bool Command::_validateIMAP4FlagsAction(const ASTNode *node) {
     
     if (size > 0 && size < 3)
         return true;
-    else
-        return false;
+
+    return false;
 }
 
 bool Command::_validateFileintoCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
-    size_t size = children.size();
+    const size_t size = children.size();
     
     if (size < 1)
         return false;
     
-    int minArguments = 1;
+    size_t minArguments = 1;
     
     if (command->find(ASTTag(":flags")) != command->children().end()) {
         minArguments += 2;
@@ -223,9 +223,9 @@ bool Command::_validateFileintoCommand(const ASTNode *node) {
 bool Command::_validateKeepCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
-    size_t size = children.size();
+    const size_t size = children.size();
     
-    int numArguments = 0;
+    size_t numArguments = 0;
     
     if (command->find(ASTTag(":flags")) != command->children().end()) {
         numArguments += 2;
@@ -241,9 +241,9 @@ bool Command::_validateKeepCommand(const ASTNode *node) {
 bool Command::_validateReplaceCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
-    size_t size = children.size();
+    const size_t size = children.size();
     
-    int numArguments = 1;
+    size_t numArguments = 1;
     
     if (command->find(ASTTag(":mime")) != command->children().end()) {
         numArguments += 1;
@@ -267,9 +267,9 @@ bool Command::_validateReplaceCommand(const ASTNode *node) {
 bool Command::_validateEncloseCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
-    size_t size = children.size();
+    const size_t size = children.size();
     
-    int numArguments = 1;
+    size_t numArguments = 1;
     
     if (command->find(ASTTag(":subject")) != command->children().end()) {
         numArguments += 2;
@@ -289,7 +289,7 @@ bool Command::_validateEncloseCommand(const ASTNode *node) {
 bool Command::_validateExpireCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand *>(node);
     std::vector<sieve::ASTNode *> children = command->children();
-    size_t size = children.size();
+    const size_t size = children.size();
 
     if (size != 2) {
         return false;
@@ -316,7 +316,7 @@ bool Command::_validateExpireCommand(const ASTNode *node) {
 bool Command::_validateRedirectCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
-    size_t size = children.size();
+    const size_t size = children.size();
     
     int numArguments = 1;
     
@@ -335,7 +335,7 @@ bool Command::_validateRedirectCommand(const ASTNode *node) {
 bool Command::_validateSetCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
-    size_t size = children.size();
+    const size_t size = children.size();
     
     int numArguments = 2;
     int stringArguments = 0;
@@ -386,7 +386,7 @@ bool Command::_validateSetCommand(const ASTNode *node) {
 bool Command::_validateVacationCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<sieve::ASTNode *> children = command->children();
-    size_t size = children.size();
+    const size_t size = children.size();
     
     int numArguments = 1;
     
@@ -423,27 +423,27 @@ bool Command::_validateVacationCommand(const ASTNode *node) {
 
 bool Command::_validateBareCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
-    size_t size = command->children().size();
+    const size_t size = command->children().size();
     
     if (size == 0)
         return true;
-    else
-        return false;
+
+    return false;
 }
 
 bool Command::_validateSingleArgumentCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
-    size_t size = command->children().size();
+    const size_t size = command->children().size();
     
     if (size == 1)
         return true;
-    else
-        return false;
+
+    return false;
 }
 
 bool Command::_validateSingleStringArgumentCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
-    size_t size = command->children().size();
+    const size_t size = command->children().size();
     
     if (size != 1)
         return false;
@@ -457,7 +457,7 @@ bool Command::_validateSingleStringArgumentCommand(const ASTNode *node) {
 
 bool Command::_validateBreakCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
-    size_t size = command->children().size();
+    const size_t size = command->children().size();
     
     if (size == 0)
         return true;
@@ -476,7 +476,7 @@ bool Command::_validateBreakCommand(const ASTNode *node) {
 
 bool Command::_validateForeverypartCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
-    size_t size = command->children().size();
+    const size_t size = command->children().size();
     
     if (size != 1 && size != 3)
         return false;
@@ -497,7 +497,7 @@ bool Command::_validateForeverypartCommand(const ASTNode *node) {
 
 bool Command::_validateExtracttextCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
-    size_t size = command->children().size();
+    const size_t size = command->children().size();
 
     if (!nodeIsType<ASTString>(command->children()[size-1]))
         return false;
@@ -507,7 +507,7 @@ bool Command::_validateExtracttextCommand(const ASTNode *node) {
 
 bool Command::_validateNotifyCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
-    size_t size = command->children().size();
+    const size_t size = command->children().size();
     
     int numArguments = 1;
     
@@ -538,7 +538,7 @@ bool Command::_validateNotifyCommand(const ASTNode *node) {
 
 bool Command::_validateConvertCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
-    size_t size = command->children().size();
+    const size_t size = command->children().size();
     
     if (size != 3)
         return false;

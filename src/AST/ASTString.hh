@@ -18,7 +18,7 @@ public:
     
     void accept(ASTVisitor &visitor);
     
-    std::string value() const { return this->_str; }
+    std::string_view value() const { return std::string_view{ this->_str }; }
 
     template<class T>
     std::vector<ASTNode *>::const_iterator find(const T& value) const {

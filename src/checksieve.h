@@ -38,9 +38,9 @@ struct parse_result {
 };
 
 struct parse_options {
-    parse_options() : string_list_max_length(0), capabilities(), all_supported_capabilities(true) {}
+    parse_options() : string_list_max_length(0), all_supported_capabilities(true) {}
     int string_list_max_length;
-    std::map<std::string, bool> capabilities;
+    std::map<std::string_view, bool> capabilities;
     bool all_supported_capabilities;
 };
 

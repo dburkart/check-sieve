@@ -58,7 +58,7 @@ bool Test::validate(const ASTNode *node) {
         return true;
     }
 
-    return (this->*_validation_fn_map[test->value()])(test);
+    return (this->_validation_fn_map[test->value()])(test);
 }
 
 std::string Test::usage(const ASTNode *node) {
@@ -182,7 +182,7 @@ bool Test::_validateExpirationTest(const ASTNode *node) {
     if (tag->value() != ":comparator") return false;
     if (asciinumeric->value() != "i;ascii-numeric") return false;
 
-    const std::unordered_set<std::string> units = {"day", "minute", "second"};
+    const std::unordered_set<std::string_view> units = {"day", "minute", "second"};
     if (units.find(unit->value()) == units.end()) return false;
 
     return true;
@@ -259,7 +259,7 @@ bool Test::_validateEnvironmentTest(const ASTNode *node) {
     if (name_node == nullptr || (key_list == nullptr && key == nullptr))
         return false;
     
-    std::string name = name_node->value();
+    const auto name = name_node->value();
     
     if (name == "domain" ||
         name == "host" ||

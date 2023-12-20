@@ -45,15 +45,15 @@ public:
 private:
     void _init();
     void _traverse_tree(sieve::ASTNode *node);
-    void _enable_capability(const std::string& capability);
+    void _enable_capability(std::string_view capability);
 
     struct parse_options _options;
     parse_result _verification_result;
     
-    std::map<std::string, bool> _capability_map;
-    std::map<std::string, bool> _command_map;
-    std::map<std::string, bool> _test_map;
-    std::map<std::string, bool> _tag_map;
+    std::map<std::string_view, bool> _capability_map;
+    std::map<std::string_view, bool> _command_map;
+    std::map<std::string_view, bool> _test_map;
+    std::map<std::string_view, bool> _tag_map;
     
     // Validators
     Command _command;

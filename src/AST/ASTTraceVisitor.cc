@@ -65,10 +65,12 @@ void ASTTraceVisitor::visit( ASTSieve* node ) {
 }
 
 void ASTTraceVisitor::visit( ASTString* node ) {
-    std::string slice = node->value().substr(0, 10);
-    if (slice != node->value())
-        slice += "...";
-    std::cout << "String (\"" << slice <<  "\")" << std::endl;
+    const auto slice = node->value().substr(0, 10);
+    if ( slice != node->value() ) {
+        std::cout << "String (\"" << slice << "..." <<  "\")" << std::endl;
+    } else {
+        std::cout << "String (\"" << slice <<  "\")" << std::endl;
+    }
 }
 
 void ASTTraceVisitor::visit( ASTStringList* node ) {

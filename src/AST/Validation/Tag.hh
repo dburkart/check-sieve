@@ -13,16 +13,16 @@ public:
     Tag();
     ~Tag() = default;
 
-    bool validate(const ASTNode *tag) override;
-    std::string usage(const ASTNode *tag) override;
+    bool validate(const ASTNode *node) override;
+    std::string usage(const ASTNode *node) override;
 
 private:
     // Validation functions
-    bool _validateSingleString(const ASTNode *node);
-    bool _validateSingleNumeric(const ASTNode *node);
-    bool _validateList(const ASTNode *node);
+    static bool _validateSingleString(const ASTNode *node);
+    static bool _validateSingleNumeric(const ASTNode *node);
+    static bool _validateList(const ASTNode *node);
     
-    std::map<std::string, bool (Tag::*)(const ASTNode *)> _validation_fn_map;
+    std::map<std::string, bool (*)(const ASTNode *)> _validation_fn_map;
     std::map<std::string, std::string> _usage_map;
 };
 

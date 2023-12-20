@@ -81,8 +81,8 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
         children = children[0]->children();
     }
 
-    for (auto & it : children) {
-        auto *child = dynamic_cast<ASTString *>(it);
+    for (const auto & it : children) {
+        const auto *child = dynamic_cast<ASTString *>(it);
         _capability_map[child->value()] = 1;
         _enable_capability(child->value());
     }
@@ -215,13 +215,13 @@ void ASTVerificationVisitor::_init() {
 
 }
 
-void ASTVerificationVisitor::_enable_capability(const std::string& capability) {
+void ASTVerificationVisitor::_enable_capability(std::string_view capability) {
     if (!_options.all_supported_capabilities && !_options.capabilities[capability])
     {
         _verification_result = {
                 1,
                 yy::location(),
-                "Capability \"" + capability + "\" was requested, but does not seem to be supported by your mail server."
+                "Capability \"" + std::string{ capability } + "\" was requested, but does not seem to be supported by your mail server."
         };
         return;
     }

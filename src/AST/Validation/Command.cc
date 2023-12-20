@@ -82,7 +82,7 @@ bool Command::validate(const ASTNode *node) {
         return true;
     }
 
-    return (this->*_validation_fn_map[command->value()])(command);
+    return (this->_validation_fn_map[command->value()])(command);
 }
 
 std::string Command::usage(const ASTNode *node) {
@@ -93,14 +93,14 @@ std::string Command::usage(const ASTNode *node) {
 //-- Private members
 bool Command::_validateAddHeadersCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
-    std::vector<sieve::ASTNode *> children = command->children();
-    size_t size = command->children().size();
+    const auto children = command->children();
+    const size_t size = command->children().size();
     
     if (size != 2 && size != 3)
         return false;
     
     int i = 0;
-    for (auto it : children) {
+    for (const auto it : children) {
         const ASTTag *tagChild = dynamic_cast<ASTTag *>(it);
         const ASTString *stringChild = dynamic_cast<ASTString *>(it);
     
@@ -122,39 +122,37 @@ bool Command::_validateAddHeadersCommand(const ASTNode *node) {
 
 bool Command::_validateDeleteHeadersCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
-    std::vector<sieve::ASTNode *> children = command->children();
-    std::vector<ASTNode *>::const_iterator it;
-    size_t size = command->children().size();
+    std::vector<ASTNode *> children = command->children();
+    const size_t size = command->children().size();
     size_t minSize = 1;
-    
-    ASTNumeric* numeric;
     
     // :index
     auto indexTag = command->find(ASTTag(":index"));
     if (indexTag != command->children().end()) {
+
         // Must be the first child
         if (indexTag != command->children().begin())
             return false;
     
         minSize += 2;
-        it = indexTag + 1;
+        auto it = indexTag + 1;
     
         // Ensure that the next argument is a numeric
         //const T* child = dynamic_cast<T*>(*it);
-        numeric = dynamic_cast<ASTNumeric*>(*it);
+        const auto numeric = dynamic_cast<ASTNumeric*>(*it);
         if (numeric == nullptr)
             return false;
     
-        indexTag++;
+        ++indexTag;
         it = indexTag + 1;
     
         // Allow a :last tag, but only if it's the next child
-        auto lastTag = command->find(ASTTag(":last"));
+        const auto lastTag = command->find(ASTTag(":last"));
         if (lastTag != command->children().end() && lastTag != it)
             return false;
     
         if (lastTag != command->children().end() && lastTag == it) {
-            indexTag++;
+            ++indexTag;
             minSize += 1;
         }
     } else {
@@ -187,7 +185,7 @@ bool Command::_validateIncludeCommand(const ASTNode *node) {
 
 bool Command::_validateIMAP4FlagsAction(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
-    size_t size = command->children().size();
+    const size_t size = command->children().size();
     
     if (size > 0 && size < 3)
         return true;
@@ -197,7 +195,7 @@ bool Command::_validateIMAP4FlagsAction(const ASTNode *node) {
 
 bool Command::_validateFileintoCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
-    std::vector<sieve::ASTNode *> children = command->children();
+    const auto children = command->children();
     const size_t size = children.size();
     
     if (size < 1)
@@ -222,7 +220,7 @@ bool Command::_validateFileintoCommand(const ASTNode *node) {
 
 bool Command::_validateKeepCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
-    std::vector<sieve::ASTNode *> children = command->children();
+    const auto children = command->children();
     const size_t size = children.size();
     
     size_t numArguments = 0;
@@ -240,7 +238,7 @@ bool Command::_validateKeepCommand(const ASTNode *node) {
 
 bool Command::_validateReplaceCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
-    std::vector<sieve::ASTNode *> children = command->children();
+    const auto children = command->children();
     const size_t size = children.size();
     
     size_t numArguments = 1;
@@ -266,7 +264,7 @@ bool Command::_validateReplaceCommand(const ASTNode *node) {
 
 bool Command::_validateEncloseCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
-    std::vector<sieve::ASTNode *> children = command->children();
+    const auto children = command->children();
     const size_t size = children.size();
     
     size_t numArguments = 1;
@@ -288,7 +286,7 @@ bool Command::_validateEncloseCommand(const ASTNode *node) {
 
 bool Command::_validateExpireCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand *>(node);
-    std::vector<sieve::ASTNode *> children = command->children();
+    const auto children = command->children();
     const size_t size = children.size();
 
     if (size != 2) {
@@ -301,7 +299,7 @@ bool Command::_validateExpireCommand(const ASTNode *node) {
         return false;
     }
 
-    const std::unordered_set<std::string> units = {"day", "minute", "second"};
+    const std::unordered_set<std::string_view> units = {"day", "minute", "second"};
     if (units.find(unitChild->value()) == units.end()) {
         return false;
     }
@@ -315,7 +313,7 @@ bool Command::_validateExpireCommand(const ASTNode *node) {
 
 bool Command::_validateRedirectCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
-    std::vector<sieve::ASTNode *> children = command->children();
+    const auto children = command->children();
     const size_t size = children.size();
     
     size_t numArguments = 1;
@@ -334,13 +332,13 @@ bool Command::_validateRedirectCommand(const ASTNode *node) {
 
 bool Command::_validateSetCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
-    std::vector<sieve::ASTNode *> children = command->children();
+    const auto children = command->children();
     const size_t size = children.size();
     
     size_t numArguments = 2;
     size_t stringArguments = 0;
     
-    for (auto it : children) {
+    for (const auto it : children) {
         const ASTTag *tagChild = dynamic_cast<ASTTag *>(it);
         const ASTString *stringChild = dynamic_cast<ASTString *>(it);
     
@@ -373,8 +371,8 @@ bool Command::_validateSetCommand(const ASTNode *node) {
     // TODO: We blindly allow namespaces in variable names even though they are
     //       disallowed unless the inclusion of an extension enabling that
     //       namespace is required.
-    std::string variableName = dynamic_cast<const ASTString*>(children[size-2])->value();
-    std::regex identifierOrDigit("^([a-zA-Z0-9_\\.]+|[0-9])$");
+    const auto variableName = std::string{ dynamic_cast<const ASTString*>(children[size-2])->value() };
+    const std::regex identifierOrDigit("^([a-zA-Z0-9_\\.]+|[0-9])$");
     
     if (!std::regex_match(variableName, identifierOrDigit)) {
         return false;
@@ -385,7 +383,7 @@ bool Command::_validateSetCommand(const ASTNode *node) {
 
 bool Command::_validateVacationCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
-    std::vector<sieve::ASTNode *> children = command->children();
+    const auto children = command->children();
     const size_t size = children.size();
     
     size_t numArguments = 1;

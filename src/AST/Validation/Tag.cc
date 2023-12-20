@@ -29,7 +29,7 @@ bool Tag::validate(const ASTNode *node) {
         return true;
     }
 
-    return (this->*_validation_fn_map[tag->value()])(tag);
+    return (this->_validation_fn_map[tag->value()])(tag);
 }
 
 std::string Tag::usage(const ASTNode *node) {

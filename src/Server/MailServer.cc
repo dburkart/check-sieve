@@ -52,9 +52,9 @@ MailServer::~MailServer()
     close(_socket);
 }
 
-std::map<std::string, bool> MailServer::capabilities()
+std::map<std::string_view, bool> MailServer::capabilities()
 {
-    auto capabilities = std::map<std::string, bool>();
+    auto capabilities = std::map<std::string_view, bool>();
 
     this->_connect();
 

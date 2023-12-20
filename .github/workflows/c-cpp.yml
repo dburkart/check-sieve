@@ -2,15 +2,12 @@ name: C/C++ CI
 
 on: [push]
 
-strategy:
-  matrix:
-    compiler: [gcc, clang]
-
 jobs:
-  build:
-
+  ubuntu_matrix:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        compiler: [gcc, clang]
     steps:
     - uses: actions/checkout@v3
     - name: make

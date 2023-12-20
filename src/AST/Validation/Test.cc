@@ -58,7 +58,7 @@ bool Test::validate(const ASTNode *node) {
         return true;
     }
 
-    return (this->_validation_fn_map[test->value()])(test);
+    return (this->*_validation_fn_map[test->value()])(test);
 }
 
 std::string Test::usage(const ASTNode *node) {

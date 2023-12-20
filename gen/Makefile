@@ -9,5 +9,5 @@ clean:
 	rm -f $(GENERATED_OBJ)
 
 $(GENERATED_OBJ): %.o: %.cc
-	$(CXX) -c $(CFLAGS) -Wno-error $< -o $@
+	$(CXX) -c $(CINCLUDES) -std=c++11 -fPIC -Wno-deprecated-register -DPLATFORM=\"$(ARCH)-$(PLATFORM)\" $< -o $@
 	

@@ -36,7 +36,7 @@ parse_result driver::parse_file( const std::string &fp ) {
 
     filepath = fp;
 
-    for (int i = 1; !file.eof(); i++) {
+    while (!file.eof()) {
         getline(file, line);
         buffer += line + "\n";
     }

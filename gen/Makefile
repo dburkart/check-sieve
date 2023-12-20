@@ -9,5 +9,5 @@ clean:
 	rm -f $(GENERATED_OBJ)
 
 $(GENERATED_OBJ): %.o: %.cc
-	$(CXX) -c $(CFLAGS) $< -o $@
+	$(CXX) -c $(CFLAGS) -Wno-error $< -o $@
 	

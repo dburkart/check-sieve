@@ -1,10 +1,10 @@
 name: C/C++ CI
 
-on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+on: [push]
+
+strategy:
+  matrix:
+    compiler: [gcc, clang]
 
 jobs:
   build:
@@ -14,6 +14,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: make
+      env:
+        CC: ${{ matrix.compiler }}
       run: make
     - name: make test
       run: make test

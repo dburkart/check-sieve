@@ -32,7 +32,7 @@ Command::Command() {
     _usage_map["global"] = "global <value: string-list>";
     _usage_map["include"] = "include [:global / :personal] [:once] [:optional] <value: string>";
     _usage_map["keep"] = "keep [:flags <list-of-flags: string-list>]";
-    _usage_map["notify"] = "notify [:from string] [:importance <1 / 2 / 3>] [:options string-list] [:message string] <method: string>";
+    _usage_map["notify"] = "notify [:from string] [:importance <1 / 2 / 3>]\n\t[:options string-list] [:message string] [:fcc string] <method: string>";
     _usage_map["redirect"] = "redirect [:copy / :list] <address: string>";
     _usage_map["reject"] = "reject <reason: string>";
     _usage_map["removeflag"] = "removeflag [<variablename: string>] <list-of-flags: string-list>";
@@ -42,7 +42,7 @@ Command::Command() {
     _usage_map["setflag"] = "setflag [<variablename: string>] <list-of-flags: string-list>";
     _usage_map["stop"] = "stop";
     _usage_map["unexpire"] = "unexpire";
-    _usage_map["vacation"] = "vacation [:days number] [:subject string] [:from string]\n\t[:addresses string-list] [:mime] [:handle string] <reason: string>";
+    _usage_map["vacation"] = "vacation [:days number] [:subject string] [:from string]\n\t[:addresses string-list] [:mime] [:handle string]\n\t[:fcc string] <reason: string>";
 
     _validation_fn_map["addflag"] = &Command::_validateIMAP4FlagsAction;
     _validation_fn_map["addheader"] = &Command::_validateAddHeadersCommand;
@@ -411,6 +411,10 @@ bool Command::_validateVacationCommand(const ASTNode *node) {
     if (command->find(ASTTag(":handle")) != command->children().end()) {
         numArguments += 2;
     }
+
+    if (command->find(ASTTag(":fcc")) != command->children().end()) {
+        numArguments += 2;
+    }
     
     if (size != numArguments) {
         return false;
@@ -525,6 +529,10 @@ bool Command::_validateNotifyCommand(const ASTNode *node) {
     }
     
     if (command->find(ASTTag(":message")) != command->children().end()) {
+        numArguments += 2;
+    }
+
+    if (command->find(ASTTag(":fcc")) != command->children().end()) {
         numArguments += 2;
     }
     

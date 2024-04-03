@@ -13,12 +13,14 @@ Tag::Tag() {
     _usage_map[":subject"] = ":subject string";
     _usage_map[":eval"] = ":eval string";
     _usage_map[":list"] = ":list string";
+    _usage_map[":fcc"] = ":fcc <mailbox: string>";
 
     _validation_fn_map[":comparator"] = &Tag::_validateSingleString; // TODO: Validate comparator string
     _validation_fn_map[":days"] = &Tag::_validateSingleNumeric;
     _validation_fn_map[":subject"] = &Tag::_validateSingleString;
     _validation_fn_map[":eval"] = &Tag::_validateSingleString;
     _validation_fn_map[":list"] = &Tag::_validateList;
+    _validation_fn_map[":fcc"] = &Tag::_validateSingleString;
 }
 
 bool Tag::validate(const ASTNode *node) {

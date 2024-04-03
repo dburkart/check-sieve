@@ -462,6 +462,15 @@ void ASTVerificationVisitor::_enable_capability(std::string_view capability) {
         _test_map["valid_ext_list"] = true;
     }
 
+    // Proposed Standards
+
+    // "fcc"
+    // RFC 8580
+    // https://www.rfc-editor.org/rfc/rfc8580.html
+    if (capability == "fcc") {
+        _tag_map[":fcc"] = true;
+    }
+
     // DRAFT RFCs
 
     // "regex"

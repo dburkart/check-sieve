@@ -32,6 +32,7 @@ libchecksieve.a: $(GENERATED_SRC) $(LIBCHECKSIEVE_SRC) $(AST_SRC) $(SERVER_SRC)
 
 test: libchecksieve.a check-sieve
 	rm -Rf checksieve.*.so build || true
+	@python3 --version
 	python3 $(BASE)/test/setup.py build_ext -i
 	python3 -m unittest discover -s test -p '*_test.py'
 

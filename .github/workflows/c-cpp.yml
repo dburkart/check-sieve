@@ -17,5 +17,7 @@ jobs:
       env:
         CC: ${{ matrix.compiler }}
       run: make
+    - name: setup test dependencies
+      run: python3 -m pip install --upgrade setuptools
     - name: make test
       run: make test

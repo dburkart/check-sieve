@@ -21,6 +21,17 @@ Tag::Tag() {
     _validation_fn_map[":eval"] = &Tag::_validateSingleString;
     _validation_fn_map[":list"] = &Tag::_validateList;
     _validation_fn_map[":fcc"] = &Tag::_validateSingleString;
+
+    // RFC 7352
+    _usage_map[":handle"] = ":handle string";
+    _usage_map[":header"] = ":header string";
+    _usage_map[":uniqueid"] = ":uniqueid string";
+    _usage_map[":seconds"] = ":seconds string";
+
+    _validation_fn_map[":handle"] = &Tag::_validateSingleString;
+    _validation_fn_map[":header"] = &Tag::_validateSingleString;
+    _validation_fn_map[":uniqueid"] = &Tag::_validateSingleString;
+    _validation_fn_map[":seconds"] = &Tag::_validateSingleNumeric;
 }
 
 bool Tag::validate(const ASTNode *node) {

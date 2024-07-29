@@ -29,6 +29,7 @@ private:
     bool _validateIhaveTest(const ASTNode *node);
     bool _validateEnvironmentTest(const ASTNode *node);
     bool _validateValidExtListTest(const ASTNode *node);
+    bool _validateDuplicateTest(const ASTNode *node);
 
     std::map<std::string, bool (Test::*)(const ASTNode *)> _validation_fn_map;
     std::map<std::string, std::string> _usage_map;

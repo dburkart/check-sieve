@@ -35,6 +35,9 @@ Test::Test() {
     _usage_map["size"]                  = "size <:over / :under> <limit: number>";
     _usage_map["valid_notify_method"]   = "valid_notify_method <notification-uris: string-list>";
     _usage_map["valid_ext_list"]        = "valid_ext_list <ext-list-names: string-list>";
+    _usage_map["duplicate"]             = "duplicate [:handle <handle: string>]                                           \n"
+                                          "          [:header <header: string> / :uniqueid <value: string>]               \n"
+                                          "          [:seconds <timeout: number>] [:last]";
 
     _validation_fn_map["allof"]                 = &Test::_validateHasOnlyTestList;
     _validation_fn_map["anyof"]                 = &Test::_validateHasOnlyTestList;
@@ -48,6 +51,7 @@ Test::Test() {
     _validation_fn_map["size"]                  = &Test::_validateSizeTest;
     _validation_fn_map["valid_notify_method"]   = &Test::_validateValidNotifyMethodTest;
     _validation_fn_map["valid_ext_list"]        = &Test::_validateValidExtListTest;
+    _validation_fn_map["duplicate"]             = &Test::_validateDuplicateTest;
 }
 
 bool Test::validate(const ASTNode *node) {
@@ -292,6 +296,41 @@ bool Test::_validateValidExtListTest(const ASTNode *node) {
     if (!nodeIsType<ASTStringList>(test->children()[0]) && !nodeIsType<ASTString>(test->children()[0]))
         return false;
     
+    return true;
+}
+
+bool Test::_validateDuplicateTest(const ASTNode *node) {
+    std::vector<ASTNode *> children = node->children();
+
+    bool seenHeader, seenUID = false;
+
+    for (auto & it : children)  {
+        const auto *tag = dynamic_cast<const ASTTag*>(it);
+
+        if (tag != nullptr) {
+            std::string tagValue;
+            tagValue = tag->value();
+
+            if (tagValue == ":header") {
+                seenHeader = true;
+            }
+
+            if (tagValue == ":uniqueid") {
+                seenUID = true;
+            }
+
+            // Cannot be used in conjunction with index or mime extensions
+            if (tagValue == ":index" || tagValue == ":mime") {
+                return false;
+            }
+        }
+    }
+
+    // :header / :uniqueid are mutually exclusive
+    if (seenHeader && seenUID) {
+        return false;
+    }
+
     return true;
 }
 

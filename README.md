@@ -90,6 +90,7 @@ Options:
 * Extensions for Checking Mailbox Status and Accessing Mailbox Metadata ([RFC 5490](https://tools.ietf.org/html/rfc5490))
 * Internet Message Access Protocol (IMAP) Events ([RFC 6785](https://tools.ietf.org/html/rfc6785))
 * Converting Messages before Delivery ([RFC 6558](https://tools.ietf.org/html/rfc6558))
+* Detecting Duplicate Deliveries ([RFC 7352](https://tools.ietf.org/html/rfc7352))
 * Proton Expiration Extension ([vnd.proton.expire](https://proton.me/support/sieve-advanced-custom-filters#managing-expiration))
 * Proton Eval Extension ([vnd.proton.eval](https://proton.me/support/sieve-advanced-custom-filters#transforming-variables))
 

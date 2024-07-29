@@ -464,6 +464,17 @@ void ASTVerificationVisitor::_enable_capability(std::string_view capability) {
 
     // Proposed Standards
 
+    // "duplicate"
+    // RFC 7352
+    // https://datatracker.ietf.org/doc/html/rfc7352.html
+    if (capability == "duplicate") {
+        _test_map["duplicate"] = true;
+        _tag_map[":handle"] = true;
+        _tag_map[":header"] = true;
+        _tag_map[":uniqueid"] = true;
+        _tag_map[":seconds"] = true;
+    }
+
     // "fcc"
     // RFC 8580
     // https://www.rfc-editor.org/rfc/rfc8580.html

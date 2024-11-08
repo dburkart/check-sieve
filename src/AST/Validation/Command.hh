@@ -13,33 +13,33 @@ public:
     Command();
     ~Command() = default;
 
-    bool validate(const ASTNode *node) override;
+    ValidationResult validate(const ASTNode *node) override;
     std::string usage(const ASTNode *node) override;
 
 private:
     // Validation functions
-    static bool _validateAddHeadersCommand(const ASTNode *node);
-    static bool _validateDeleteHeadersCommand(const ASTNode *node);
-    static bool _validateIncludeCommand(const ASTNode *node);
-    static bool _validateIMAP4FlagsAction(const ASTNode *node);
-    static bool _validateFileintoCommand(const ASTNode *node);
-    static bool _validateKeepCommand(const ASTNode *node);
-    static bool _validateReplaceCommand(const ASTNode *node);
-    static bool _validateEncloseCommand(const ASTNode *node);
-    static bool _validateRedirectCommand(const ASTNode *node);
-    static bool _validateSetCommand(const ASTNode *node);
-    static bool _validateVacationCommand(const ASTNode *node);
-    static bool _validateBareCommand(const ASTNode *node);
-    static bool _validateSingleArgumentCommand(const ASTNode *node);
-    static bool _validateSingleStringArgumentCommand(const ASTNode *node);
-    static bool _validateBreakCommand(const ASTNode *node);
-    static bool _validateForeverypartCommand(const ASTNode *node);
-    static bool _validateExtracttextCommand(const ASTNode *node);
-    static bool _validateExpireCommand(const ASTNode *node);
-    static bool _validateNotifyCommand(const ASTNode *node);
-    static bool _validateConvertCommand(const ASTNode *node);
+    static ValidationResult _validateAddHeadersCommand(const ASTNode *node);
+    static ValidationResult _validateDeleteHeadersCommand(const ASTNode *node);
+    static ValidationResult _validateIncludeCommand(const ASTNode *node);
+    static ValidationResult _validateIMAP4FlagsAction(const ASTNode *node);
+    static ValidationResult _validateFileintoCommand(const ASTNode *node);
+    static ValidationResult _validateKeepCommand(const ASTNode *node);
+    static ValidationResult _validateReplaceCommand(const ASTNode *node);
+    static ValidationResult _validateEncloseCommand(const ASTNode *node);
+    static ValidationResult _validateRedirectCommand(const ASTNode *node);
+    static ValidationResult _validateSetCommand(const ASTNode *node);
+    static ValidationResult _validateVacationCommand(const ASTNode *node);
+    static ValidationResult _validateBareCommand(const ASTNode *node);
+    static ValidationResult _validateSingleArgumentCommand(const ASTNode *node);
+    static ValidationResult _validateSingleStringArgumentCommand(const ASTNode *node);
+    static ValidationResult _validateBreakCommand(const ASTNode *node);
+    static ValidationResult _validateForeverypartCommand(const ASTNode *node);
+    static ValidationResult _validateExtracttextCommand(const ASTNode *node);
+    static ValidationResult _validateExpireCommand(const ASTNode *node);
+    static ValidationResult _validateNotifyCommand(const ASTNode *node);
+    static ValidationResult _validateConvertCommand(const ASTNode *node);
 
-    std::map<std::string, bool (*)(const ASTNode *)> _validation_fn_map;
+    std::map<std::string, ValidationResult (*)(const ASTNode *)> _validation_fn_map;
     std::map<std::string, std::string> _usage_map;
 };
 

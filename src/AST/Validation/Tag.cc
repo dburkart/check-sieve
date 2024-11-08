@@ -36,12 +36,12 @@ Tag::Tag() {
     _validation_fn_map[":specialuse"] = &Tag::_validateSpecialUse;
 }
 
-bool Tag::validate(const ASTNode *node) {
+ValidationResult Tag::validate(const ASTNode *node) {
     const auto *tag = dynamic_cast<const ASTTag*>(node);
     
     if (!_validation_fn_map[tag->value()]) {
         DEBUGLOG(tag->value() + " tag is missing validation.")
-        return true;
+        return ValidationResult(true);
     }
 
     return (this->_validation_fn_map[tag->value()])(tag);
@@ -53,59 +53,59 @@ std::string Tag::usage(const ASTNode *node) {
 }
 
 //-- Private members
-bool Tag::_validateSingleString(const ASTNode *node) {
+ValidationResult Tag::_validateSingleString(const ASTNode *node) {
     const auto *tag = dynamic_cast<const ASTTag*>(node);
     const ASTNode *parent = tag->parent();
     const ASTNode *next = parent->nextChild(tag);
     
     if (next == nullptr) {
-        return false;
+        return ValidationResult(false);
     }
     
     const auto *nextString = dynamic_cast<const ASTString *>(next) ;
     if (nextString == nullptr) {
-        return false;
+        return ValidationResult(false);
     }
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Tag::_validateSingleNumeric(const ASTNode *node) {
+ValidationResult Tag::_validateSingleNumeric(const ASTNode *node) {
     const auto *tag = dynamic_cast<const ASTTag*>(node);
     const ASTNode *parent = tag->parent();
     const ASTNode *next = parent->nextChild(tag);
     
     if (next == nullptr) {
-        return false;
+        return ValidationResult(false);
     }
     
     const auto *nextString = dynamic_cast<const ASTNumeric *>(next) ;
     if (nextString == nullptr) {
-        return false;
+        return ValidationResult(false);
     }
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Tag::_validateList(const ASTNode *node) {
+ValidationResult Tag::_validateList(const ASTNode *node) {
     const auto *tag = dynamic_cast<const ASTTag*>(node);
     const ASTNode *parent = tag->parent();
     const ASTNode *next = parent->nextChild(tag);
 
     if (dynamic_cast<const ASTString *>(next) != nullptr) {
-        return true;
+        return ValidationResult(true);
     }
 
     if (dynamic_cast<const ASTStringList *>(next) != nullptr) {
-        return true;
+        return ValidationResult(true);
     }
 
-    return false;
+    return ValidationResult(false);
 }
 
-bool Tag::_validateSpecialUse(const ASTNode *node) {
+ValidationResult Tag::_validateSpecialUse(const ASTNode *node) {
     auto result = _validateSingleString(node);
-    if (!result) {
+    if (!result.result()) {
         return result;
     }
 
@@ -113,11 +113,10 @@ bool Tag::_validateSpecialUse(const ASTNode *node) {
     const ASTCommand *parent = dynamic_cast<const ASTCommand*>(tag->parent());
 
     if (parent->value() != "fileinto") {
-        // FIXME: We'd like to bubble up a hint here, since the error won't be great in this case
-        return false;
+        return ValidationResult(false, "\":specialuse\" is only valid as part of the fileinto command");
     }
 
-    return true;
+    return ValidationResult(true);
 }
 
 }

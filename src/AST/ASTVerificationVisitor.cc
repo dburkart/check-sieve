@@ -48,14 +48,22 @@ void ASTVerificationVisitor::visit( ASTCommand* node ) {
 
     if (!_command_map[value_lower]) {
         _verification_result = {1, node->location(), "Unrecognized command \"" + node->value() + "\"."};
+        return;
     }
 
-    else if (!_command.validate(node)) {
+    auto r = _command.validate(node);
+    if (!r.result()) {
+        auto hint = _command.usage(node);
+
+        if (r.hint() != "") {
+            hint += "\n" + r.hint();
+        }
+
         _verification_result = {
             1,
             node->location(),
             "Incorrect syntax for command \"" + node->value() + "\".",
-            _command.usage(node)
+            hint,
         };
     }
 }
@@ -110,14 +118,22 @@ void ASTVerificationVisitor::visit( ASTTag* node ) {
 
     if (!_tag_map[value_lower]) {
         _verification_result = {1, node->location(), "Unrecognized tag \"" + node->value() + "\"."};
+        return;
     }
 
-    if (!_tag.validate(node)) {
+    auto r =  _tag.validate(node);
+    if (!r.result()) {
+        auto hint = _tag.usage(node);
+
+        if (r.hint() != "") {
+            hint += "\n\n(Hint: " + r.hint() + ")";
+        }
+
         _verification_result = {
             1,
             node->location(),
             "Incorrect syntax for tag \"" + node->value() + "\".",
-            _tag.usage(node)
+            hint,
         };
     }
 }
@@ -161,12 +177,19 @@ void ASTVerificationVisitor::visit( ASTTest* node ) {
         _verification_result = {1, second_match_tag->location(), "Only one match type tag is allowed; first match type tag was \"" + first_match_tag->value() + "\"."};
     }
 
-    if (!_test.validate(node)) {
+
+    auto r = _test.validate(node);
+    if (!r.result()) {
+        auto hint = _test.usage(node);
+
+        if (r.hint() != "") {
+            hint += "\n\nHint: " + r.hint();
+        }
         _verification_result = {
             1,
             node->location(),
             "Incorrect syntax for test \"" + node->value() + "\".",
-            _test.usage(node)
+            hint,
         };
     }
 }

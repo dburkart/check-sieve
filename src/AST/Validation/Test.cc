@@ -57,12 +57,12 @@ Test::Test() {
     _validation_fn_map["specialuse_exists"]     = &Test::_validateSpecialUseExistsTest;
 }
 
-bool Test::validate(const ASTNode *node) {
+ValidationResult Test::validate(const ASTNode *node) {
     const auto *test = dynamic_cast<const ASTTest*>(node);
     
     if (!_validation_fn_map[test->value()]) {
         DEBUGLOG(test->value() + " test is missing validation.")
-        return true;
+        return ValidationResult(true);
     }
 
     return (this->*_validation_fn_map[test->value()])(test);
@@ -74,41 +74,41 @@ std::string Test::usage(const ASTNode *node) {
 }
 
 //-- Private Members
-bool Test::_validateExists(const ASTNode *node) {
+ValidationResult Test::_validateExists(const ASTNode *node) {
     const auto *test = dynamic_cast<const ASTTest*>(node);
     size_t size = test->children().size();
     
     if (size < 1 || size > 3)
-        return false;
+        return ValidationResult(false);
     
     const auto *stringChild = dynamic_cast<const ASTString*>(test->children()[size - 1]);
     const auto *stringListChild = dynamic_cast<const ASTStringList*>(test->children()[size - 1]);
     if (stringChild == nullptr && stringListChild == nullptr)
-        return false;
+        return ValidationResult(false);
     
     // If we have more than 1 child, check that they are either :mime or :anychild
     if (size > 1) {
         const auto *firstTag = dynamic_cast<const ASTTag*>(test->children()[0]);
         if (firstTag == nullptr)
-            return false;
+            return ValidationResult(false);
     
         if (firstTag->value() != ":mime" && firstTag->value() != ":anychild")
-            return false;
+            return ValidationResult(false);
     }
     
     if (size > 2) {
         const auto *secondTag = dynamic_cast<const ASTTag*>(test->children()[1]);
         if (secondTag == nullptr)
-            return false;
+            return ValidationResult(false);
     
         if (secondTag->value() != ":mime" && secondTag->value() != ":anychild")
-            return false;
+            return ValidationResult(false);
     }
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Test::_validateHasOnlyTestList(const ASTNode *node) {
+ValidationResult Test::_validateHasOnlyTestList(const ASTNode *node) {
     const auto *test = dynamic_cast<const ASTTest*>(node);
     std::vector<sieve::ASTNode *> children = test->children();
     
@@ -116,84 +116,84 @@ bool Test::_validateHasOnlyTestList(const ASTNode *node) {
         const ASTTestList *child = dynamic_cast<ASTTestList*>(it);
     
         if (child == nullptr)
-            return false;
+            return ValidationResult(false);
     }
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Test::_validateNotTest(const ASTNode *node) {
+ValidationResult Test::_validateNotTest(const ASTNode *node) {
     const auto *test = dynamic_cast<const ASTTest*>(node);
     size_t size = test->children().size();
 
     // Child should be a single test, no test-list allowed
     if (!nodeIsType<ASTTest>(test->children()[0]))
-        return false;
+        return ValidationResult(false);
     
     if (size != 1)
-        return false;
+        return ValidationResult(false);
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Test::_validateSizeTest(const ASTNode *node) {
+ValidationResult Test::_validateSizeTest(const ASTNode *node) {
     const auto *test = dynamic_cast<const ASTTest*>(node);
     size_t size = test->children().size();
     
     if (size != 2)
-        return false;
+        return ValidationResult(false);
     
     const auto *tag = dynamic_cast<const ASTTag*>(test->children()[0]);
     if (tag == nullptr || (tag->value() != ":over" && tag->value() != ":under"))
-        return false;
+        return ValidationResult(false);
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Test::_validateValidNotifyMethodTest(const ASTNode *node) {
+ValidationResult Test::_validateValidNotifyMethodTest(const ASTNode *node) {
     const auto *test = dynamic_cast<const ASTTest*>(node);
     size_t size = test->children().size();
     
     if (size != 1)
-        return false;
+        return ValidationResult(false);
     
     if (!nodeIsType<ASTStringList>(test->children()[0]) && !nodeIsType<ASTString>(test->children()[0]))
-        return false;
+        return ValidationResult(false);
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Test::_validateSpecialUseExistsTest(const ASTNode *node) {
+ValidationResult Test::_validateSpecialUseExistsTest(const ASTNode *node) {
     const auto *test = dynamic_cast<const ASTTest*>(node);
     size_t size = test->children().size();
 
     if (size != 1 && size != 2) {
-        return false;
+        return ValidationResult(false);
     }
 
     if (size == 2) {
         if (!nodeIsType<ASTString>(test->children()[0]) || (!nodeIsType<ASTStringList>(test->children()[1]) && !nodeIsType<ASTString>(test->children()[1]))) {
-            return false;
+            return ValidationResult(false);
         }
     } else {
         if (!nodeIsType<ASTStringList>(test->children()[0]) && !nodeIsType<ASTString>(test->children()[0])) {
-            return false;
+            return ValidationResult(false);
         }
     }
 
-    return true;
+    return ValidationResult(true);
 }
 
-bool Test::_validateHasExpirationTest(const ASTNode *node) {
+ValidationResult Test::_validateHasExpirationTest(const ASTNode *node) {
     const auto *test = dynamic_cast<const ASTTest *>(node);
-    return test->children().size() == 0;
+    return ValidationResult(test->children().size() == 0);
 }
 
-bool Test::_validateExpirationTest(const ASTNode *node) {
+ValidationResult Test::_validateExpirationTest(const ASTNode *node) {
     std::vector<ASTNode *> children = node->children();
     size_t size = children.size();
 
-    if (size < 4) return false;
+    if (size < 4) return ValidationResult(false);
 
     const auto *tag = dynamic_cast<const ASTTag *>(children[0]);
     const auto *asciinumeric = dynamic_cast<const ASTString *>(children[1]);
@@ -204,24 +204,24 @@ bool Test::_validateExpirationTest(const ASTNode *node) {
         asciinumeric == nullptr || 
         match == nullptr || 
         unit == nullptr) {
-            return false;
+            return ValidationResult(false);
     }
 
-    if (tag->value() != ":comparator") return false;
-    if (asciinumeric->value() != "i;ascii-numeric") return false;
+    if (tag->value() != ":comparator") return ValidationResult(false);
+    if (asciinumeric->value() != "i;ascii-numeric") return ValidationResult(false);
 
     const std::unordered_set<std::string_view> units = {"day", "minute", "second"};
-    if (units.find(unit->value()) == units.end()) return false;
+    if (units.find(unit->value()) == units.end()) return ValidationResult(false);
 
-    return true;
+    return ValidationResult(true);
 }
 
-bool Test::_validateHeaderTest(const ASTNode *node) {
+ValidationResult Test::_validateHeaderTest(const ASTNode *node) {
     std::vector<ASTNode *> children = node->children();
     size_t size = children.size();
     
     if (size < 2)
-        return false;
+        return ValidationResult(false);
     
     for (auto & it : children) {
         const auto *tag = dynamic_cast<const ASTTag*>(it);
@@ -248,35 +248,35 @@ bool Test::_validateHeaderTest(const ASTNode *node) {
                     continue;
                 }
             
-            return false;
+            return ValidationResult(false);
         }
     } 
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Test::_validateIhaveTest(const ASTNode *node) {
+ValidationResult Test::_validateIhaveTest(const ASTNode *node) {
     std::vector<ASTNode *> children = node->children();
     size_t size = children.size();
     
     if (size != 1)
-        return false;
+        return ValidationResult(false);
     
     const auto *string_child = dynamic_cast<const ASTString*>(children[0]);
     const auto *stringlist_child = dynamic_cast<const ASTStringList*>(children[0]);
     
     if (string_child == nullptr && stringlist_child == nullptr)
-        return false;
+        return ValidationResult(false);
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Test::_validateEnvironmentTest(const ASTNode *node) {
+ValidationResult Test::_validateEnvironmentTest(const ASTNode *node) {
     std::vector<ASTNode *> children = node->children();
     size_t size = children.size();
     
     if (size < 2)
-        return false;
+        return ValidationResult(false);
     
     const auto *name_node = dynamic_cast<const ASTString*>(children[size-2]);
     const auto *key = dynamic_cast<const ASTString*>(children[size-1]);
@@ -285,7 +285,7 @@ bool Test::_validateEnvironmentTest(const ASTNode *node) {
     // TODO: Validation for [COMPARATOR] / [MATCH-TYPE]
     
     if (name_node == nullptr || (key_list == nullptr && key == nullptr))
-        return false;
+        return ValidationResult(false);
     
     const auto name = name_node->value();
     
@@ -297,7 +297,7 @@ bool Test::_validateEnvironmentTest(const ASTNode *node) {
         name == "remote-host" ||
         name == "remote-ip" ||
         name == "version") {
-        return true;
+        return ValidationResult(true);
     }
     
     // RFC 6785
@@ -308,22 +308,22 @@ bool Test::_validateEnvironmentTest(const ASTNode *node) {
         name == "imap.cause" ||
         name == "imap.mailbox" ||
         name == "imap.changedflags")) {
-        return true;
+        return ValidationResult(true);
     }
     
-    return false;
+    return ValidationResult(false);
 }
 
-bool Test::_validateValidExtListTest(const ASTNode *node) {
+ValidationResult Test::_validateValidExtListTest(const ASTNode *node) {
     const auto *test = dynamic_cast<const ASTTest*>(node);
     
     if (!nodeIsType<ASTStringList>(test->children()[0]) && !nodeIsType<ASTString>(test->children()[0]))
-        return false;
+        return ValidationResult(false);
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Test::_validateDuplicateTest(const ASTNode *node) {
+ValidationResult Test::_validateDuplicateTest(const ASTNode *node) {
     std::vector<ASTNode *> children = node->children();
 
     bool seenHeader, seenUID = false;
@@ -345,17 +345,17 @@ bool Test::_validateDuplicateTest(const ASTNode *node) {
 
             // Cannot be used in conjunction with index or mime extensions
             if (tagValue == ":index" || tagValue == ":mime") {
-                return false;
+                return ValidationResult(false);
             }
         }
     }
 
     // :header / :uniqueid are mutually exclusive
     if (seenHeader && seenUID) {
-        return false;
+        return ValidationResult(false);
     }
 
-    return true;
+    return ValidationResult(true);
 }
 
 

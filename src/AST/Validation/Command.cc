@@ -74,12 +74,12 @@ Command::Command() {
 
 }
 
-bool Command::validate(const ASTNode *node) {
+ValidationResult Command::validate(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
 
     if (!_validation_fn_map[command->value()]) {
         DEBUGLOG(command->value() + " command is missing validation.")
-        return true;
+        return ValidationResult(true);
     }
 
     return (this->_validation_fn_map[command->value()])(command);
@@ -91,13 +91,13 @@ std::string Command::usage(const ASTNode *node) {
 }
 
 //-- Private members
-bool Command::_validateAddHeadersCommand(const ASTNode *node) {
+ValidationResult Command::_validateAddHeadersCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const auto children = command->children();
     const size_t size = command->children().size();
     
     if (size != 2 && size != 3)
-        return false;
+        return ValidationResult(false);
     
     int i = 0;
     for (const auto it : children) {
@@ -107,20 +107,20 @@ bool Command::_validateAddHeadersCommand(const ASTNode *node) {
         // If we have 3 children, the first child must be a :last tag.
         if (size == 3 && i == 0) {
             if (!tagChild || tagChild->value() != ":last")
-                return false;
+                return ValidationResult(false);
         }
         // Every other child must be a string
         else if (!stringChild) {
-            return false;
+            return ValidationResult(false);
         }
     
         i++;
     }
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Command::_validateDeleteHeadersCommand(const ASTNode *node) {
+ValidationResult Command::_validateDeleteHeadersCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     std::vector<ASTNode *> children = command->children();
     const size_t size = command->children().size();
@@ -132,7 +132,7 @@ bool Command::_validateDeleteHeadersCommand(const ASTNode *node) {
 
         // Must be the first child
         if (indexTag != command->children().begin())
-            return false;
+            return ValidationResult(false);
     
         minSize += 2;
         auto it = indexTag + 1;
@@ -141,7 +141,7 @@ bool Command::_validateDeleteHeadersCommand(const ASTNode *node) {
         //const T* child = dynamic_cast<T*>(*it);
         const auto numeric = dynamic_cast<ASTNumeric*>(*it);
         if (numeric == nullptr)
-            return false;
+            return ValidationResult(false);
     
         ++indexTag;
         it = indexTag + 1;
@@ -149,7 +149,7 @@ bool Command::_validateDeleteHeadersCommand(const ASTNode *node) {
         // Allow a :last tag, but only if it's the next child
         const auto lastTag = command->find(ASTTag(":last"));
         if (lastTag != command->children().end() && lastTag != it)
-            return false;
+            return ValidationResult(false);
     
         if (lastTag != command->children().end() && lastTag == it) {
             ++indexTag;
@@ -158,48 +158,48 @@ bool Command::_validateDeleteHeadersCommand(const ASTNode *node) {
     } else {
         // TODO: Ensure that :last hasn't been specified since their's no :index
         if (indexTag != command->children().end())
-            return false;
+            return ValidationResult(false);
     }
     
     // TODO: Validate comparators
     
     if (size < minSize)
-        return false;
+        return ValidationResult(false);
     
     // TODO: Validate string-list
     
-    return true;
+    return ValidationResult(true);
 }
 
 // Validation logic
 // TODO: Think about if this is the right way to do this
-bool Command::_validateIncludeCommand(const ASTNode *node) {
+ValidationResult Command::_validateIncludeCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const size_t size = command->children().size();
 
     if (size < 5 && size > 0)
-        return true;
+        return ValidationResult(true);
 
-    return false;
+    return ValidationResult(false);
 }
 
-bool Command::_validateIMAP4FlagsAction(const ASTNode *node) {
+ValidationResult Command::_validateIMAP4FlagsAction(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const size_t size = command->children().size();
     
     if (size > 0 && size < 3)
-        return true;
+        return ValidationResult(true);
 
-    return false;
+    return ValidationResult(false);
 }
 
-bool Command::_validateFileintoCommand(const ASTNode *node) {
+ValidationResult Command::_validateFileintoCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const auto children = command->children();
     const size_t size = children.size();
     
     if (size < 1)
-        return false;
+        return ValidationResult(false);
     
     size_t minArguments = 1;
     
@@ -210,15 +210,15 @@ bool Command::_validateFileintoCommand(const ASTNode *node) {
     if (command->find(ASTTag(":copy")) != command->children().end()) {
         minArguments++;
     }
-    
+
     if (size < minArguments) {
-        return false;
+        return ValidationResult(false);
     }
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Command::_validateKeepCommand(const ASTNode *node) {
+ValidationResult Command::_validateKeepCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const auto children = command->children();
     const size_t size = children.size();
@@ -230,13 +230,13 @@ bool Command::_validateKeepCommand(const ASTNode *node) {
     }
     
     if (size != numArguments) {
-        return false;
+        return ValidationResult(false);
     }
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Command::_validateReplaceCommand(const ASTNode *node) {
+ValidationResult Command::_validateReplaceCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const auto children = command->children();
     const size_t size = children.size();
@@ -256,13 +256,13 @@ bool Command::_validateReplaceCommand(const ASTNode *node) {
     }
     
     if (size != numArguments) {
-        return false;
+        return ValidationResult(false);
     }
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Command::_validateEncloseCommand(const ASTNode *node) {
+ValidationResult Command::_validateEncloseCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const auto children = command->children();
     const size_t size = children.size();
@@ -278,40 +278,40 @@ bool Command::_validateEncloseCommand(const ASTNode *node) {
     }
     
     if (size != numArguments) {
-        return false;
+        return ValidationResult(false);
     }
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Command::_validateExpireCommand(const ASTNode *node) {
+ValidationResult Command::_validateExpireCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand *>(node);
     const auto children = command->children();
     const size_t size = children.size();
 
     if (size != 2) {
-        return false;
+        return ValidationResult(false);
     }
 
     const ASTString *unitChild = dynamic_cast<ASTString *>(command->children()[0]);
     const ASTString *valueChild = dynamic_cast<ASTString *>(command->children()[1]);
     if (unitChild == nullptr || valueChild == nullptr) {
-        return false;
+        return ValidationResult(false);
     }
 
     const std::unordered_set<std::string_view> units = {"day", "minute", "second"};
     if (units.find(unitChild->value()) == units.end()) {
-        return false;
+        return ValidationResult(false);
     }
 
     if (valueChild->value().find_first_not_of("0123456789") != std::string::npos) {
-        return false;
+        return ValidationResult(false);
     }
 
-    return true;
+    return ValidationResult(true);
 }
 
-bool Command::_validateRedirectCommand(const ASTNode *node) {
+ValidationResult Command::_validateRedirectCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const auto children = command->children();
     const size_t size = children.size();
@@ -324,13 +324,13 @@ bool Command::_validateRedirectCommand(const ASTNode *node) {
     }
     
     if (size != numArguments) {
-        return false;
+        return ValidationResult(false);
     }
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Command::_validateSetCommand(const ASTNode *node) {
+ValidationResult Command::_validateSetCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const auto children = command->children();
     const size_t size = children.size();
@@ -355,17 +355,17 @@ bool Command::_validateSetCommand(const ASTNode *node) {
            ))
             numArguments += 1;
         else if (tagChild)
-            return false;
+            return ValidationResult(false);
     
         if (stringChild)
             stringArguments++;
     
         if (stringArguments > 2)
-            return false;
+            return ValidationResult(false);
     }
 
     if (size != numArguments || stringArguments < 2) {
-        return false;
+        return ValidationResult(false);
     }
     
     // TODO: We blindly allow namespaces in variable names even though they are
@@ -375,13 +375,13 @@ bool Command::_validateSetCommand(const ASTNode *node) {
     const std::regex identifierOrDigit("^([a-zA-Z0-9_\\.]+|[0-9])$");
     
     if (!std::regex_match(variableName, identifierOrDigit)) {
-        return false;
+        return ValidationResult(false);
     }
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Command::_validateVacationCommand(const ASTNode *node) {
+ValidationResult Command::_validateVacationCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const auto children = command->children();
     const size_t size = children.size();
@@ -417,104 +417,104 @@ bool Command::_validateVacationCommand(const ASTNode *node) {
     }
     
     if (size != numArguments) {
-        return false;
+        return ValidationResult(false);
     }
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Command::_validateBareCommand(const ASTNode *node) {
+ValidationResult Command::_validateBareCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const size_t size = command->children().size();
     
     if (size == 0)
-        return true;
+        return ValidationResult(true);
 
-    return false;
+    return ValidationResult(false);
 }
 
-bool Command::_validateSingleArgumentCommand(const ASTNode *node) {
+ValidationResult Command::_validateSingleArgumentCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const size_t size = command->children().size();
     
     if (size == 1)
-        return true;
+        return ValidationResult(true);
 
-    return false;
+    return ValidationResult(false);
 }
 
-bool Command::_validateSingleStringArgumentCommand(const ASTNode *node) {
+ValidationResult Command::_validateSingleStringArgumentCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const size_t size = command->children().size();
     
     if (size != 1)
-        return false;
+        return ValidationResult(false);
     
     const auto *argument = dynamic_cast<const ASTString*>(command->children()[0]);
     if (argument == nullptr)
-        return false;
+        return ValidationResult(false);
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Command::_validateBreakCommand(const ASTNode *node) {
+ValidationResult Command::_validateBreakCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const size_t size = command->children().size();
     
     if (size == 0)
-        return true;
+        return ValidationResult(true);
     
     if (size != 2)
-        return false;
+        return ValidationResult(false);
     
     const ASTTag *tagChild = dynamic_cast<ASTTag *>(command->children()[0]);
     const ASTString *stringChild = dynamic_cast<ASTString *>(command->children()[1]);
     
     if (tagChild == nullptr || stringChild == nullptr)
-        return false;
+        return ValidationResult(false);
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Command::_validateForeverypartCommand(const ASTNode *node) {
+ValidationResult Command::_validateForeverypartCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const size_t size = command->children().size();
     
     if (size != 1 && size != 3)
-        return false;
+        return ValidationResult(false);
     
     if (!nodeIsType<ASTBlock>(command->children()[size-1]))
-        return false;
+        return ValidationResult(false);
     
     if (size == 3) {
         const ASTTag *tagChild = dynamic_cast<ASTTag *>(command->children()[0]);
         const ASTString *stringChild = dynamic_cast<ASTString *>(command->children()[1]);
     
         if (tagChild == nullptr || stringChild == nullptr)
-            return false;
+            return ValidationResult(false);
     }
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Command::_validateExtracttextCommand(const ASTNode *node) {
+ValidationResult Command::_validateExtracttextCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const size_t size = command->children().size();
 
     if (!nodeIsType<ASTString>(command->children()[size-1]))
-        return false;
+        return ValidationResult(false);
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Command::_validateNotifyCommand(const ASTNode *node) {
+ValidationResult Command::_validateNotifyCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const size_t size = command->children().size();
     
     size_t numArguments = 1;
     
     if (!nodeIsType<ASTString>(command->children()[size-1]))
-        return false;
+        return ValidationResult(false);
     
     if (command->find(ASTTag(":from")) != command->children().end()) {
         numArguments += 2;
@@ -537,17 +537,17 @@ bool Command::_validateNotifyCommand(const ASTNode *node) {
     }
     
     if (size != numArguments)
-        return false;
+        return ValidationResult(false);
     
-    return true;
+    return ValidationResult(true);
 }
 
-bool Command::_validateConvertCommand(const ASTNode *node) {
+ValidationResult Command::_validateConvertCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const size_t size = command->children().size();
     
     if (size != 3)
-        return false;
+        return ValidationResult(false);
     
     // TODO: We need to verify that the strings are quoted
     const ASTString *fromMediaType = dynamic_cast<ASTString *>(command->children()[0]);
@@ -555,9 +555,9 @@ bool Command::_validateConvertCommand(const ASTNode *node) {
     const ASTStringList *transcodingParams = dynamic_cast<ASTStringList *>(command->children()[2]);
     
     if (fromMediaType == nullptr || toMediaType == nullptr || transcodingParams == nullptr)
-        return false;
+        return ValidationResult(false);
     
-    return true;
+    return ValidationResult(true);
 }
 
 }

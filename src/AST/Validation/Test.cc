@@ -38,6 +38,8 @@ Test::Test() {
     _usage_map["duplicate"]             = "duplicate [:handle <handle: string>]                                           \n"
                                           "          [:header <header: string> / :uniqueid <value: string>]               \n"
                                           "          [:seconds <timeout: number>] [:last]";
+    _usage_map["specialuse_exists"]     = "specialuse_exists [<mailbox: string>]                                          \n"
+                                          "                  <special-use-attrs: string-list>                             \n";
 
     _validation_fn_map["allof"]                 = &Test::_validateHasOnlyTestList;
     _validation_fn_map["anyof"]                 = &Test::_validateHasOnlyTestList;
@@ -52,6 +54,7 @@ Test::Test() {
     _validation_fn_map["valid_notify_method"]   = &Test::_validateValidNotifyMethodTest;
     _validation_fn_map["valid_ext_list"]        = &Test::_validateValidExtListTest;
     _validation_fn_map["duplicate"]             = &Test::_validateDuplicateTest;
+    _validation_fn_map["specialuse_exists"]     = &Test::_validateSpecialUseExistsTest;
 }
 
 bool Test::validate(const ASTNode *node) {
@@ -157,6 +160,27 @@ bool Test::_validateValidNotifyMethodTest(const ASTNode *node) {
     if (!nodeIsType<ASTStringList>(test->children()[0]) && !nodeIsType<ASTString>(test->children()[0]))
         return false;
     
+    return true;
+}
+
+bool Test::_validateSpecialUseExistsTest(const ASTNode *node) {
+    const auto *test = dynamic_cast<const ASTTest*>(node);
+    size_t size = test->children().size();
+
+    if (size != 1 && size != 2) {
+        return false;
+    }
+
+    if (size == 2) {
+        if (!nodeIsType<ASTString>(test->children()[0]) || (!nodeIsType<ASTStringList>(test->children()[1]) && !nodeIsType<ASTString>(test->children()[1]))) {
+            return false;
+        }
+    } else {
+        if (!nodeIsType<ASTStringList>(test->children()[0]) && !nodeIsType<ASTString>(test->children()[0])) {
+            return false;
+        }
+    }
+
     return true;
 }
 

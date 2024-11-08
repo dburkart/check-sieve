@@ -21,6 +21,7 @@ private:
     static bool _validateSingleString(const ASTNode *node);
     static bool _validateSingleNumeric(const ASTNode *node);
     static bool _validateList(const ASTNode *node);
+    static bool _validateSpecialUse(const ASTNode *node);
     
     std::map<std::string, bool (*)(const ASTNode *)> _validation_fn_map;
     std::map<std::string, std::string> _usage_map;

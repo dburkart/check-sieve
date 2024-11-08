@@ -1,4 +1,4 @@
-#include "ASTNode.hh"
+#include "ASTCommand.hh"
 #include "ASTNumeric.hh"
 #include "ASTString.hh"
 #include "ASTStringList.hh"
@@ -27,11 +27,13 @@ Tag::Tag() {
     _usage_map[":header"] = ":header string";
     _usage_map[":uniqueid"] = ":uniqueid string";
     _usage_map[":seconds"] = ":seconds string";
+    _usage_map[":specialuse"] = "fileinto [:specialuse string] ...";
 
     _validation_fn_map[":handle"] = &Tag::_validateSingleString;
     _validation_fn_map[":header"] = &Tag::_validateSingleString;
     _validation_fn_map[":uniqueid"] = &Tag::_validateSingleString;
     _validation_fn_map[":seconds"] = &Tag::_validateSingleNumeric;
+    _validation_fn_map[":specialuse"] = &Tag::_validateSpecialUse;
 }
 
 bool Tag::validate(const ASTNode *node) {
@@ -99,6 +101,23 @@ bool Tag::_validateList(const ASTNode *node) {
     }
 
     return false;
+}
+
+bool Tag::_validateSpecialUse(const ASTNode *node) {
+    auto result = _validateSingleString(node);
+    if (!result) {
+        return result;
+    }
+
+    const auto *tag = dynamic_cast<const ASTTag*>(node);
+    const ASTCommand *parent = dynamic_cast<const ASTCommand*>(tag->parent());
+
+    if (parent->value() != "fileinto") {
+        // FIXME: We'd like to bubble up a hint here, since the error won't be great in this case
+        return false;
+    }
+
+    return true;
 }
 
 }

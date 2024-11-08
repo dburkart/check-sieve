@@ -475,6 +475,14 @@ void ASTVerificationVisitor::_enable_capability(std::string_view capability) {
         _tag_map[":seconds"] = true;
     }
 
+    // "special-use"
+    // RFC 8579
+    // https://www.rfc-editor.org/rfc/rfc8579
+    if (capability == "special-use") {
+        _test_map["specialuse_exists"] = true;
+        _tag_map[":specialuse"] = true;
+    }
+
     // "fcc"
     // RFC 8580
     // https://www.rfc-editor.org/rfc/rfc8580.html

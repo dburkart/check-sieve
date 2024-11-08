@@ -1,3 +1,11 @@
+Version 0.10:
+ * Support for Delivering to Special-Use Mailboxes (RFC 8579).
+ * Support for Detecting Duplicate Deliveries (RFC 7352).
+ * Support for File Carbon Copy (FCC) (RFC 8580).
+ * Support for Python 3.12. (@grawlinson)
+ * Support for building with GCC 13. (@RensOliemans)
+ * Move to C++17.
+
 Version 0.9:
  * Fixed Xcode project files.
  * Add support for Externally Stored Lists (RFC 6134). (@johnlettman)

@@ -54,6 +54,7 @@ private:
     std::map<std::string_view, bool> _command_map;
     std::map<std::string_view, bool> _test_map;
     std::map<std::string_view, bool> _tag_map;
+    std::map<std::string_view, std::string> _require_lookup;
     
     // Validators
     Command _command;

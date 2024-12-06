@@ -328,7 +328,7 @@ ValidationResult Test::_validateEnvironmentTest(const ASTNode *node) {
 ValidationResult Test::_validateDuplicateTest(const ASTNode *node) {
     std::vector<ASTNode *> children = node->children();
 
-    bool seenHeader, seenUID = false;
+    bool seenHeader = false, seenUD = false;
 
     for (auto & it : children)  {
         const auto *tag = dynamic_cast<const ASTTag*>(it);

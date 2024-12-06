@@ -302,7 +302,7 @@ ValidationResult Test::_validateEnvironmentTest(const ASTNode *node) {
     
     // RFC 6785
     // TODO: Fix this cast
-    if (((ASTVerificationVisitor *)visitor())->requires_capability("imapsieve") && (
+    if (((ASTVerificationVisitor *)visitor())->has_required("imapsieve") && (
         name == "imap.user" ||
         name == "imap.email" ||
         name == "imap.cause" ||

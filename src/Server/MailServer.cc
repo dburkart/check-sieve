@@ -122,7 +122,11 @@ void MailServer::_connect()
 
     char buffer[1024] = {};
     send(_socket, "", 0, 0);
-    read(_socket, buffer, 1024);
+
+    if (read(_socket, buffer, 1024) == -1) {
+        std::cout << "Could not read from socket: " << strerror(errno) << std::endl;
+        abort();
+    }
 
     _greeting = std::string(buffer);
 }

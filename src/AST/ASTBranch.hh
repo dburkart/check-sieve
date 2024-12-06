@@ -10,15 +10,15 @@ class ASTVisitor;
 class ASTBranch : public ASTNode {
 public:
     ASTBranch() : ASTNode() {}    
-    ASTBranch(yy::location location);
+    explicit ASTBranch(yy::location location);
     
-    void accept(ASTVisitor &visitor);
+    void accept(ASTVisitor &visitor) override;
     
-    std::string value() const { return "ASTBranch"; }
+    [[nodiscard]] std::string value() const { return "ASTBranch"; }
 
     template<class T>
     std::vector<ASTNode *>::const_iterator find(const T& value) const {
-        for (std::vector<ASTNode *>::const_iterator it = this->children().begin(); it != this->children().end(); ++it) {
+        for (auto it = this->children().begin(); it != this->children().end(); ++it) {
             const T* child = dynamic_cast<T*>(*it);
 
             if (child == NULL)

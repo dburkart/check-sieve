@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "ASTString.hh"
 #include "ASTVisitor.hh"
 
@@ -10,12 +12,12 @@ ASTString::ASTString( yy::location location )
 }
 
 ASTString::ASTString( std::string str)
-    : _str( str )
+    : _str(std::move( str ))
 {
 }
 ASTString::ASTString( yy::location location, std::string str)
     : ASTNode( location )
-    , _str( str )
+    , _str(std::move( str ))
 {
 }
 

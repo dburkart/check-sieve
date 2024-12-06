@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "ASTTestList.hh"
 #include "ASTVisitor.hh"
 
@@ -10,12 +12,12 @@ ASTTestList::ASTTestList( yy::location location )
 }
 
 ASTTestList::ASTTestList( std::string name)
-    : _name( name )
+    : _name(std::move( name ))
 {
 }
 ASTTestList::ASTTestList( yy::location location, std::string name)
     : ASTCommand( location )
-    , _name( name )
+    , _name(std::move( name ))
 {
 }
 

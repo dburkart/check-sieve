@@ -114,15 +114,15 @@ ValidationResult Tag::_validateSpecialUse(const ASTNode *node) {
     }
 
     const auto *tag = dynamic_cast<const ASTTag*>(node);
-    const ASTCommand *parent = dynamic_cast<const ASTCommand*>(tag->parent());
+    const auto *parent = dynamic_cast<const ASTCommand*>(tag->parent());
 
     if (parent->value() != "fileinto") {
-        return ValidationResult(false, "\"" + tag->value() + "\" is only valid as part of the fileinto command");
+        return {false, "\"" + tag->value() + "\" is only valid as part of the fileinto command"};
     }
 
     if (tag->value() == ":mailboxid") {
         if (parent->find(ASTTag(":mailboxid")) != parent->children().end() && parent->find(ASTTag(":specialuse")) != parent->children().end()) {
-            return ValidationResult(false, ":specialuse is disallowed when using :mailboxid, choose one or the other.", true);
+            return {false, ":specialuse is disallowed when using :mailboxid, choose one or the other.", true};
         }
     }
 

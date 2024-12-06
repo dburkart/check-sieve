@@ -18,8 +18,7 @@ void ASTTraceVisitor::_traverse_tree( sieve::ASTNode *node, int indent_level ) {
     node->accept(*this);
 
     std::vector<sieve::ASTNode *> children = node->children();
-    for (std::vector<sieve::ASTNode *>::iterator it = children.begin(); it != children.end(); ++it) {
-        sieve::ASTNode *child = *it;
+    for (auto child : children) {
         _traverse_tree(child, indent_level + 1);
     }
 }

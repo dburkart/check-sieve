@@ -5,7 +5,7 @@
 
 namespace sieve {
 
-std::string Diagnostic::describe( parse_result result, std::ifstream &input ) const {
+std::string Diagnostic::describe( parse_result& result, std::ifstream &input ) const {
     std::string line;
     std::ostringstream output;
 

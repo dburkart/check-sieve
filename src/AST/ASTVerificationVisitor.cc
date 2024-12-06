@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iostream>
+#include <utility>
 #include <vector>
 
 #include "ASTVerificationVisitor.hh"
@@ -8,7 +9,7 @@ namespace sieve
 {
 
 ASTVerificationVisitor::ASTVerificationVisitor(struct parse_options options)
-    : _options( options )
+    : _options(std::move( options ))
     , _verification_result()
     , _require_lookup()
     , _required_capabilities( nullptr ) {
@@ -62,7 +63,7 @@ void ASTVerificationVisitor::visit( ASTCommand* node ) {
     if (!r.result()) {
         auto hint = _command.usage(node);
 
-        if (r.hint() != "") {
+        if (!r.hint().empty()) {
             if (r.hint_as_error()) {
                 hint = r.hint();
             } else {
@@ -102,7 +103,7 @@ void ASTVerificationVisitor::visit( ASTRequire* node ) {
 
     for (const auto & it : children) {
         const auto *child = dynamic_cast<ASTString *>(it);
-        _capability_map[child->value()] = 1;
+        _capability_map[child->value()] = true;
         _enable_capability(child->value());
     }
 }
@@ -142,7 +143,7 @@ void ASTVerificationVisitor::visit( ASTTag* node ) {
     if (!r.result()) {
         auto hint = _tag.usage(node);
 
-        if (r.hint() != "") {
+        if (!r.hint().empty()) {
             if (r.hint_as_error()) {
                 hint = r.hint();
             } else {
@@ -210,7 +211,7 @@ void ASTVerificationVisitor::visit( ASTTest* node ) {
     if (!r.result()) {
         auto hint = _test.usage(node);
 
-        if (r.hint() != "") {
+        if (!r.hint().empty()) {
             if (r.hint_as_error()) {
                 hint = r.hint();
             } else {

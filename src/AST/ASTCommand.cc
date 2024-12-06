@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "ASTCommand.hh"
 #include "ASTVisitor.hh"
 
@@ -10,12 +12,12 @@ ASTCommand::ASTCommand( yy::location location )
 }
 
 ASTCommand::ASTCommand( std::string name)
-    : _name( name )
+    : _name(std::move( name ))
 {
 }
 ASTCommand::ASTCommand( yy::location location, std::string name)
     : ASTNode( location )
-    , _name( name )
+    , _name(std::move( name ))
 {
 }
 

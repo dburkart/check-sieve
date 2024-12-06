@@ -275,19 +275,25 @@ ValidationResult Test::_validateEnvironmentTest(const ASTNode *node) {
     std::vector<ASTNode *> children = node->children();
     size_t size = children.size();
     
-    if (size < 2)
+    if (size < 2) {
+        std::cout << "SIZE < 2" << std::endl;
         return ValidationResult(false);
-    
+    }
+
     const auto *name_node = dynamic_cast<const ASTString*>(children[size-2]);
     const auto *key = dynamic_cast<const ASTString*>(children[size-1]);
     const auto *key_list = dynamic_cast<const ASTStringList*>(children[size-1]);
     
     // TODO: Validation for [COMPARATOR] / [MATCH-TYPE]
     
-    if (name_node == nullptr || (key_list == nullptr && key == nullptr))
+    if (name_node == nullptr || (key_list == nullptr && key == nullptr)) {
+        std::cout << "nullptr found" << std::endl;
         return ValidationResult(false);
-    
+    }
+
     const auto name = name_node->value();
+
+    std::cout << "name: " << name << std::endl;
     
     if (name == "domain" ||
         name == "host" ||
@@ -310,6 +316,8 @@ ValidationResult Test::_validateEnvironmentTest(const ASTNode *node) {
         name == "imap.changedflags")) {
         return ValidationResult(true);
     }
+
+    std::cout << "does not have capability" << std::endl;
     
     return ValidationResult(false);
 }

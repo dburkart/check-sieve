@@ -206,7 +206,7 @@ ValidationResult Command::_validateFileintoCommand(const ASTNode *node) {
     if (command->find(ASTTag(":flags")) != command->children().end()) {
         minArguments += 2;
     }
-    
+
     if (command->find(ASTTag(":copy")) != command->children().end()) {
         minArguments++;
     }

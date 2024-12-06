@@ -56,7 +56,11 @@ void ASTVerificationVisitor::visit( ASTCommand* node ) {
         auto hint = _command.usage(node);
 
         if (r.hint() != "") {
-            hint += "\n" + r.hint();
+            if (r.hint_as_error()) {
+                hint = r.hint();
+            } else {
+                hint += "\n\n(Hint: " + r.hint() + ")";
+            }
         }
 
         _verification_result = {
@@ -126,7 +130,11 @@ void ASTVerificationVisitor::visit( ASTTag* node ) {
         auto hint = _tag.usage(node);
 
         if (r.hint() != "") {
-            hint += "\n\n(Hint: " + r.hint() + ")";
+            if (r.hint_as_error()) {
+                hint = r.hint();
+            } else {
+                hint += "\n\n(Hint: " + r.hint() + ")";
+            }
         }
 
         _verification_result = {
@@ -183,8 +191,13 @@ void ASTVerificationVisitor::visit( ASTTest* node ) {
         auto hint = _test.usage(node);
 
         if (r.hint() != "") {
-            hint += "\n\nHint: " + r.hint();
+            if (r.hint_as_error()) {
+                hint = r.hint();
+            } else {
+                hint += "\n\n(Hint: " + r.hint() + ")";
+            }
         }
+
         _verification_result = {
             1,
             node->location(),
@@ -511,6 +524,14 @@ void ASTVerificationVisitor::_enable_capability(std::string_view capability) {
     // https://www.rfc-editor.org/rfc/rfc8580.html
     if (capability == "fcc") {
         _tag_map[":fcc"] = true;
+    }
+
+    // "mailboxid"
+    // RFC 9042
+    // https://www.rfc-editor.org/rfc/rfc9042.html
+    if (capability == "mailboxid") {
+        _test_map["mailboxidexists"] = true;
+        _tag_map[":mailboxid"] = true;
     }
 
     // DRAFT RFCs

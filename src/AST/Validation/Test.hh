@@ -20,6 +20,7 @@ private:
     // Validation functions
     ValidationResult _validateExists(const ASTNode *node);
     ValidationResult _validateHasOnlyTestList(const ASTNode *node);
+    ValidationResult _validateHasOnlyStringList(const ASTNode *node);
     ValidationResult _validateNotTest(const ASTNode *node);
     ValidationResult _validateSizeTest(const ASTNode *node);
     ValidationResult _validateValidNotifyMethodTest(const ASTNode *node);
@@ -28,7 +29,6 @@ private:
     ValidationResult _validateHeaderTest(const ASTNode *node);
     ValidationResult _validateIhaveTest(const ASTNode *node);
     ValidationResult _validateEnvironmentTest(const ASTNode *node);
-    ValidationResult _validateValidExtListTest(const ASTNode *node);
     ValidationResult _validateDuplicateTest(const ASTNode *node);
     ValidationResult _validateSpecialUseExistsTest(const ASTNode *node);
 

@@ -40,6 +40,7 @@ Test::Test() {
                                           "          [:seconds <timeout: number>] [:last]";
     _usage_map["specialuse_exists"]     = "specialuse_exists [<mailbox: string>]                                          \n"
                                           "                  <special-use-attrs: string-list>                             \n";
+    _usage_map["mailboxidexists"]       = "mailboxidexists <mailbox-objectids: string-list>";
 
     _validation_fn_map["allof"]                 = &Test::_validateHasOnlyTestList;
     _validation_fn_map["anyof"]                 = &Test::_validateHasOnlyTestList;
@@ -52,9 +53,10 @@ Test::Test() {
     _validation_fn_map["not"]                   = &Test::_validateNotTest;
     _validation_fn_map["size"]                  = &Test::_validateSizeTest;
     _validation_fn_map["valid_notify_method"]   = &Test::_validateValidNotifyMethodTest;
-    _validation_fn_map["valid_ext_list"]        = &Test::_validateValidExtListTest;
+    _validation_fn_map["valid_ext_list"]        = &Test::_validateHasOnlyStringList;
     _validation_fn_map["duplicate"]             = &Test::_validateDuplicateTest;
     _validation_fn_map["specialuse_exists"]     = &Test::_validateSpecialUseExistsTest;
+    _validation_fn_map["mailboxidexists"]       = &Test::_validateHasOnlyStringList;
 }
 
 ValidationResult Test::validate(const ASTNode *node) {
@@ -119,6 +121,15 @@ ValidationResult Test::_validateHasOnlyTestList(const ASTNode *node) {
             return ValidationResult(false);
     }
     
+    return ValidationResult(true);
+}
+
+ValidationResult Test::_validateHasOnlyStringList(const ASTNode *node) {
+    const auto *test = dynamic_cast<const ASTTest*>(node);
+
+    if (!nodeIsType<ASTStringList>(test->children()[0]) && !nodeIsType<ASTString>(test->children()[0]))
+        return ValidationResult(false);
+
     return ValidationResult(true);
 }
 
@@ -312,15 +323,6 @@ ValidationResult Test::_validateEnvironmentTest(const ASTNode *node) {
     }
     
     return ValidationResult(false);
-}
-
-ValidationResult Test::_validateValidExtListTest(const ASTNode *node) {
-    const auto *test = dynamic_cast<const ASTTest*>(node);
-    
-    if (!nodeIsType<ASTStringList>(test->children()[0]) && !nodeIsType<ASTString>(test->children()[0]))
-        return ValidationResult(false);
-    
-    return ValidationResult(true);
 }
 
 ValidationResult Test::_validateDuplicateTest(const ASTNode *node) {

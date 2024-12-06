@@ -29,11 +29,15 @@ Tag::Tag() {
     _usage_map[":seconds"] = ":seconds string";
     _usage_map[":specialuse"] = "fileinto [:specialuse string] ...";
 
+    // RFC 9042
+    _usage_map[":mailboxid"] = "fileinto [:mailboxid string] ...";
+
     _validation_fn_map[":handle"] = &Tag::_validateSingleString;
     _validation_fn_map[":header"] = &Tag::_validateSingleString;
     _validation_fn_map[":uniqueid"] = &Tag::_validateSingleString;
     _validation_fn_map[":seconds"] = &Tag::_validateSingleNumeric;
     _validation_fn_map[":specialuse"] = &Tag::_validateSpecialUse;
+    _validation_fn_map[":mailboxid"] = &Tag::_validateSpecialUse;
 }
 
 ValidationResult Tag::validate(const ASTNode *node) {
@@ -113,7 +117,13 @@ ValidationResult Tag::_validateSpecialUse(const ASTNode *node) {
     const ASTCommand *parent = dynamic_cast<const ASTCommand*>(tag->parent());
 
     if (parent->value() != "fileinto") {
-        return ValidationResult(false, "\":specialuse\" is only valid as part of the fileinto command");
+        return ValidationResult(false, "\"" + tag->value() + "\" is only valid as part of the fileinto command");
+    }
+
+    if (tag->value() == ":mailboxid") {
+        if (parent->find(ASTTag(":mailboxid")) != parent->children().end() && parent->find(ASTTag(":specialuse")) != parent->children().end()) {
+            return ValidationResult(false, ":specialuse is disallowed when using :mailboxid, choose one or the other.", true);
+        }
     }
 
     return ValidationResult(true);

@@ -166,6 +166,19 @@ sudo pacman -Sy emscripten
 </details>
 
 
+<details>
+<summary><strong>Fedora / RHEL</strong></summary>
+<p>
+
+```bash
+sudo dnf install make gcc bison flex python3 python3-devel
+```
+
+There is no package providing emscripten, so you will need to install the [emsdk](https://emscripten.org/docs/getting_started/downloads.html).
+
+</p>
+</details>
+
 ### Compiling
 
 At the moment, there are four targets for this project:

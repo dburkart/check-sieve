@@ -32,12 +32,17 @@ Tag::Tag() {
     // RFC 9042
     _usage_map[":mailboxid"] = "fileinto [:mailboxid string] ...";
 
+    _usage_map[":input"] = "execute [:input string] ...";
+    _usage_map[":output"] = "execute [:output varname] ...";
+
     _validation_fn_map[":handle"] = &Tag::_validateSingleString;
     _validation_fn_map[":header"] = &Tag::_validateSingleString;
     _validation_fn_map[":uniqueid"] = &Tag::_validateSingleString;
     _validation_fn_map[":seconds"] = &Tag::_validateSingleNumeric;
     _validation_fn_map[":specialuse"] = &Tag::_validateSpecialUse;
     _validation_fn_map[":mailboxid"] = &Tag::_validateSpecialUse;
+    _validation_fn_map[":input"] = &Tag::_validateSingleString;
+    _validation_fn_map[":output"] = &Tag::_validateSingleString;
 }
 
 ValidationResult Tag::validate(const ASTNode *node) {

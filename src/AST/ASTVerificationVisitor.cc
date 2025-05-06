@@ -71,9 +71,14 @@ void ASTVerificationVisitor::visit( ASTCommand* node ) {
             }
         }
 
+        auto location = node->location();
+        if (r.offset() != 0) {
+            location = node->children()[r.offset()]->location();
+        }
+
         _verification_result = {
             1,
-            node->location(),
+            location,
             "Incorrect syntax for command \"" + node->value() + "\".",
             hint,
         };
@@ -151,9 +156,14 @@ void ASTVerificationVisitor::visit( ASTTag* node ) {
             }
         }
 
+        auto location = node->location();
+        if (r.offset() != 0) {
+            location = node->children()[r.offset()]->location();
+        }
+
         _verification_result = {
             1,
-            node->location(),
+            location,
             "Incorrect syntax for tag \"" + node->value() + "\".",
             hint,
         };
@@ -768,6 +778,41 @@ void ASTVerificationVisitor::_enable_capability(std::string_view capability) {
 
     // Require hints
     _require_lookup[":eval"] = "vnd.proton.eval";
+
+    // vnd.dovecot.pipe
+    // (https://raw.githubusercontent.com/dovecot/pigeonhole/refs/heads/main/doc/rfc/spec-bosch-sieve-extprograms.txt)
+    if (capability == "vnd.dovecot.pipe") {
+        _command_map["pipe"] = true;
+        _tag_map[":try"] = true;
+    }
+
+    // Hints
+    _require_lookup["pipe"] = "vnd.dovecot.pipe";
+    _require_lookup[":try"] = "vnd.dovecot.pipe";
+
+    // vnd.dovecot.filter
+    if (capability == "vnd.dovecot.filter") {
+        _command_map["filter"] = true;
+        _test_map["filter"] = true;
+    }
+
+    // Hint
+    _require_lookup["filter"] = "vnd.dovecot.filter";
+
+    // vnd.dovecot.execute
+    if (capability == "vnd.dovecot.execute") {
+        _command_map["execute"] = true;
+        _test_map["execute"] = true;
+        _tag_map[":input"] = true;
+        _tag_map[":output"] = true;
+        _tag_map[":pipe"] = true;
+    }
+
+    // Hint
+    _require_lookup["execute"] = "vnd.dovecot.execute";
+    _require_lookup[":input"] = "vnd.dovecot.execute";
+    _require_lookup[":output"] = "vnd.dovecot.execute";
+    _require_lookup[":pipe"] = "vnd.dovecot.execute";
 }
 
 } // namespace sieve

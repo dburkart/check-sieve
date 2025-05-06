@@ -57,6 +57,8 @@ Test::Test() {
     _validation_fn_map["duplicate"]             = &Test::_validateDuplicateTest;
     _validation_fn_map["specialuse_exists"]     = &Test::_validateSpecialUseExistsTest;
     _validation_fn_map["mailboxidexists"]       = &Test::_validateHasOnlyStringList;
+    _validation_fn_map["filter"]                = &Test::_validateFilterTest;
+    _validation_fn_map["execute"]               = &Test::_validateExecuteTest;
 }
 
 ValidationResult Test::validate(const ASTNode *node) {
@@ -358,6 +360,14 @@ ValidationResult Test::_validateDuplicateTest(const ASTNode *node) {
     }
 
     return ValidationResult(true);
+}
+
+ValidationResult Test::_validateFilterTest(const ASTNode *node) {
+    return Command::_validateFilterCommand(node);
+}
+
+ValidationResult Test::_validateExecuteTest(const ASTNode *node) {
+    return Command::_validateExecuteCommand(node);
 }
 
 

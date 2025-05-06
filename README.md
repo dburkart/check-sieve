@@ -96,6 +96,7 @@ Options:
 * Delivery by MAILBOXID ([RFC 9042](https://tools.ietf.org/html/rfc9042))
 * Proton Expiration Extension ([vnd.proton.expire](https://proton.me/support/sieve-advanced-custom-filters#managing-expiration))
 * Proton Eval Extension ([vnd.proton.eval](https://proton.me/support/sieve-advanced-custom-filters#transforming-variables))
+* Dovecot Invoking External Programs ([vnd.dovecot.{pipe,filter,execute}](https://raw.githubusercontent.com/dovecot/pigeonhole/refs/heads/main/doc/rfc/spec-bosch-sieve-extprograms.txt))
 
 > [!NOTE]
 > If you find any discrepancies with these RFCs,

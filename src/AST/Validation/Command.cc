@@ -43,6 +43,9 @@ Command::Command() {
     _usage_map["stop"] = "stop";
     _usage_map["unexpire"] = "unexpire";
     _usage_map["vacation"] = "vacation [:days number] [:subject string] [:from string]\n\t[:addresses string-list] [:mime] [:handle string]\n\t[:fcc string] <reason: string>";
+    _usage_map["pipe"] = "pipe [:try] <program-name: string>\n\t[<arguments: string-list>]";
+    _usage_map["filter"] = "filter <program-name: string> [<arguments: string-list>]";
+    _usage_map["execute"] = "execute [:input <input-data: string> / :pipe]\n\t[:output <varname: string>]\n\t<program-name: string> [<arguments: string-list>]";
 
     _validation_fn_map["addflag"] = &Command::_validateIMAP4FlagsAction;
     _validation_fn_map["addheader"] = &Command::_validateAddHeadersCommand;
@@ -71,7 +74,9 @@ Command::Command() {
     _validation_fn_map["unexpire"] = &Command::_validateBareCommand;
     _validation_fn_map["vacation"] = &Command::_validateVacationCommand;
     _validation_fn_map["convert"] = &Command::_validateConvertCommand;
-
+    _validation_fn_map["pipe"] = &Command::_validatePipeCommand;
+    _validation_fn_map["filter"] = &Command::_validateFilterCommand;
+    _validation_fn_map["execute"] = &Command::_validateExecuteCommand;
 }
 
 ValidationResult Command::validate(const ASTNode *node) {
@@ -557,6 +562,97 @@ ValidationResult Command::_validateConvertCommand(const ASTNode *node) {
     if (fromMediaType == nullptr || toMediaType == nullptr || transcodingParams == nullptr)
         return ValidationResult(false);
     
+    return ValidationResult(true);
+}
+
+ValidationResult Command::_validatePipeCommand(const ASTNode *node) {
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
+    const size_t size = command->children().size();
+
+    if (size == 0)
+        return ValidationResult(false);
+
+    // If size == 1, verify that the argument is a string
+    if (size == 1) {
+        if (nodeIsType<ASTString>(command->children()[0]))
+            return ValidationResult(true);
+        else
+            return ValidationResult(false);
+    }
+
+    bool seenProgram = false;
+    for (auto i = 0; i < size; i++) {
+        if (nodeIsType<ASTString>(command->children()[i])) {
+            seenProgram = true;
+            continue;
+        }
+
+        if (nodeIsType<ASTTag>(command->children()[i])) {
+            if (seenProgram) {
+                return {false, "Note: tag arguments not allowed after program name", true, i};
+            }
+
+            const auto *tag = dynamic_cast<const ASTTag*>(command->children()[i]);
+            if (tag->value() != ":try" && tag->value() != ":copy") {
+                return {false, "Note: only :try and :copy allowed as arguments to pipe", true, i};
+            }
+        }
+
+        if (seenProgram) {
+            if (!nodeIsType<ASTStringList>(command->children()[i])) {
+                return { false, "Expected program arguments", true, i};
+            }
+        }
+    }
+
+    return ValidationResult(true);
+}
+
+ValidationResult Command::_validateFilterCommand(const ASTNode *node) {
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
+    const size_t size = command->children().size();
+
+    if (size == 0)
+        return ValidationResult(false);
+
+    if (!nodeIsType<ASTString>(command->children()[0])) {
+        return {false, "First argument to filter command must be a program name", true};
+    }
+
+    if (size > 1) {
+        if (!nodeIsType<ASTStringList>(command->children()[1])) {
+            return ValidationResult(false);
+        }
+    }
+
+    return ValidationResult(true);
+}
+
+ValidationResult Command::_validateExecuteCommand(const ASTNode *node) {
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
+    const size_t size = command->children().size();
+
+    auto minSize = 1;
+
+    if (size == 0)
+        return ValidationResult(false);
+
+    if (command->find(ASTTag(":input")) != command->children().end())
+        minSize += 2;
+
+    if (command->find(ASTTag(":output")) != command->children().end())
+        minSize += 2;
+
+    if (command->find(ASTTag(":pipe")) != command->children().end())
+        minSize += 1;
+
+
+    if (nodeIsType<ASTStringList>(command->children()[size-1]))
+        minSize += 1;
+
+    if (size < minSize)
+        return ValidationResult(false);
+
     return ValidationResult(true);
 }
 

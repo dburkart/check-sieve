@@ -16,6 +16,8 @@ public:
     ValidationResult validate(const ASTNode *node) override;
     std::string usage(const ASTNode *node) override;
 
+    friend class Test;
+
 private:
     // Validation functions
     static ValidationResult _validateAddHeadersCommand(const ASTNode *node);
@@ -38,6 +40,9 @@ private:
     static ValidationResult _validateExpireCommand(const ASTNode *node);
     static ValidationResult _validateNotifyCommand(const ASTNode *node);
     static ValidationResult _validateConvertCommand(const ASTNode *node);
+    static ValidationResult _validatePipeCommand(const ASTNode *node);
+    static ValidationResult _validateFilterCommand(const ASTNode *node);
+    static ValidationResult _validateExecuteCommand(const ASTNode *node);
 
     std::map<std::string, ValidationResult (*)(const ASTNode *)> _validation_fn_map;
     std::map<std::string, std::string> _usage_map;

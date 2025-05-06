@@ -581,7 +581,7 @@ ValidationResult Command::_validatePipeCommand(const ASTNode *node) {
     }
 
     bool seenProgram = false;
-    for (auto i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
         if (nodeIsType<ASTString>(command->children()[i])) {
             seenProgram = true;
             continue;
@@ -632,7 +632,7 @@ ValidationResult Command::_validateExecuteCommand(const ASTNode *node) {
     const auto *command = dynamic_cast<const ASTCommand*>(node);
     const size_t size = command->children().size();
 
-    auto minSize = 1;
+    size_t minSize = 1;
 
     if (size == 0)
         return ValidationResult(false);

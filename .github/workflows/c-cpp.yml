@@ -16,8 +16,26 @@ jobs:
     - name: make
       env:
         CC: ${{ matrix.compiler }}
-      run: make
+      run: make clean && make
     - name: setup test dependencies
       run: python3 -m pip install --upgrade setuptools
     - name: make test
       run: make test
+  macos_matrix:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        compiler: [gcc, clang]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.12"
+      - name: make
+        env:
+          CC: ${{ matrix.compiler }}
+        run: make clean && make
+      - name: setup test dependencies
+        run: python3 -m pip install --upgrade setuptools
+      - name: make test
+        run: make test

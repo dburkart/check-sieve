@@ -589,18 +589,18 @@ ValidationResult Command::_validatePipeCommand(const ASTNode *node) {
 
         if (nodeIsType<ASTTag>(command->children()[i])) {
             if (seenProgram) {
-                return {false, "Note: tag arguments not allowed after program name", true, i};
+                return {false, "Note: tag arguments not allowed after program name", true, int(i)};
             }
 
             const auto *tag = dynamic_cast<const ASTTag*>(command->children()[i]);
             if (tag->value() != ":try" && tag->value() != ":copy") {
-                return {false, "Note: only :try and :copy allowed as arguments to pipe", true, i};
+                return {false, "Note: only :try and :copy allowed as arguments to pipe", true, int(i)};
             }
         }
 
         if (seenProgram) {
             if (!nodeIsType<ASTStringList>(command->children()[i])) {
-                return { false, "Expected program arguments", true, i};
+                return { false, "Expected program arguments", true, int(i)};
             }
         }
     }

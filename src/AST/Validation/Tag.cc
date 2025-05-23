@@ -42,6 +42,13 @@ Tag::Tag() {
     // RFC 9042
     _usage_map[":mailboxid"] = "fileinto [:mailboxid string] ...";
 
+    // RFC 9671
+    _usage_map[":organizers"] = ":organizers <ext-list-name: string>";
+    _usage_map[":outcome"] = ":outcome <variable-name: string>";
+    _usage_map[":reason"] = ":reason <variable-name: string>";
+    _usage_map[":addresses"] = ":addresses <string-list>";
+    _usage_map[":calendarid"] = ":calendarid <string>";
+
     _usage_map[":input"] = "execute [:input string] ...";
     _usage_map[":output"] = "execute [:output varname] ...";
 
@@ -57,6 +64,11 @@ Tag::Tag() {
     _validation_fn_map[":input"] = &Tag::_validateSingleString;
     _validation_fn_map[":output"] = &Tag::_validateSingleString;
     _validation_fn_map[":zone"] = &Tag::_validateZone;
+    _validation_fn_map[":organizers"] = &Tag::_validateOrganizers;
+    _validation_fn_map[":outcome"] = &Tag::_validateOutcomeOrReason;
+    _validation_fn_map[":reason"] = &Tag::_validateOutcomeOrReason;
+    _validation_fn_map[":addresses"] = &Tag::_validateList;
+    _validation_fn_map[":calendarid"] = &Tag::_validateSingleString;
 }
 
 ValidationResult Tag::validate(const ASTNode *node) {
@@ -182,6 +194,37 @@ ValidationResult Tag::_validateByMode(const ASTNode *node) {
         return ValidationResult(false, "Unexpected argument to :bymode", true);
 
     return ValidationResult(true);
+}
+
+ValidationResult Tag::_validateOrganizers(const ASTNode *node) {
+    auto result = _validateSingleString(node);
+    if (!result.result()) {
+        return result;
+    }
+
+    auto v = dynamic_cast<const ASTVerificationVisitor*>(this->visitor());
+    if (v != nullptr && !v->has_required("extlists")) {
+        return ValidationResult(false, "The :organizers tag requires the extlists extension.", true);
+    }
+
+    return ValidationResult(true);
+}
+
+ValidationResult Tag::_validateOutcomeOrReason(const ASTNode *node) {
+    auto result = _validateSingleString(node);
+    if (!result.result()) {
+        return result;
+    }
+
+    const auto *tag = dynamic_cast<const ASTTag*>(node);
+
+    auto v = dynamic_cast<const ASTVerificationVisitor*>(this->visitor());
+    if (v != nullptr && !v->has_required("variables")) {
+        return ValidationResult(false, "The " + tag->value() + " tag requires the variables extension.", true);
+    }
+
+    return ValidationResult(true);
+
 }
 
 }

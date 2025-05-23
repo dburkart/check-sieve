@@ -47,6 +47,13 @@ Command::Command() {
     _usage_map["pipe"] = "pipe [:try] <program-name: string>\n\t[<arguments: string-list>]";
     _usage_map["filter"] = "filter <program-name: string> [<arguments: string-list>]";
     _usage_map["execute"] = "execute [:input <input-data: string> / :pipe]\n\t[:output <varname: string>]\n\t<program-name: string> [<arguments: string-list>]";
+    _usage_map["processcalendar"] = "processcalendar [:allowpublic ]\n"
+                                    "                [:addresses <string-list>]\n"
+                                    "                [:updatesonly / :calendarid <string>]\n"
+                                    "                [:deletecancelled]\n"
+                                    "                [:organizers <ext-list-name: string>]\n"
+                                    "                [:outcome <variable-name: string>]\n"
+                                    "                [:reason <variable-name: string>]";
 
     _validation_fn_map["addflag"] = &Command::_validateIMAP4FlagsAction;
     _validation_fn_map["addheader"] = &Command::_validateAddHeadersCommand;
@@ -78,6 +85,7 @@ Command::Command() {
     _validation_fn_map["pipe"] = &Command::_validatePipeCommand;
     _validation_fn_map["filter"] = &Command::_validateFilterCommand;
     _validation_fn_map["execute"] = &Command::_validateExecuteCommand;
+    _validation_fn_map["processcalendar"] = &Command::_validateProcesscalendarCommand;
 }
 
 ValidationResult Command::validate(const ASTNode *node) {
@@ -661,6 +669,48 @@ ValidationResult Command::_validateExecuteCommand(const ASTNode *node) {
         minSize += 1;
 
     if (size < minSize)
+        return ValidationResult(false);
+
+    return ValidationResult(true);
+}
+
+ValidationResult Command::_validateProcesscalendarCommand(const ASTNode *node) {
+    const auto *command = dynamic_cast<const ASTCommand*>(node);
+    const size_t size = command->children().size();
+
+    size_t desiredSize = 0;
+    int i = 0;
+
+    for (const auto it : command->children()) {
+        const ASTTag *tagChild = dynamic_cast<ASTTag *>(it);
+        i++;
+
+        if (tagChild && (
+                        tagChild->value() == ":allowpublic" ||
+                        tagChild->value() == ":updatesonly" ||
+                        tagChild->value() == ":deletecancelled"
+                )) {
+            desiredSize += 1;
+        } else if (tagChild && (
+                        tagChild->value() == ":addresses" ||
+                        tagChild->value() == ":calendarid" ||
+                        tagChild->value() == ":organizers" ||
+                        tagChild->value() == ":outcome" ||
+                        tagChild->value() == ":reason"
+                )) {
+            desiredSize += 2;
+        } else if (tagChild) {
+            auto reason = "Unexpected tag found: " + tagChild->value();
+            return ValidationResult(false, reason, false, i);
+        }
+    }
+
+    if (command->find(ASTTag(":updatesonly")) != command->children().end()) {
+        if (command->find(ASTTag(":calendarid")) != command->children().end())
+            return ValidationResult(false, ":updatesonly and :calendarid are mutually exclusive", true);
+    }
+
+    if (size != desiredSize)
         return ValidationResult(false);
 
     return ValidationResult(true);

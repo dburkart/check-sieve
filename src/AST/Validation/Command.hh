@@ -43,6 +43,7 @@ private:
     static ValidationResult _validatePipeCommand(const ASTNode *node);
     static ValidationResult _validateFilterCommand(const ASTNode *node);
     static ValidationResult _validateExecuteCommand(const ASTNode *node);
+    static ValidationResult _validateProcesscalendarCommand(const ASTNode *node);
 
     std::map<std::string, ValidationResult (*)(const ASTNode *)> _validation_fn_map;
     std::map<std::string, std::string> _usage_map;

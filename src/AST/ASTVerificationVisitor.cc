@@ -754,6 +754,32 @@ void ASTVerificationVisitor::_enable_capability(std::string_view capability) {
     _require_lookup["mailboxidexists"] = "mailboxid";
     _require_lookup[":mailboxid"] = "mailboxid";
 
+    // "processcalendar"
+    // RFC 9671
+    // https://datatracker.ietf.org/doc/html/rfc9671
+    if (capability == "processcalendar") {
+        _command_map["processcalendar"] = true;
+        _tag_map[":allowpublic"] = true;
+        _tag_map[":addresses"] = true;
+        _tag_map[":updatesonly"] = true;
+        _tag_map[":calendarid"] = true;
+        _tag_map[":deletecancelled"] = true;
+        _tag_map[":organizers"] = true;
+        _tag_map[":outcome"] = true;
+        _tag_map[":reason"] = true;
+    }
+
+    // Hints
+    _require_lookup["processcalendar"] = "processcalendar";
+    _require_lookup[":allowpublic"] = "processcalendar";
+    _require_lookup[":addresses"] = "processcalendar";
+    _require_lookup[":updatesonly"] = "processcalendar";
+    _require_lookup[":calendarid"] = "processcalendar";
+    _require_lookup[":deletecancelled"] = "processcalendar";
+    _require_lookup[":organizers"] = "processcalendar";
+    _require_lookup[":outcome"] = "processcalendar";
+    _require_lookup[":reason"] = "processcalendar";
+
     // DRAFT RFCs
 
     // "regex"

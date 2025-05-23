@@ -18,12 +18,14 @@ public:
 
 private:
     // Validation functions
-    static ValidationResult _validateSingleString(const ASTNode *node);
-    static ValidationResult _validateSingleNumeric(const ASTNode *node);
-    static ValidationResult _validateList(const ASTNode *node);
-    static ValidationResult _validateSpecialUse(const ASTNode *node);
-    
-    std::map<std::string, ValidationResult (*)(const ASTNode *)> _validation_fn_map;
+    ValidationResult _validateSingleString(const ASTNode *node);
+    ValidationResult _validateSingleNumeric(const ASTNode *node);
+    ValidationResult _validateList(const ASTNode *node);
+    ValidationResult _validateSpecialUse(const ASTNode *node);
+    ValidationResult _validateZone(const ASTNode *node);
+    ValidationResult _validateByMode(const ASTNode *node);
+
+    std::map<std::string, ValidationResult (Tag::*)(const ASTNode *)> _validation_fn_map;
     std::map<std::string, std::string> _usage_map;
 };
 

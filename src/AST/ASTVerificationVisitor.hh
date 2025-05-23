@@ -35,8 +35,14 @@ public:
 
     parse_result result() { return _verification_result; }
     
-    bool requires_capability( std::string capability ) { return _capability_map[capability]; }
-    bool has_required( std::string require ) {
+    bool requires_capability( std::string capability ) const {
+        try {
+            return _capability_map.at(capability);
+        } catch (const std::out_of_range& ex) {
+            return false;
+        }
+    }
+    bool has_required( std::string require ) const {
         return requires_capability(require) || (
             _required_capabilities != nullptr &&
             _required_capabilities->find(ASTString(require)) != _required_capabilities->children().end());

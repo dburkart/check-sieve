@@ -627,6 +627,32 @@ void ASTVerificationVisitor::_enable_capability(std::string_view capability) {
     _require_lookup[":subject"] = "enclose";
     _require_lookup[":headers"] = "enclose";
 
+    // "redirect-dsn"
+    // RFC 6009
+    if (capability == "redirect-dsn") {
+        _tag_map[":notify"] = true;
+        _tag_map[":ret"] = true;
+    }
+
+    // Require hints
+    _require_lookup[":notify"] = "redirect-dsn";
+    _require_lookup[":ret"] = "redirect-dsn";
+
+    // "redirect-deliverby"
+    // RFC 6009
+    if (capability == "redirect-deliverby") {
+        _tag_map[":bytimerelative"] = true;
+        _tag_map[":bytimeabsolute"] = true;
+        _tag_map[":bymode"] = true;
+        _tag_map[":bytrace"] = true;
+    }
+
+    // Require hints
+    _require_lookup[":bytimerelative"] = "redirect-deliverby";
+    _require_lookup[":bytimeabsolute"] = "redirect-deliverby";
+    _require_lookup[":bymode"] = "redirect-deliverby";
+    _require_lookup[":bytrace"] = "redirect-deliverby";
+
     // "include"
     // RFC 6609
     if (capability == "include") {

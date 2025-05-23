@@ -94,6 +94,7 @@ Options:
 * Delivering to Special-Use Mailboxes ([RFC 8579](https://tools.ietf.org/html/rfc8579))
 * File Carbon Copy (FCC) ([RFC 8580](https://tools.ietf.org/html/rfc8580))
 * Delivery by MAILBOXID ([RFC 9042](https://tools.ietf.org/html/rfc9042))
+* Delivery Status Notifications and Deliver-By Extensions ([RFC 6009](https://tools.ietf.org/html/rfc6009))
 * Proton Expiration Extension ([vnd.proton.expire](https://proton.me/support/sieve-advanced-custom-filters#managing-expiration))
 * Proton Eval Extension ([vnd.proton.eval](https://proton.me/support/sieve-advanced-custom-filters#transforming-variables))
 * Dovecot Invoking External Programs ([vnd.dovecot.{pipe,filter,execute}](https://raw.githubusercontent.com/dovecot/pigeonhole/refs/heads/main/doc/rfc/spec-bosch-sieve-extprograms.txt))

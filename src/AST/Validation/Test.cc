@@ -41,6 +41,8 @@ Test::Test() {
     _usage_map["specialuse_exists"]     = "specialuse_exists [<mailbox: string>]                                          \n"
                                           "                  <special-use-attrs: string-list>                             \n";
     _usage_map["mailboxidexists"]       = "mailboxidexists <mailbox-objectids: string-list>";
+    _usage_map["envelope"]              = "envelope [COMPARATOR] [ADDRESS-PART] [MATCH-TYPE]                              \n"
+                                          "         <envelope-part: string-list> <key-list: string-list>";
 
     _validation_fn_map["allof"]                 = &Test::_validateHasOnlyTestList;
     _validation_fn_map["anyof"]                 = &Test::_validateHasOnlyTestList;
@@ -59,6 +61,7 @@ Test::Test() {
     _validation_fn_map["mailboxidexists"]       = &Test::_validateHasOnlyStringList;
     _validation_fn_map["filter"]                = &Test::_validateFilterTest;
     _validation_fn_map["execute"]               = &Test::_validateExecuteTest;
+    _validation_fn_map["envelope"]              = &Test::_validateEnvelopeTest;
 }
 
 ValidationResult Test::validate(const ASTNode *node) {
@@ -368,6 +371,72 @@ ValidationResult Test::_validateFilterTest(const ASTNode *node) {
 
 ValidationResult Test::_validateExecuteTest(const ASTNode *node) {
     return Command::_validateExecuteCommand(node);
+}
+
+ValidationResult Test::_validateEnvelopeTest(const ASTNode *node) {
+    std::vector<ASTNode *> children = node->children();
+    size_t size = children.size();
+
+    // Must have at least two arguments, envelope-part and key-list
+    if (size < 2) {
+        return ValidationResult(false);
+    }
+
+    std::vector<std::string_view> envelope_parts;
+
+    const auto *envelope_part_sl = dynamic_cast<const ASTStringList*>(children[size-2]);
+    if (envelope_part_sl == nullptr) {
+        const auto *envelope_part = dynamic_cast<const ASTString*>(children[size-2]);
+        if (envelope_part == nullptr)
+            return ValidationResult(false, "envelope-part should be a valid string-list", true, size-2);
+
+        envelope_parts.push_back(envelope_part->value());
+    } else {
+        for (auto & it : envelope_part_sl->children()) {
+            const auto *p = dynamic_cast<const ASTString*>(it);
+
+            if (p == nullptr)
+                return ValidationResult(false, "unexpected value in envelope-part", true);
+
+            envelope_parts.push_back(p->value());
+        }
+    }
+
+    // Validate allowed envelope-parts
+    std::vector<std::string_view> valid_envelope_parts = {"from", "to"};
+
+    auto v = dynamic_cast<const ASTVerificationVisitor*>(this->visitor());
+    if (v != nullptr) {
+        if (v->has_required("envelope-dsn")) {
+            valid_envelope_parts.push_back("notify");
+            valid_envelope_parts.push_back("orcpt");
+            valid_envelope_parts.push_back("ret");
+            valid_envelope_parts.push_back("envid");
+        }
+
+        if (v->has_required("envelope-deliverby")) {
+            valid_envelope_parts.push_back("bytimeabsolute");
+            valid_envelope_parts.push_back("bytimerelative");
+            valid_envelope_parts.push_back("bymode");
+            valid_envelope_parts.push_back("bytrace");
+        }
+    }
+
+    for (auto & it : envelope_parts) {
+        auto found = false;
+        for (auto & v : valid_envelope_parts) {
+            if (it.compare(v) == 0) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+            return ValidationResult(false, "unexpected envelope-part found: " + std::string(it), true);
+    }
+
+
+    return ValidationResult(true);
 }
 
 

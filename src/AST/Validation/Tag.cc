@@ -4,6 +4,8 @@
 #include "ASTStringList.hh"
 #include "ASTTag.hh"
 #include "Tag.hh"
+#include "ASTTest.hh"
+#include "ASTVerificationVisitor.hh"
 
 namespace sieve {
 
@@ -22,6 +24,14 @@ Tag::Tag() {
     _validation_fn_map[":list"] = &Tag::_validateList;
     _validation_fn_map[":fcc"] = &Tag::_validateSingleString;
 
+    // RFC 5260
+    _usage_map[":zone"] = ":zone <time-zone: string>";
+
+    // RFC 6009
+    _usage_map[":bytimerelative"] = ":bytimerelative <rlimit: number>";
+    _usage_map[":bytimeabsolute"] = ":bytimeabsolute <alimit: string>";
+    _usage_map[":bymode"] = ":bymode \"notify\" | \"return\"";
+
     // RFC 7352
     _usage_map[":handle"] = ":handle string";
     _usage_map[":header"] = ":header string";
@@ -39,10 +49,14 @@ Tag::Tag() {
     _validation_fn_map[":header"] = &Tag::_validateSingleString;
     _validation_fn_map[":uniqueid"] = &Tag::_validateSingleString;
     _validation_fn_map[":seconds"] = &Tag::_validateSingleNumeric;
+    _validation_fn_map[":bytimerelative"] = &Tag::_validateSingleNumeric;
+    _validation_fn_map[":bytimeabsolute"] = &Tag::_validateSingleString;
+    _validation_fn_map[":bymode"] = &Tag::_validateByMode;
     _validation_fn_map[":specialuse"] = &Tag::_validateSpecialUse;
     _validation_fn_map[":mailboxid"] = &Tag::_validateSpecialUse;
     _validation_fn_map[":input"] = &Tag::_validateSingleString;
     _validation_fn_map[":output"] = &Tag::_validateSingleString;
+    _validation_fn_map[":zone"] = &Tag::_validateZone;
 }
 
 ValidationResult Tag::validate(const ASTNode *node) {
@@ -53,7 +67,7 @@ ValidationResult Tag::validate(const ASTNode *node) {
         return ValidationResult(true);
     }
 
-    return (this->_validation_fn_map[tag->value()])(tag);
+    return (this->*_validation_fn_map[tag->value()])(tag);
 }
 
 std::string Tag::usage(const ASTNode *node) {
@@ -130,6 +144,42 @@ ValidationResult Tag::_validateSpecialUse(const ASTNode *node) {
             return {false, ":specialuse is disallowed when using :mailboxid, choose one or the other.", true};
         }
     }
+
+    return ValidationResult(true);
+}
+
+ValidationResult Tag::_validateZone(const ASTNode *node) {
+    const auto *tag = dynamic_cast<const ASTTag*>(node);
+    const auto *parent = dynamic_cast<const ASTTest*>(tag->parent());
+    const ASTNode *next = parent->nextChild(tag);
+
+    if (dynamic_cast<const ASTString*>(next) == nullptr)
+        return ValidationResult(false);
+
+    if (parent->value() == "envelope") {
+        auto v = dynamic_cast<const ASTVerificationVisitor*>(this->visitor());
+        if (v != nullptr && !v->has_required("envelope-deliverby")) {
+            return ValidationResult(false, "Using :zone with envelope requires the envelope-deliverby extension.", true);
+        }
+    }
+
+    return ValidationResult(true);
+}
+
+ValidationResult Tag::_validateByMode(const ASTNode *node) {
+    auto result = _validateSingleString(node);
+    if (!result.result()) {
+        return result;
+    }
+
+    const auto *tag = dynamic_cast<const ASTTag*>(node);
+    const auto *next = dynamic_cast<const ASTString*>(tag->parent()->nextChild(tag));
+
+    if (next == nullptr)
+        return ValidationResult(false);
+
+    if (next->value() != "notify" && next->value() != "return")
+        return ValidationResult(false, "Unexpected argument to :bymode", true);
 
     return ValidationResult(true);
 }

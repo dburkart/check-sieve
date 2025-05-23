@@ -9,6 +9,7 @@
 #include "ASTTag.hh"
 #include "checksieve.h"
 #include "Command.hh"
+#include "ASTVerificationVisitor.hh"
 
 namespace sieve
 {
@@ -322,12 +323,21 @@ ValidationResult Command::_validateRedirectCommand(const ASTNode *node) {
     const size_t size = children.size();
     
     size_t numArguments = 1;
-    
-    if (command->find(ASTTag(":copy")) != command->children().end() ||
-        command->find(ASTTag(":list")) != command->children().end()) {
-        numArguments += 1;
+
+    for (auto & it : command->children()) {
+        const auto *arg = dynamic_cast<const ASTTag*>(it);
+
+        if (arg == nullptr)
+            continue;
+
+        if (arg->value() == ":copy" || arg->value() == ":list" || arg->value() == ":bytrace")
+            numArguments += 1;
+
+        if (arg->value() == ":notify" || arg->value() == ":ret" || arg->value() == ":bytimerelative" ||
+            arg->value() == ":bytimeabsolute" || arg->value() == ":bymode")
+            numArguments += 2;
     }
-    
+
     if (size != numArguments) {
         return ValidationResult(false);
     }

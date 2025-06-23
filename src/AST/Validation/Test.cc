@@ -425,7 +425,10 @@ ValidationResult Test::_validateEnvelopeTest(const ASTNode *node) {
     for (auto & it : envelope_parts) {
         auto found = false;
         for (auto & v : valid_envelope_parts) {
-            if (it.compare(v) == 0) {
+            std::string lower(v);
+            std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
+
+            if (lower == v) {
                 found = true;
                 break;
             }

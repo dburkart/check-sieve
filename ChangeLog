@@ -1,3 +1,12 @@
+Version 0.11:
+ * Support for Extension for Processing Calendar Attachments (RFC 9671).
+ * Support for Delivery Status Notifications and Deliver-By Extensions (RFC 6009).
+ * Support for Dovecot-specific sieve_extprograms functionality.
+ * Add Fedora dependency documentation. (@mwinters0)
+ * Add various hints to error messages.
+ * Support for Delivery by MAILBOXID (RFC 9042).
+ * Better error checking when connecting to mail servers.
+
 Version 0.10:
  * Support for Delivering to Special-Use Mailboxes (RFC 8579).
  * Support for Detecting Duplicate Deliveries (RFC 7352).

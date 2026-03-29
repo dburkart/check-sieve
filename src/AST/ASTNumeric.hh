@@ -9,14 +9,14 @@ class ASTVisitor;
 
 class ASTNumeric : public ASTNode {
 public:
-    ASTNumeric() : ASTNode() {}    
+    ASTNumeric() : ASTNode() {}
     ASTNumeric(yy::location location);
-    ASTNumeric(int number);
-    ASTNumeric(yy::location location, int number);
-    
+    ASTNumeric(long number);
+    ASTNumeric(yy::location location, long number);
+
     void accept(ASTVisitor &visitor);
-    
-    int value() const { return this->_number; }
+
+    long value() const { return this->_number; }
 
     template<class T>
     std::vector<ASTNode *>::const_iterator find(const T& value) const {
@@ -34,7 +34,7 @@ public:
     }
     
 private:
-    int _number;
+    long _number;
 };
 
 } // namespace sieve

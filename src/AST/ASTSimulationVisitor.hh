@@ -36,7 +36,7 @@ private:
         std::string sizeComparator;
         std::vector<std::string> headerNames;
         std::vector<std::string> values;
-        int numericValue = 0;
+        long numericValue = 0;
         bool hasNumeric = false;
     };
 
@@ -56,6 +56,7 @@ private:
     std::string _sieveFile;
     std::string _emailFile;
     bool _stopped = false;
+    bool _deliveryActionTaken = false;
     std::vector<std::string> _actions;
 };
 

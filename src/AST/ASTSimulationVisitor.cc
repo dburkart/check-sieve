@@ -23,8 +23,8 @@ void ASTSimulationVisitor::walk( ASTSieve *root ) {
         _simulate(child);
     }
 
-    // If no actions were taken, implicit keep
-    if (_actions.empty() && !_stopped) {
+    // If no delivery action was taken, implicit keep (RFC 5228 §4.2)
+    if (!_deliveryActionTaken) {
         std::cout << "ACTION: keep (implicit)" << std::endl;
         _actions.push_back("keep (implicit)");
     }
@@ -81,6 +81,11 @@ void ASTSimulationVisitor::_simulate(ASTNode *node) {
         if (name == "keep" || name == "discard" || name == "stop" ||
             name == "fileinto" || name == "redirect" || name == "reject" ||
             name == "ereject") {
+
+            if (name == "keep" || name == "discard" || name == "fileinto" ||
+                name == "redirect") {
+                _deliveryActionTaken = true;
+            }
 
             std::string actionDesc = name;
 
@@ -304,9 +309,9 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
 
         bool result = false;
         if (args.sizeComparator == ":over") {
-            result = static_cast<int>(_email.size()) > args.numericValue;
+            result = static_cast<long>(_email.size()) > args.numericValue;
         } else if (args.sizeComparator == ":under") {
-            result = static_cast<int>(_email.size()) < args.numericValue;
+            result = static_cast<long>(_email.size()) < args.numericValue;
         }
 
         if (result && !quiet) {
@@ -421,29 +426,48 @@ bool ASTSimulationVisitor::_matchString(const std::string &value, const std::str
 }
 
 bool ASTSimulationVisitor::_globMatch(const std::string &str, const std::string &pattern) {
-    size_t si = 0, pi = 0;
-    size_t starSi = std::string::npos, starPi = std::string::npos;
+    // Tokenize pattern to handle RFC 5228 §2.7.3 backslash escapes:
+    // \* → literal '*', \? → literal '?', \X → literal X
+    struct Token { enum Kind { LITERAL, QUESTION, STAR } kind; char ch; };
+    std::vector<Token> tokens;
+    for (size_t i = 0; i < pattern.size(); ++i) {
+        if (pattern[i] == '\\' && i + 1 < pattern.size()) {
+            tokens.push_back({Token::LITERAL, pattern[++i]});
+        } else if (pattern[i] == '*') {
+            tokens.push_back({Token::STAR, 0});
+        } else if (pattern[i] == '?') {
+            tokens.push_back({Token::QUESTION, 0});
+        } else {
+            tokens.push_back({Token::LITERAL, pattern[i]});
+        }
+    }
+
+    // Backtrack matching on token vector
+    size_t si = 0, ti = 0;
+    size_t starTi = std::string::npos, starSi = std::string::npos;
 
     while (si < str.size()) {
-        if (pi < pattern.size() && pattern[pi] == '*') {
-            starPi = pi++;
+        if (ti < tokens.size() && tokens[ti].kind == Token::STAR) {
+            starTi = ti++;
             starSi = si;
-        } else if (pi < pattern.size() && (pattern[pi] == '?' || pattern[pi] == str[si])) {
-            pi++;
-            si++;
-        } else if (starPi != std::string::npos) {
-            pi = starPi + 1;
+        } else if (ti < tokens.size() &&
+                   (tokens[ti].kind == Token::QUESTION ||
+                    (tokens[ti].kind == Token::LITERAL && tokens[ti].ch == str[si]))) {
+            ++ti;
+            ++si;
+        } else if (starTi != std::string::npos) {
+            ti = starTi + 1;
             si = ++starSi;
         } else {
             return false;
         }
     }
 
-    while (pi < pattern.size() && pattern[pi] == '*') {
-        pi++;
+    while (ti < tokens.size() && tokens[ti].kind == Token::STAR) {
+        ++ti;
     }
 
-    return pi == pattern.size();
+    return ti == tokens.size();
 }
 
 std::string ASTSimulationVisitor::_extractAddressPart(const std::string &headerValue, const std::string &partTag) {
@@ -451,7 +475,7 @@ std::string ASTSimulationVisitor::_extractAddressPart(const std::string &headerV
 
     if (partTag == ":localpart") {
         auto at = addr.find('@');
-        return (at != std::string::npos) ? addr.substr(0, at) : addr;
+        return (at != std::string::npos) ? addr.substr(0, at) : "";
     }
     if (partTag == ":domain") {
         auto at = addr.find('@');

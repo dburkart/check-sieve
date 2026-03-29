@@ -92,5 +92,44 @@ class TestSimulateSize(util.DiffTestCase):
         self.assertNoDiff(util.diff(util.run_simulate('size_over.sieve', 'spam.eml'), 'size_over_spam.out'))
 
 
+class TestSimulateStopImplicitKeep(util.DiffTestCase):
+
+    def test_stop_implicit_keep_basic(self):
+        self.assertNoDiff(util.diff(util.run_simulate('stop_no_delivery.sieve', 'basic.eml'), 'stop_no_delivery_basic.out'))
+
+    def test_stop_implicit_keep_spam(self):
+        self.assertNoDiff(util.diff(util.run_simulate('stop_no_delivery.sieve', 'spam.eml'), 'stop_no_delivery_spam.out'))
+
+
+class TestSimulateTrailingWhitespace(util.DiffTestCase):
+
+    def test_header_trailing_whitespace_stripped(self):
+        self.assertNoDiff(util.diff(util.run_simulate('trailing_ws_match.sieve', 'trailing_ws.eml'), 'trailing_ws_match_trailing_ws.out'))
+
+
+class TestSimulateLocalpartBareAddress(util.DiffTestCase):
+
+    def test_localpart_bare_address_no_match(self):
+        self.assertNoDiff(util.diff(util.run_simulate('localpart_bare.sieve', 'bare_address.eml'), 'localpart_bare_bare_address.out'))
+
+
+class TestSimulateMatchesEscape(util.DiffTestCase):
+
+    def test_matches_escape_no_literal_star(self):
+        self.assertNoDiff(util.diff(util.run_simulate('matches_escape.sieve', 'basic.eml'), 'matches_escape_basic.out'))
+
+    def test_matches_escape_with_literal_star(self):
+        self.assertNoDiff(util.diff(util.run_simulate('matches_escape.sieve', 'asterisk_subject.eml'), 'matches_escape_asterisk_subject.out'))
+
+
+class TestSimulateSizeQuantifier(util.DiffTestCase):
+
+    def test_size_quantifier_basic(self):
+        self.assertNoDiff(util.diff(util.run_simulate('size_quantifier.sieve', 'basic.eml'), 'size_quantifier_basic.out'))
+
+    def test_size_quantifier_spam(self):
+        self.assertNoDiff(util.diff(util.run_simulate('size_quantifier.sieve', 'spam.eml'), 'size_quantifier_spam.out'))
+
+
 if __name__ == '__main__':
     unittest.main()

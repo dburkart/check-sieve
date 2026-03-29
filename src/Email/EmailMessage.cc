@@ -53,7 +53,11 @@ EmailMessage EmailMessage::parse(const std::string &filepath) {
                 auto range = msg._headers.equal_range(lastHeaderName);
                 if (range.first != range.second) {
                     auto last = std::prev(range.second);
-                    last->second += " " + line.substr(line.find_first_not_of(" \t"));
+                    std::string cont = line.substr(line.find_first_not_of(" \t"));
+                    auto contEnd = cont.find_last_not_of(" \t");
+                    if (contEnd != std::string::npos) cont = cont.substr(0, contEnd + 1);
+                    else cont.clear();
+                    last->second += " " + cont;
                 }
                 continue;
             }
@@ -64,10 +68,16 @@ EmailMessage EmailMessage::parse(const std::string &filepath) {
                 std::string name = line.substr(0, colonPos);
                 std::string value = line.substr(colonPos + 1);
 
-                // Trim leading whitespace from value
+                // Trim leading and trailing whitespace from value (RFC 5228 §5.4)
                 auto start = value.find_first_not_of(" \t");
                 if (start != std::string::npos) {
                     value = value.substr(start);
+                } else {
+                    value.clear();
+                }
+                auto end = value.find_last_not_of(" \t\r");
+                if (end != std::string::npos) {
+                    value = value.substr(0, end + 1);
                 } else {
                     value.clear();
                 }

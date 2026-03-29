@@ -53,9 +53,9 @@ typedef void* yyscan_t;
     LCURLY        "{"
     RCURLY        "}"
     COMMA         ","
-    QUANTIFIER    "quantifier"
   ;
 
+%token <char> QUANTIFIER "quantifier"
 
 %token <std::string> IDENTIFIER "identifier"
 %token <std::string> FOREVERYPART "foreverypart"
@@ -261,8 +261,8 @@ numeric :
         }
     | NUMBER QUANTIFIER
         {
-            // TODO: Somehow incorporate the quantifier in here
-            $$ = new sieve::ASTNumeric(@1, $1);
+            long mult = ($2 == 'K') ? 1024L : ($2 == 'M') ? 1048576L : 1073741824L;
+            $$ = new sieve::ASTNumeric(@1, $1 * mult);
         }
     ;
 

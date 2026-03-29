@@ -81,7 +81,7 @@ tag       :[a-zA-Z_][a-zA-Z0-9_]*
                         driver.push_error(loc, "integer is out of range");
                     return yy::sieve_parser::make_NUMBER( n, loc );
                 }
-[KGM]?      return yy::sieve_parser::make_QUANTIFIER( loc );
+[KGM]       return yy::sieve_parser::make_QUANTIFIER( yytext[0], loc );
 {id}        return yy::sieve_parser::make_IDENTIFIER( yytext, loc );
 {tag}       return yy::sieve_parser::make_TAG( yytext, loc );
 

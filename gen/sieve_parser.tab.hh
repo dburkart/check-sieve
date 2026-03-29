@@ -395,25 +395,28 @@ namespace yy {
       // "false"
       char dummy1[sizeof (bool)];
 
+      // "quantifier"
+      char dummy2[sizeof (char)];
+
       // "number"
-      char dummy2[sizeof (int)];
+      char dummy3[sizeof (int)];
 
       // command
       // block
       // if_flow
-      char dummy3[sizeof (sieve::ASTNode *)];
+      char dummy4[sizeof (sieve::ASTNode *)];
 
       // numeric
-      char dummy4[sizeof (sieve::ASTNumeric *)];
+      char dummy5[sizeof (sieve::ASTNumeric *)];
 
       // sieve
-      char dummy5[sizeof (sieve::ASTSieve *)];
+      char dummy6[sizeof (sieve::ASTSieve *)];
 
       // "identifier"
       // "foreverypart"
       // ":tag"
       // STRING_LITERAL
-      char dummy6[sizeof (std::string)];
+      char dummy7[sizeof (std::string)];
 
       // command_list
       // arguments
@@ -423,7 +426,7 @@ namespace yy {
       // test
       // string_list
       // strings
-      char dummy7[sizeof (std::vector<sieve::ASTNode *>)];
+      char dummy8[sizeof (std::vector<sieve::ASTNode *>)];
     };
 
     /// The size of the largest semantic type.
@@ -591,6 +594,10 @@ namespace yy {
         value.move< bool > (std::move (that.value));
         break;
 
+      case symbol_kind::S_QUANTIFIER: // "quantifier"
+        value.move< char > (std::move (that.value));
+        break;
+
       case symbol_kind::S_NUMBER: // "number"
         value.move< int > (std::move (that.value));
         break;
@@ -658,6 +665,20 @@ namespace yy {
       {}
 #else
       basic_symbol (typename Base::kind_type t, const bool& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, char&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const char& v, const location_type& l)
         : Base (t)
         , value (v)
         , location (l)
@@ -775,6 +796,10 @@ switch (yykind)
       case symbol_kind::S_TRUE: // "true"
       case symbol_kind::S_FALSE: // "false"
         value.template destroy< bool > ();
+        break;
+
+      case symbol_kind::S_QUANTIFIER: // "quantifier"
+        value.template destroy< char > ();
         break;
 
       case symbol_kind::S_NUMBER: // "number"
@@ -914,6 +939,14 @@ switch (yykind)
         : super_type (token_kind_type (tok), std::move (v), std::move (l))
 #else
       symbol_type (int tok, const bool& v, const location_type& l)
+        : super_type (token_kind_type (tok), v, l)
+#endif
+      {}
+#if 201103L <= YY_CPLUSPLUS
+      symbol_type (int tok, char v, location_type l)
+        : super_type (token_kind_type (tok), std::move (v), std::move (l))
+#else
+      symbol_type (int tok, const char& v, const location_type& l)
         : super_type (token_kind_type (tok), v, l)
 #endif
       {}
@@ -1224,16 +1257,16 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_QUANTIFIER (location_type l)
+      make_QUANTIFIER (char v, location_type l)
       {
-        return symbol_type (token::TOK_QUANTIFIER, std::move (l));
+        return symbol_type (token::TOK_QUANTIFIER, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_QUANTIFIER (const location_type& l)
+      make_QUANTIFIER (const char& v, const location_type& l)
       {
-        return symbol_type (token::TOK_QUANTIFIER, l);
+        return symbol_type (token::TOK_QUANTIFIER, v, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1747,6 +1780,10 @@ switch (yykind)
         value.copy< bool > (YY_MOVE (that.value));
         break;
 
+      case symbol_kind::S_QUANTIFIER: // "quantifier"
+        value.copy< char > (YY_MOVE (that.value));
+        break;
+
       case symbol_kind::S_NUMBER: // "number"
         value.copy< int > (YY_MOVE (that.value));
         break;
@@ -1817,6 +1854,10 @@ switch (yykind)
       case symbol_kind::S_TRUE: // "true"
       case symbol_kind::S_FALSE: // "false"
         value.move< bool > (YY_MOVE (s.value));
+        break;
+
+      case symbol_kind::S_QUANTIFIER: // "quantifier"
+        value.move< char > (YY_MOVE (s.value));
         break;
 
       case symbol_kind::S_NUMBER: // "number"
@@ -1921,7 +1962,7 @@ switch (yykind)
 
 
 } // yy
-#line 1925 "../gen/sieve_parser.tab.hh"
+#line 1966 "../gen/sieve_parser.tab.hh"
 
 
 

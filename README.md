@@ -63,6 +63,7 @@ Options:
   --trace-parser           Trace the operation of the parser                   
   --trace-scanner          Trace the operation of the scanner                  
   --trace-tree             Trace the abstract-syntax-tree                      
+  --simulate <email-file>  Simulate sieve processing against an email (.eml)
   --version                Print out version information 
 ```
 
@@ -107,6 +108,17 @@ Options:
 > please [file an issue][file-issue].
 
 [file-issue]: https://github.com/dburkart/check-sieve/issues/new
+
+### Mail Sorting Simulation
+
+You can simulate sorting a particular email by passing `--simulate <path/to/email.eml>`.
+`check-sieve` will parse your sieve script(s), and print out a list of matched tests, and actions taken.
+The plan is to also have an easy way of testing your sieve script against a directory of input emails, and a directory of expectations, essentially allowing you to "unit test" your sieve script before pushing it to the server.
+
+> [!NOTE]
+> This feature is experimental, and does not currently
+> implement all of the RFCs listed above. If you'd like
+> your RFC of choice to be prioritized, leave a note in issue #30.
 
 ## Development
 ### Dependencies

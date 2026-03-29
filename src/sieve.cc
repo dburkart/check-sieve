@@ -1,9 +1,11 @@
 #include <cstring>
 #include <iostream>
+#include <vector>
 
 #include "AST.hh"
 #include "checksieve.h"
 #include "diagnostic.hh"
+#include "EmailMessage.hh"
 #include "sieve_driver.hh"
 #include "MailServer.hh"
 
@@ -18,6 +20,7 @@ const char *usage_string  =
 "  --trace-parser           Trace the operation of the parser                   \n"
 "  --trace-scanner          Trace the operation of the scanner                  \n"
 "  --trace-tree             Trace the abstract-syntax-tree                      \n"
+"  --simulate <email-file>  Simulate sieve processing against an email (.eml)  \n"
 "  --version                Print out version information                       \n";
 
 void print_version() {
@@ -38,6 +41,8 @@ int main( int argc, char *argv[] ) {
     bool trace_scanning = false;
     bool trace_parsing = false;
     bool trace_tree = false;
+    std::string simulate_email_path;
+    std::vector<std::string> sieve_files;
     sieve::Diagnostic diag;
     struct sieve::parse_options options;
 
@@ -46,6 +51,7 @@ int main( int argc, char *argv[] ) {
         return 1;
     }
 
+    // First pass: parse all options and collect sieve file paths
     for (int i = 1; i < argc; ++i) {
         // Long argument
         if (argv[i][0] == '-' && argv[i][1] == '-') {
@@ -84,6 +90,16 @@ int main( int argc, char *argv[] ) {
                 return 0;
             }
 
+            if (strcmp(argv[i], "--simulate") == 0) {
+                if (i + 1 >= argc) {
+                    std::cerr << "Expected an email file path after --simulate." << std::endl;
+                    return 1;
+                }
+                simulate_email_path = argv[i+1];
+                i++;
+                continue;
+            }
+
             if (strcmp(argv[i], "--server") == 0) {
                 if (i + 1 >= argc)
                 {
@@ -110,34 +126,48 @@ int main( int argc, char *argv[] ) {
         }
         // Sieve file
         else {
-            if (!file_exists(argv[i])) {
-                std::cerr << "Could not find file \"" << argv[i] << "\"." << std::endl;
-                result = 2;
-                break;
-            }
+            sieve_files.push_back(argv[i]);
+        }
+    }
 
-            sieve::driver driver(options);
+    // Second pass: process sieve files
+    for (const auto &sieve_file : sieve_files) {
+        if (!file_exists(sieve_file.c_str())) {
+            std::cerr << "Could not find file \"" << sieve_file << "\"." << std::endl;
+            result = 2;
+            break;
+        }
 
-            // Configure driver
-            driver.trace_scanning = trace_scanning;
-            driver.trace_parsing = trace_parsing;
-            driver.trace_tree = trace_tree;
+        sieve::driver driver(options);
 
-            sieve::parse_result parse_res = driver.parse_file( argv[i] );
+        // Configure driver
+        driver.trace_scanning = trace_scanning;
+        driver.trace_parsing = trace_parsing;
+        driver.trace_tree = trace_tree;
 
-            if ( !parse_res.status ) {
-                if (driver.trace_tree) {
-                    sieve::ASTTraceVisitor visitor = sieve::ASTTraceVisitor();
-                    visitor.walk(driver.syntax_tree());
-                } else {
-                    std::cout << argv[i] << ": No errors found!" << std::endl;
+        sieve::parse_result parse_res = driver.parse_file( sieve_file );
+
+        if ( !parse_res.status ) {
+            if (!simulate_email_path.empty()) {
+                if (!file_exists(simulate_email_path.c_str())) {
+                    std::cerr << "Could not find email file \"" << simulate_email_path << "\"." << std::endl;
+                    result = 2;
+                    break;
                 }
+                sieve::EmailMessage email = sieve::EmailMessage::parse(simulate_email_path);
+                sieve::ASTSimulationVisitor sim(email, sieve_file, simulate_email_path);
+                sim.walk(driver.syntax_tree());
+            } else if (driver.trace_tree) {
+                sieve::ASTTraceVisitor visitor = sieve::ASTTraceVisitor();
+                visitor.walk(driver.syntax_tree());
             } else {
-                std::ifstream fin( argv[i] );
-                std::cerr << "Errors found in \"" << argv[i] << "\":" << std::endl << std::endl;
-                std::cerr << diag.describe(parse_res, fin);
-                result = 1;
+                std::cout << sieve_file << ": No errors found!" << std::endl;
             }
+        } else {
+            std::ifstream fin( sieve_file );
+            std::cerr << "Errors found in \"" << sieve_file << "\":" << std::endl << std::endl;
+            std::cerr << diag.describe(parse_res, fin);
+            result = 1;
         }
     }
 

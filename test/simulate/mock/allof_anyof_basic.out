@@ -1,0 +1,8 @@
+Simulating "test/simulate/mock/allof_anyof.sieve" with "test/simulate/mock/basic.eml"
+---
+MATCH: allof (header :contains "Subject" "money", exists "X-Spam-Score")
+ACTION: fileinto "definite-spam"
+MATCH: anyof (header :is "From" "nobody@nowhere.com", exists "Date")
+ACTION: fileinto "has-date-or-from-nobody"
+---
+Actions: fileinto "definite-spam", fileinto "has-date-or-from-nobody"

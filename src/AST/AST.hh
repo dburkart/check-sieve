@@ -15,4 +15,5 @@
 #include "ASTTest.hh"
 #include "ASTTestList.hh"
 #include "ASTTraceVisitor.hh"
+#include "ASTSimulationVisitor.hh"
 #include "ASTVerificationVisitor.hh"

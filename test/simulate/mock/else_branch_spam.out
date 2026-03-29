@@ -1,0 +1,5 @@
+Simulating "test/simulate/mock/else_branch.sieve" with "test/simulate/mock/spam.eml"
+---
+ACTION: fileinto "default"
+---
+Actions: fileinto "default"

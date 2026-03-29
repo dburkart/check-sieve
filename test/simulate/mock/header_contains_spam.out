@@ -1,0 +1,6 @@
+Simulating "test/simulate/mock/header_contains.sieve" with "test/simulate/mock/spam.eml"
+---
+MATCH: header :contains "Subject" "university"
+ACTION: fileinto "junk"
+---
+Actions: fileinto "junk"

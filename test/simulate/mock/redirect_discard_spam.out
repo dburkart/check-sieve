@@ -1,0 +1,5 @@
+Simulating "test/simulate/mock/redirect_discard.sieve" with "test/simulate/mock/spam.eml"
+---
+ACTION: discard
+---
+Actions: discard

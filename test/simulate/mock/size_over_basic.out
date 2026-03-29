@@ -1,0 +1,8 @@
+Simulating "test/simulate/mock/size_over.sieve" with "test/simulate/mock/basic.eml"
+---
+MATCH: size :under 1000
+ACTION: fileinto "small"
+MATCH: size :over 100
+ACTION: fileinto "not-tiny"
+---
+Actions: fileinto "small", fileinto "not-tiny"

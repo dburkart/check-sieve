@@ -1,0 +1,6 @@
+Simulating "test/simulate/mock/address_localpart.sieve" with "test/simulate/mock/basic.eml"
+---
+MATCH: address :localpart :is "From" "john"
+ACTION: fileinto "known"
+---
+Actions: fileinto "known"

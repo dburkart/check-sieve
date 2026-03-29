@@ -1,0 +1,5 @@
+Simulating "test/simulate/mock/boolean.sieve" with "test/simulate/mock/basic.eml"
+---
+ACTION: fileinto "always"
+---
+Actions: fileinto "always"

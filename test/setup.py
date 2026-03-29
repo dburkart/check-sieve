@@ -3,7 +3,7 @@ from setuptools import Extension, setup
 module = Extension('checksieve',
                     extra_compile_args = ['-std=c++17'],
                     sources = ['src/python.cc'],
-                    include_dirs = ['src', 'src/AST', 'gen'],
+                    include_dirs = ['src', 'src/AST', 'src/Email', 'gen'],
                     libraries = ['checksieve'],
                     library_dirs = ['./'] );
 

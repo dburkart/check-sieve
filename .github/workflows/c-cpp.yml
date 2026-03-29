@@ -1,6 +1,4 @@
 name: C/C++ CI
-permissions:
-  contents: read
 
 permissions:
   contents: read

@@ -1,0 +1,5 @@
+---
+MATCH: header :is "Subject" "hello"
+ACTION: keep
+---
+Actions: keep

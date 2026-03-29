@@ -1,0 +1,5 @@
+---
+MATCH: header :matches "Subject" "*money*fast*"
+ACTION: fileinto "spam"
+---
+Actions: fileinto "spam"

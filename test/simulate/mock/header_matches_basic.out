@@ -1,6 +1,0 @@
-Simulating "test/simulate/mock/header_matches.sieve" with "test/simulate/mock/basic.eml"
----
-MATCH: header :matches "Subject" "*money*fast*"
-ACTION: fileinto "spam"
----
-Actions: fileinto "spam"

@@ -1,6 +1,0 @@
-Simulating "test/simulate/mock/size_quantifier.sieve" with "test/simulate/mock/basic.eml"
----
-MATCH: size :under 1024
-ACTION: fileinto "tiny"
----
-Actions: fileinto "tiny"

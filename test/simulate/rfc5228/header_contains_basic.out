@@ -1,0 +1,5 @@
+---
+MATCH: header :contains "Subject" "university"
+ACTION: fileinto "junk"
+---
+Actions: fileinto "junk"

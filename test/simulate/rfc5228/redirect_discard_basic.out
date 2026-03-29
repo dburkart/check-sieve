@@ -1,0 +1,5 @@
+---
+MATCH: exists "X-Spam-Score"
+ACTION: redirect "admin@example.com"
+---
+Actions: redirect "admin@example.com"

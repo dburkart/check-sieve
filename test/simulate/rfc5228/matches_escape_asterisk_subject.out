@@ -1,0 +1,5 @@
+---
+MATCH: header :matches "Subject" "test \* subject"
+ACTION: fileinto "literal-star"
+---
+Actions: fileinto "literal-star"

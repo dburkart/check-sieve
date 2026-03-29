@@ -1,0 +1,5 @@
+---
+MATCH: anyof (not address :all :contains ["To", "Cc", "Bcc"] "me@example.com", header :matches "subject" ["*make*money*fast*", "*university*dipl*mas*"])
+ACTION: fileinto "spam"
+---
+Actions: fileinto "spam"

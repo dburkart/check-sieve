@@ -15,7 +15,7 @@ include $(BASE)/src/AST/Makefile.env
 include $(BASE)/src/Server/Makefile.env
 include $(BASE)/src/Email/Makefile.env
 
-.PHONY: test
+.PHONY: test rebase
 
 all: libchecksieve.a check-sieve
 
@@ -30,6 +30,9 @@ libchecksieve.a: $(GENERATED_SRC) $(LIBCHECKSIEVE_SRC) $(AST_SRC) $(SERVER_SRC) 
 	$(MAKE) -C $(BASE)/gen
 	$(MAKE) -C $(BASE)/src lib
 	ar rc libchecksieve.a $(GENERATED_OBJ) $(LIBCHECKSIEVE_OBJ) $(AST_OBJ) $(SERVER_OBJ) $(EMAIL_OBJ)
+
+rebase: check-sieve
+	python3 $(BASE)/test/simulate/rebase.py
 
 test: libchecksieve.a check-sieve
 	rm -Rf checksieve.*.so build || true

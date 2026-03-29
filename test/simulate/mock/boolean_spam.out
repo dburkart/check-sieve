@@ -1,5 +1,0 @@
-Simulating "test/simulate/mock/boolean.sieve" with "test/simulate/mock/spam.eml"
----
-ACTION: fileinto "always"
----
-Actions: fileinto "always"

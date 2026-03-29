@@ -1,0 +1,5 @@
+---
+MATCH: address :localpart :is "From" "john"
+ACTION: fileinto "known"
+---
+Actions: fileinto "known"

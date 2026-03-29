@@ -1,0 +1,6 @@
+---
+MATCH: exists "X-Spam-Score"
+ACTION: fileinto "spam"
+ACTION: stop
+---
+Actions: fileinto "spam", stop

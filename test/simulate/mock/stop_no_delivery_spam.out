@@ -1,6 +1,0 @@
-Simulating "test/simulate/mock/stop_no_delivery.sieve" with "test/simulate/mock/spam.eml"
----
-ACTION: stop
-ACTION: keep (implicit)
----
-Actions: stop, keep (implicit)

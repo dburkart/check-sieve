@@ -1,6 +1,0 @@
-Simulating "test/simulate/mock/trailing_ws_match.sieve" with "test/simulate/mock/trailing_ws.eml"
----
-MATCH: header :is "Subject" "hello"
-ACTION: keep
----
-Actions: keep

@@ -1,0 +1,5 @@
+---
+MATCH: address :domain :is ["From", "To"] "example.com"
+ACTION: keep
+---
+Actions: keep

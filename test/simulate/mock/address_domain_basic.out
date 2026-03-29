@@ -1,6 +1,0 @@
-Simulating "test/simulate/mock/address_domain.sieve" with "test/simulate/mock/basic.eml"
----
-MATCH: address :domain :is ["From", "To"] "example.com"
-ACTION: keep
----
-Actions: keep

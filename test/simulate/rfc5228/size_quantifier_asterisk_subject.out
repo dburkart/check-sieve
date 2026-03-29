@@ -1,0 +1,5 @@
+---
+MATCH: size :under 1024
+ACTION: fileinto "tiny"
+---
+Actions: fileinto "tiny"

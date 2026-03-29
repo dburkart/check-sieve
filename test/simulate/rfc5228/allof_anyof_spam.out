@@ -1,0 +1,5 @@
+---
+MATCH: anyof (header :is "From" "nobody@nowhere.com", exists "Date")
+ACTION: fileinto "has-date-or-from-nobody"
+---
+Actions: fileinto "has-date-or-from-nobody"

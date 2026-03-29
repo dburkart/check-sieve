@@ -118,7 +118,7 @@ The plan is to also have an easy way of testing your sieve script against a dire
 > [!NOTE]
 > This feature is experimental, and does not currently
 > implement all of the RFCs listed above. If you'd like
-> your RFC of choice to be prioritized, leave a note in issue #30.
+> your RFC of choice to be prioritized, leave a note in [issue #30](https://github.com/dburkart/check-sieve/issues/30).
 
 ## Development
 ### Dependencies

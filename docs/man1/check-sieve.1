@@ -38,6 +38,17 @@ Trace the operation of the parser
 Trace the operation of the scanner
 .IP "--trace-tree"
 Trace the abstract-syntax-tree
+.IP "--simulate <email-file>"
+Simulate sieve processing against the specified email file (.eml format). After
+validating the sieve script, the program will evaluate each test against the
+message headers and print any matching tests and resulting actions to stdout.
+.br
+Supported tests: header, address, envelope (approximated from headers), exists,
+size, allof, anyof, not, true, false.
+.br
+.B NOTE: 
+Many RFC extensions are still in progress, filing an issue for unsupported
+extensions will help me prioritize what to work on next!
 .IP "--version"
 Print out version information
 .

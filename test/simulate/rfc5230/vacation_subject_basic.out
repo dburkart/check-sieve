@@ -1,0 +1,5 @@
+---
+ACTION: vacation :subject "Out of office" "I am away on vacation."
+ACTION: keep (implicit)
+---
+Actions: vacation "I am away on vacation.", keep (implicit)

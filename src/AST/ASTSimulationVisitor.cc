@@ -139,6 +139,84 @@ void ASTSimulationVisitor::_simulate(ASTNode *node) {
             return;
         }
 
+        // RFC 5230: vacation — out-of-office reply, NOT a delivery action
+        if (name == "vacation") {
+            std::string lastTag;
+            std::string daysValue;
+            std::string subject;
+            std::string from;
+            std::string handle;
+            std::vector<std::string> addresses;
+            bool mime = false;
+            std::string reason;
+
+            for (auto *child : command->children()) {
+                if (auto *tag = dynamic_cast<ASTTag*>(child)) {
+                    std::string tagVal = std::string(tag->value());
+                    if (tagVal == ":mime") {
+                        mime = true;
+                        lastTag.clear();
+                    } else {
+                        lastTag = tagVal;
+                    }
+                } else if (auto *num = dynamic_cast<ASTNumeric*>(child)) {
+                    if (lastTag == ":days") {
+                        daysValue = std::to_string(num->value());
+                    }
+                    lastTag.clear();
+                } else if (auto *strList = dynamic_cast<ASTStringList*>(child)) {
+                    if (lastTag == ":addresses") {
+                        addresses = _getStrings(strList);
+                    }
+                    lastTag.clear();
+                } else if (auto *str = dynamic_cast<ASTString*>(child)) {
+                    std::string sval = _expandVariables(std::string(str->value()));
+                    if (lastTag == ":subject") {
+                        subject = sval;
+                    } else if (lastTag == ":from") {
+                        from = sval;
+                    } else if (lastTag == ":handle") {
+                        handle = sval;
+                    } else if (lastTag == ":addresses") {
+                        // Single-element list parsed as bare string by parser
+                        addresses.push_back(sval);
+                    } else {
+                        // Positional argument: the reason text
+                        reason = sval;
+                    }
+                    lastTag.clear();
+                }
+            }
+
+            // Emit tags in canonical order, then reason
+            std::ostringstream actionLine;
+            actionLine << "vacation";
+            if (!daysValue.empty())
+                actionLine << " :days " << daysValue;
+            if (!subject.empty())
+                actionLine << " :subject \"" << subject << "\"";
+            if (!from.empty())
+                actionLine << " :from \"" << from << "\"";
+            if (!addresses.empty()) {
+                actionLine << " :addresses [";
+                for (size_t i = 0; i < addresses.size(); ++i) {
+                    if (i > 0) actionLine << ", ";
+                    actionLine << "\"" << addresses[i] << "\"";
+                }
+                actionLine << "]";
+            }
+            if (mime)
+                actionLine << " :mime";
+            if (!handle.empty())
+                actionLine << " :handle \"" << handle << "\"";
+            actionLine << " \"" << reason << "\"";
+
+            std::string actionStr = actionLine.str();
+            std::cout << "ACTION: " << actionStr << std::endl;
+            _actions.push_back("vacation \"" + reason + "\"");
+            return;
+        }
+
         // For other commands (addflag, etc.), just note them
         {
             std::cout << "ACTION: " << name;

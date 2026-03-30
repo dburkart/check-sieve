@@ -1,0 +1,5 @@
+---
+ACTION: vacation "I am away on vacation."
+ACTION: fileinto "INBOX.archive"
+---
+Actions: vacation "I am away on vacation.", fileinto "INBOX.archive"

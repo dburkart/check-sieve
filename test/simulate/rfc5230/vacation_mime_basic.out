@@ -1,0 +1,5 @@
+---
+ACTION: vacation :mime "I am away. (MIME formatted)"
+ACTION: keep (implicit)
+---
+Actions: vacation "I am away. (MIME formatted)", keep (implicit)

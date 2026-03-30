@@ -1,0 +1,5 @@
+---
+ACTION: vacation :addresses ["user@example.com"] "I am away on vacation."
+ACTION: keep (implicit)
+---
+Actions: vacation "I am away on vacation.", keep (implicit)

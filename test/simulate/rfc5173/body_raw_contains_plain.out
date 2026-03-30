@@ -1,0 +1,5 @@
+---
+MATCH: body :raw :contains "MAKE MONEY FAST"
+ACTION: discard
+---
+Actions: discard

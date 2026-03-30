@@ -34,8 +34,10 @@ private:
         std::string matchType = ":is";
         std::string addressPart = ":all";
         std::string sizeComparator;
+        std::string bodyTransform;  // empty = not explicitly set (body test defaults to :text)
         std::vector<std::string> headerNames;
         std::vector<std::string> values;
+        std::vector<std::string> contentTypes;
         long numericValue = 0;
         bool hasNumeric = false;
     };
@@ -48,6 +50,7 @@ private:
 
     static bool _matchString(const std::string &value, const std::string &pattern, const std::string &matchType);
     static bool _globMatch(const std::string &str, const std::string &pattern);
+    static bool _contentTypeMatches(const std::string &partType, const std::vector<std::string> &patterns);
     static std::string _extractAddressPart(const std::string &headerValue, const std::string &partTag);
     static std::string _extractAddress(const std::string &headerValue);
     static std::vector<std::string> _getStrings(ASTNode *node);

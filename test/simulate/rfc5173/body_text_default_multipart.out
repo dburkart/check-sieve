@@ -1,0 +1,5 @@
+---
+MATCH: body :contains "plain text part"
+ACTION: fileinto "text-messages"
+---
+Actions: fileinto "text-messages"

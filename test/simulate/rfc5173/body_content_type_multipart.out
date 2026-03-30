@@ -1,0 +1,5 @@
+---
+MATCH: body :content "text" :contains "html"
+ACTION: fileinto "html-messages"
+---
+Actions: fileinto "html-messages"

@@ -320,6 +320,48 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
         return result;
     }
 
+    if (testName == "body") {
+        TestArgs args = _collectTestArgs(test);
+        // When no body-transform tag was present, _collectTestArgs routes the single
+        // string arg to headerNames (the generic fallback). Fix that up here.
+        if (args.values.empty() && !args.headerNames.empty()) {
+            args.values = std::move(args.headerNames);
+        }
+        std::vector<std::string> candidates;
+
+        if (args.bodyTransform == ":raw") {
+            // RFC 5173 §5: entire undecoded body as single string
+            candidates.push_back(_email.body());
+        } else if (args.bodyTransform == ":content") {
+            // RFC 5173 §5: match MIME parts with matching content-type
+            for (const auto &part : _email.mimeParts()) {
+                if (_contentTypeMatches(part.contentType, args.contentTypes)) {
+                    candidates.push_back(part.body);
+                }
+            }
+        } else {
+            // :text (explicit or default): best-effort — treat as :content "text"
+            std::vector<std::string> textType = {"text"};
+            for (const auto &part : _email.mimeParts()) {
+                if (!part.isMultipart && _contentTypeMatches(part.contentType, textType)) {
+                    candidates.push_back(part.body);
+                }
+            }
+        }
+
+        for (const auto &candidate : candidates) {
+            for (const auto &pattern : args.values) {
+                if (_matchString(candidate, pattern, args.matchType)) {
+                    if (!quiet) {
+                        std::cout << "MATCH: " << _describeTest(test) << std::endl;
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     // Unsupported test
     std::cerr << "WARNING: Unsupported test \"" << testName << "\" -- assuming false" << std::endl;
     return false;
@@ -328,31 +370,51 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
 ASTSimulationVisitor::TestArgs ASTSimulationVisitor::_collectTestArgs(ASTNode *node) {
     TestArgs args;
     std::vector<ASTNode*> stringArgs;
+    std::string lastTag;
 
     for (auto *child : node->children()) {
         if (auto *tag = dynamic_cast<ASTTag*>(child)) {
             std::string tagVal = tag->value();
             if (tagVal == ":is" || tagVal == ":contains" || tagVal == ":matches") {
                 args.matchType = tagVal;
+                lastTag.clear();
             } else if (tagVal == ":localpart" || tagVal == ":domain" || tagVal == ":all") {
                 args.addressPart = tagVal;
+                lastTag.clear();
             } else if (tagVal == ":over" || tagVal == ":under") {
                 args.sizeComparator = tagVal;
+                lastTag.clear();
+            } else if (tagVal == ":raw" || tagVal == ":text" || tagVal == ":content") {
+                args.bodyTransform = tagVal;
+                lastTag = tagVal;
+            } else {
+                lastTag.clear();
             }
-            // Ignore other tags (comparator, etc.)
-        } else if (dynamic_cast<ASTString*>(child)) {
-            stringArgs.push_back(child);
-        } else if (dynamic_cast<ASTStringList*>(child)) {
-            stringArgs.push_back(child);
+        } else if (dynamic_cast<ASTString*>(child) || dynamic_cast<ASTStringList*>(child)) {
+            if (lastTag == ":content") {
+                args.contentTypes = _getStrings(child);
+                lastTag.clear();
+            } else {
+                stringArgs.push_back(child);
+                lastTag.clear();
+            }
         } else if (auto *num = dynamic_cast<ASTNumeric*>(child)) {
             args.numericValue = num->value();
             args.hasNumeric = true;
+            lastTag.clear();
         }
     }
 
+    // For body tests: only one string arg (the key-list) → goes to values
     // For header/address/envelope tests: first string arg = header names, second = values
     // For exists: all string args = header names
-    if (stringArgs.size() >= 2) {
+    bool isBodyTest = !args.contentTypes.empty() || !args.bodyTransform.empty();
+    if (isBodyTest) {
+        // Body test: the single remaining string arg is the key-list
+        if (!stringArgs.empty()) {
+            args.values = _getStrings(stringArgs[0]);
+        }
+    } else if (stringArgs.size() >= 2) {
         args.headerNames = _getStrings(stringArgs[0]);
         args.values = _getStrings(stringArgs[1]);
     } else if (stringArgs.size() == 1) {
@@ -402,6 +464,44 @@ std::string ASTSimulationVisitor::_describeTest(ASTNode *node) {
     }
 
     return ss.str();
+}
+
+bool ASTSimulationVisitor::_contentTypeMatches(const std::string &partType,
+                                                const std::vector<std::string> &patterns) {
+    // Normalize partType to lowercase
+    std::string lowerPart = partType;
+    std::transform(lowerPart.begin(), lowerPart.end(), lowerPart.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+
+    for (const auto &pat : patterns) {
+        std::string p = pat;
+        std::transform(p.begin(), p.end(), p.begin(),
+                       [](unsigned char c) { return std::tolower(c); });
+
+        if (p.empty()) {
+            // Empty string matches all MIME types
+            return true;
+        }
+
+        auto slashPos = p.find('/');
+        if (slashPos == std::string::npos) {
+            // Type-only: matches any subtype (e.g. "text" matches "text/plain")
+            if (lowerPart.size() > p.size() + 1 &&
+                lowerPart.substr(0, p.size()) == p &&
+                lowerPart[p.size()] == '/') {
+                return true;
+            }
+        } else {
+            // Check for invalid patterns: leading slash, trailing slash, multiple slashes
+            bool invalid = (slashPos == 0) ||
+                           (slashPos == p.size() - 1) ||
+                           (p.find('/', slashPos + 1) != std::string::npos);
+            if (!invalid && lowerPart == p) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 bool ASTSimulationVisitor::_matchString(const std::string &value, const std::string &pattern, const std::string &matchType) {

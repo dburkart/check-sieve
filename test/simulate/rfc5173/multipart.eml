@@ -1,0 +1,16 @@
+From: sender@example.com
+To: recipient@test.org
+Subject: Multipart Test
+Content-Type: multipart/mixed; boundary="boundary42"
+
+This is the prologue.
+--boundary42
+Content-Type: text/plain
+
+this is the plain text part
+--boundary42
+Content-Type: text/html
+
+<b>this is html</b>
+--boundary42--
+This is the epilogue.

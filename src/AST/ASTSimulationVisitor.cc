@@ -51,6 +51,8 @@ void ASTSimulationVisitor::_simulate(ASTNode *node) {
             auto *condition = dynamic_cast<ASTCondition*>(children[i]);
             if (condition) {
                 // Evaluate the condition's test (first child of condition)
+                // Reset match variables before each top-level test (RFC 5229 §3.2)
+                _matchVars.assign(10, "");
                 bool result = false;
                 if (!condition->children().empty()) {
                     result = _evaluateTest(condition->children()[0]);
@@ -94,7 +96,7 @@ void ASTSimulationVisitor::_simulate(ASTNode *node) {
                 for (auto *child : command->children()) {
                     auto *str = dynamic_cast<ASTString*>(child);
                     if (str) {
-                        actionDesc += " \"" + std::string(str->value()) + "\"";
+                        actionDesc += " \"" + _expandVariables(std::string(str->value())) + "\"";
                         break;
                     }
                 }
@@ -109,7 +111,35 @@ void ASTSimulationVisitor::_simulate(ASTNode *node) {
             return;
         }
 
-        // For other commands (set, addflag, etc.), just note them
+        // RFC 5229: set command — store variable with optional modifiers
+        if (name == "set") {
+            std::vector<std::string> modifiers;
+            std::vector<std::string> strings;
+            for (auto *child : command->children()) {
+                if (auto *tag = dynamic_cast<ASTTag*>(child)) {
+                    modifiers.push_back(std::string(tag->value()));
+                } else if (auto *str = dynamic_cast<ASTString*>(child)) {
+                    strings.push_back(std::string(str->value()));
+                }
+            }
+            if (strings.size() >= 2) {
+                std::string varName = strings[strings.size() - 2];
+                std::string varValue = strings[strings.size() - 1];
+                // Normalize name to lowercase (RFC 5229 §3: case-insensitive)
+                std::string lowerName = varName;
+                std::transform(lowerName.begin(), lowerName.end(), lowerName.begin(),
+                               [](unsigned char c) { return std::tolower(c); });
+                // Expand then apply modifiers
+                varValue = _expandVariables(varValue);
+                varValue = _applyModifiers(varValue, modifiers);
+                _variables[lowerName] = varValue;
+                std::cout << "ACTION: set \"" << varName << "\" \"" << varValue << "\"" << std::endl;
+                _actions.push_back("set \"" + varName + "\"");
+            }
+            return;
+        }
+
+        // For other commands (addflag, etc.), just note them
         {
             std::cout << "ACTION: " << name;
             for (auto *child : command->children()) {
@@ -223,11 +253,15 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
     if (testName == "header") {
         TestArgs args = _collectTestArgs(test);
 
-        for (const auto &headerName : args.headerNames) {
+        for (const auto &rawHeaderName : args.headerNames) {
+            std::string headerName = _expandVariables(rawHeaderName);
             auto values = _email.header(headerName);
             for (const auto &hdrVal : values) {
-                for (const auto &pattern : args.values) {
-                    if (_matchString(hdrVal, pattern, args.matchType)) {
+                for (const auto &rawPattern : args.values) {
+                    std::string pattern = _expandVariables(rawPattern);
+                    std::vector<std::string> captures;
+                    if (_matchString(hdrVal, pattern, args.matchType, &captures)) {
+                        if (args.matchType == ":matches") _matchVars = captures;
                         if (!quiet) {
                             std::cout << "MATCH: " << _describeTest(test) << std::endl;
                         }
@@ -242,12 +276,16 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
     if (testName == "address") {
         TestArgs args = _collectTestArgs(test);
 
-        for (const auto &headerName : args.headerNames) {
+        for (const auto &rawHeaderName : args.headerNames) {
+            std::string headerName = _expandVariables(rawHeaderName);
             auto values = _email.header(headerName);
             for (const auto &hdrVal : values) {
                 std::string addr = _extractAddressPart(hdrVal, args.addressPart);
-                for (const auto &pattern : args.values) {
-                    if (_matchString(addr, pattern, args.matchType)) {
+                for (const auto &rawPattern : args.values) {
+                    std::string pattern = _expandVariables(rawPattern);
+                    std::vector<std::string> captures;
+                    if (_matchString(addr, pattern, args.matchType, &captures)) {
+                        if (args.matchType == ":matches") _matchVars = captures;
                         if (!quiet) {
                             std::cout << "MATCH: " << _describeTest(test) << std::endl;
                         }
@@ -263,7 +301,8 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
         std::cerr << "WARNING: envelope test approximated from message headers" << std::endl;
         TestArgs args = _collectTestArgs(test);
 
-        for (const auto &envPart : args.headerNames) {
+        for (const auto &rawEnvPart : args.headerNames) {
+            std::string envPart = _expandVariables(rawEnvPart);
             std::string lowerPart = envPart;
             std::transform(lowerPart.begin(), lowerPart.end(), lowerPart.begin(),
                            [](unsigned char c) { return std::tolower(c); });
@@ -277,8 +316,11 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
             auto hdrValues = _email.header(headerName);
             for (const auto &hdrVal : hdrValues) {
                 std::string addr = _extractAddressPart(hdrVal, args.addressPart);
-                for (const auto &pattern : args.values) {
-                    if (_matchString(addr, pattern, args.matchType)) {
+                for (const auto &rawPattern : args.values) {
+                    std::string pattern = _expandVariables(rawPattern);
+                    std::vector<std::string> captures;
+                    if (_matchString(addr, pattern, args.matchType, &captures)) {
+                        if (args.matchType == ":matches") _matchVars = captures;
                         if (!quiet) {
                             std::cout << "MATCH: " << _describeTest(test) << std::endl;
                         }
@@ -292,7 +334,8 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
 
     if (testName == "exists") {
         TestArgs args = _collectTestArgs(test);
-        for (const auto &headerName : args.headerNames) {
+        for (const auto &rawHeaderName : args.headerNames) {
+            std::string headerName = _expandVariables(rawHeaderName);
             if (!_email.hasHeader(headerName)) {
                 return false;
             }
@@ -350,8 +393,33 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
         }
 
         for (const auto &candidate : candidates) {
-            for (const auto &pattern : args.values) {
-                if (_matchString(candidate, pattern, args.matchType)) {
+            for (const auto &rawPattern : args.values) {
+                std::string pattern = _expandVariables(rawPattern);
+                std::vector<std::string> captures;
+                if (_matchString(candidate, pattern, args.matchType, &captures)) {
+                    if (args.matchType == ":matches") _matchVars = captures;
+                    if (!quiet) {
+                        std::cout << "MATCH: " << _describeTest(test) << std::endl;
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // RFC 5229 §5: string test — like header but source comes from the script
+    if (testName == "string") {
+        TestArgs args = _collectTestArgs(test);
+        // _collectTestArgs puts first string arg in headerNames (source-list) and
+        // second in values (key-list), which is exactly what we want here.
+        for (const auto &rawSource : args.headerNames) {
+            std::string source = _expandVariables(rawSource);
+            for (const auto &rawPattern : args.values) {
+                std::string pattern = _expandVariables(rawPattern);
+                std::vector<std::string> captures;
+                if (_matchString(source, pattern, args.matchType, &captures)) {
+                    if (args.matchType == ":matches") _matchVars = captures;
                     if (!quiet) {
                         std::cout << "MATCH: " << _describeTest(test) << std::endl;
                     }
@@ -504,7 +572,8 @@ bool ASTSimulationVisitor::_contentTypeMatches(const std::string &partType,
     return false;
 }
 
-bool ASTSimulationVisitor::_matchString(const std::string &value, const std::string &pattern, const std::string &matchType) {
+bool ASTSimulationVisitor::_matchString(const std::string &value, const std::string &pattern, const std::string &matchType,
+                                         std::vector<std::string> *captures) {
     // Case-insensitive comparison (default comparator is i;ascii-casemap)
     std::string lowerValue = value;
     std::string lowerPattern = pattern;
@@ -520,12 +589,13 @@ bool ASTSimulationVisitor::_matchString(const std::string &value, const std::str
         return lowerValue.find(lowerPattern) != std::string::npos;
     }
     if (matchType == ":matches") {
-        return _globMatch(lowerValue, lowerPattern);
+        return _globMatch(lowerValue, lowerPattern, captures);
     }
     return false;
 }
 
-bool ASTSimulationVisitor::_globMatch(const std::string &str, const std::string &pattern) {
+bool ASTSimulationVisitor::_globMatch(const std::string &str, const std::string &pattern,
+                                       std::vector<std::string> *captures) {
     // Tokenize pattern to handle RFC 5228 §2.7.3 backslash escapes:
     // \* → literal '*', \? → literal '?', \X → literal X
     struct Token { enum Kind { LITERAL, QUESTION, STAR } kind; char ch; };
@@ -542,7 +612,14 @@ bool ASTSimulationVisitor::_globMatch(const std::string &str, const std::string 
         }
     }
 
-    // Backtrack matching on token vector
+    // Backtrack matching on token vector.
+    // We also track per-STAR the start position in str so we can record captures.
+    // Each STAR gets an index (1-based, up to 9) corresponding to RFC 5229 ${1}–${9}.
+    struct StarState {
+        size_t ti;      // token index of this STAR
+        size_t startSi; // where in str this star's match started (minimum position)
+    };
+
     size_t si = 0, ti = 0;
     size_t starTi = std::string::npos, starSi = std::string::npos;
 
@@ -567,7 +644,57 @@ bool ASTSimulationVisitor::_globMatch(const std::string &str, const std::string 
         ++ti;
     }
 
-    return ti == tokens.size();
+    if (ti != tokens.size()) return false;
+
+    // Match succeeded. Populate captures if requested (RFC 5229 §3.2).
+    // Walk through token sequence tracking position in str; for each STAR find the
+    // shortest span (leftmost end) that still allows the rest of the pattern to match.
+    if (captures) {
+        captures->assign(10, "");
+        (*captures)[0] = str;  // ${0} = full matched string
+
+        int captureIdx = 1;
+        size_t si2 = 0;
+        for (size_t tIdx = 0; tIdx < tokens.size() && captureIdx <= 9; ++tIdx) {
+            if (tokens[tIdx].kind == Token::LITERAL || tokens[tIdx].kind == Token::QUESTION) {
+                ++si2; // advance past the character this token consumed
+            } else {
+                // STAR: find shortest (leftmost end) span from si2.
+                // Scan forward from captureStart to find the earliest position where
+                // the suffix tokens[nextTi..] can begin to match.
+                size_t captureStart = si2;
+                size_t nextTi = tIdx + 1;
+                size_t captureEnd = str.size(); // default: trailing star consumes rest
+                if (nextTi < tokens.size()) {
+                    for (size_t s = captureStart; s <= str.size(); ++s) {
+                        // Try matching tokens from nextTi against str starting at s.
+                        // Consume all consecutive literal/question tokens; stop at STAR
+                        // or mismatch.
+                        size_t ts = nextTi, ss = s;
+                        bool matched = true;
+                        while (ts < tokens.size() && tokens[ts].kind != Token::STAR) {
+                            if (ss >= str.size()) { matched = false; break; }
+                            if (tokens[ts].kind == Token::QUESTION ||
+                                (tokens[ts].kind == Token::LITERAL && tokens[ts].ch == str[ss])) {
+                                ++ts; ++ss;
+                            } else { matched = false; break; }
+                        }
+                        // If we stopped at a STAR or exhausted non-star tokens at
+                        // the end of str (with remaining tokens = stars only), it's ok
+                        if (matched) {
+                            captureEnd = s;
+                            si2 = ss; // advance past the literal/question tokens consumed
+                            tIdx = ts - 1; // loop will ++tIdx to ts (next token to process)
+                            break;
+                        }
+                    }
+                }
+                (*captures)[captureIdx++] = str.substr(captureStart, captureEnd - captureStart);
+            }
+        }
+    }
+
+    return true;
 }
 
 std::string ASTSimulationVisitor::_extractAddressPart(const std::string &headerValue, const std::string &partTag) {
@@ -611,6 +738,116 @@ std::vector<std::string> ASTSimulationVisitor::_getStrings(ASTNode *node) {
             if (auto *s = dynamic_cast<ASTString*>(child)) {
                 result.push_back(std::string(s->value()));
             }
+        }
+    }
+    return result;
+}
+
+std::string ASTSimulationVisitor::_expandVariables(const std::string &s) const {
+    std::string result;
+    size_t i = 0;
+    while (i < s.size()) {
+        if (s[i] == '$' && i + 1 < s.size() && s[i + 1] == '{') {
+            size_t start = i + 2;
+            size_t end = s.find('}', start);
+            if (end == std::string::npos) {
+                // No closing brace — copy literally
+                result += s[i];
+                ++i;
+                continue;
+            }
+            std::string name = s.substr(start, end - start);
+            // Validate name: must not be empty
+            if (name.empty()) {
+                // Invalid — copy literal ${} unchanged
+                result += s.substr(i, end - i + 1);
+                i = end + 1;
+                continue;
+            }
+            // Check for illegal characters (RFC 5229 §3: letters, digits, underscore,
+            // and dot for namespace vars; digit-only = match variable)
+            bool isDigit = (name.size() == 1 && std::isdigit((unsigned char)name[0]));
+            bool valid = isDigit;
+            if (!valid) {
+                valid = true;
+                for (char c : name) {
+                    if (!std::isalnum((unsigned char)c) && c != '_' && c != '.') {
+                        valid = false;
+                        break;
+                    }
+                }
+            }
+            if (!valid) {
+                // Invalid reference — copy literally
+                result += s.substr(i, end - i + 1);
+                i = end + 1;
+                continue;
+            }
+            if (isDigit) {
+                size_t idx = name[0] - '0';
+                if (idx < _matchVars.size()) {
+                    result += _matchVars[idx];
+                }
+                // else: out of range → empty string (append nothing)
+            } else {
+                std::string lowerName = name;
+                std::transform(lowerName.begin(), lowerName.end(), lowerName.begin(),
+                               [](unsigned char c) { return std::tolower(c); });
+                auto it = _variables.find(lowerName);
+                if (it != _variables.end()) {
+                    result += it->second;
+                }
+                // else: unknown variable → empty string
+            }
+            i = end + 1;
+        } else {
+            result += s[i];
+            ++i;
+        }
+    }
+    return result;
+}
+
+std::string ASTSimulationVisitor::_applyModifiers(const std::string &value,
+                                                    const std::vector<std::string> &modifiers) const {
+    if (modifiers.empty()) return value;
+
+    // Assign precedence values (RFC 5229 §4)
+    auto precedence = [](const std::string &mod) -> int {
+        if (mod == ":lower" || mod == ":upper") return 40;
+        if (mod == ":lowerfirst" || mod == ":upperfirst") return 30;
+        if (mod == ":quotewildcard") return 20;
+        if (mod == ":length") return 10;
+        return 0;
+    };
+
+    // Sort modifiers by descending precedence (apply highest first)
+    std::vector<std::string> sorted = modifiers;
+    std::sort(sorted.begin(), sorted.end(), [&](const std::string &a, const std::string &b) {
+        return precedence(a) > precedence(b);
+    });
+
+    std::string result = value;
+    for (const auto &mod : sorted) {
+        if (mod == ":lower") {
+            std::transform(result.begin(), result.end(), result.begin(),
+                           [](unsigned char c) { return std::tolower(c); });
+        } else if (mod == ":upper") {
+            std::transform(result.begin(), result.end(), result.begin(),
+                           [](unsigned char c) { return std::toupper(c); });
+        } else if (mod == ":lowerfirst") {
+            if (!result.empty()) result[0] = static_cast<char>(std::tolower((unsigned char)result[0]));
+        } else if (mod == ":upperfirst") {
+            if (!result.empty()) result[0] = static_cast<char>(std::toupper((unsigned char)result[0]));
+        } else if (mod == ":quotewildcard") {
+            std::string escaped;
+            for (char c : result) {
+                if (c == '*' || c == '?' || c == '\\') escaped += '\\';
+                escaped += c;
+            }
+            result = escaped;
+        } else if (mod == ":length") {
+            result = std::to_string(result.size());
         }
     }
     return result;

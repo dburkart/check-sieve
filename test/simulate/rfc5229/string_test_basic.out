@@ -1,0 +1,6 @@
+---
+ACTION: set "greeting" "Hello World"
+MATCH: string :contains "${greeting}" "World"
+ACTION: fileinto "greetings"
+---
+Actions: set "greeting", fileinto "greetings"

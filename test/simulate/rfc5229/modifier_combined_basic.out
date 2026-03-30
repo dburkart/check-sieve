@@ -1,0 +1,5 @@
+---
+ACTION: set "tag" "World"
+ACTION: fileinto "World"
+---
+Actions: set "tag", fileinto "World"

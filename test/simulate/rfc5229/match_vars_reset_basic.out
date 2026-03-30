@@ -1,0 +1,6 @@
+---
+MATCH: header :matches "Subject" "Hello *"
+ACTION: fileinto "first-world"
+ACTION: fileinto "after-"
+---
+Actions: fileinto "first-world", fileinto "after-"

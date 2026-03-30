@@ -1,0 +1,5 @@
+---
+ACTION: set "tag" "hello"
+ACTION: fileinto "hello"
+---
+Actions: set "tag", fileinto "hello"

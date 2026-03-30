@@ -1,0 +1,5 @@
+---
+ACTION: set "len" "5"
+ACTION: fileinto "length-5"
+---
+Actions: set "len", fileinto "length-5"

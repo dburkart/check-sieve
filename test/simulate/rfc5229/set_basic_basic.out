@@ -1,0 +1,5 @@
+---
+ACTION: set "folder" "inbox-archive"
+ACTION: fileinto "inbox-archive"
+---
+Actions: set "folder", fileinto "inbox-archive"

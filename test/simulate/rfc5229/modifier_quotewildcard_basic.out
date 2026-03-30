@@ -1,0 +1,5 @@
+---
+ACTION: set "escaped" "foo\*bar"
+ACTION: fileinto "foo\*bar"
+---
+Actions: set "escaped", fileinto "foo\*bar"

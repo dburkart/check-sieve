@@ -1,0 +1,5 @@
+---
+ACTION: set "Folder" "mybox"
+ACTION: fileinto "mybox"
+---
+Actions: set "Folder", fileinto "mybox"

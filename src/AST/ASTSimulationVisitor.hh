@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -48,12 +49,17 @@ private:
     TestArgs _collectTestArgs(ASTNode *node);
     std::string _describeTest(ASTNode *node);
 
-    static bool _matchString(const std::string &value, const std::string &pattern, const std::string &matchType);
-    static bool _globMatch(const std::string &str, const std::string &pattern);
+    static bool _matchString(const std::string &value, const std::string &pattern, const std::string &matchType,
+                             std::vector<std::string> *captures = nullptr);
+    static bool _globMatch(const std::string &str, const std::string &pattern,
+                            std::vector<std::string> *captures = nullptr);
     static bool _contentTypeMatches(const std::string &partType, const std::vector<std::string> &patterns);
     static std::string _extractAddressPart(const std::string &headerValue, const std::string &partTag);
     static std::string _extractAddress(const std::string &headerValue);
     static std::vector<std::string> _getStrings(ASTNode *node);
+
+    std::string _expandVariables(const std::string &s) const;
+    std::string _applyModifiers(const std::string &value, const std::vector<std::string> &modifiers) const;
 
     const EmailMessage &_email;
     std::string _sieveFile;
@@ -61,6 +67,8 @@ private:
     bool _stopped = false;
     bool _deliveryActionTaken = false;
     std::vector<std::string> _actions;
+    std::map<std::string, std::string> _variables;
+    std::vector<std::string> _matchVars = std::vector<std::string>(10, "");
 };
 
 } // namespace sieve

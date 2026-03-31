@@ -1,0 +1,5 @@
+---
+MATCH: address :count "eq" :comparator "i;ascii-numeric" "to" "1"
+ACTION: fileinto "SingleRecipient"
+---
+Actions: fileinto "SingleRecipient"

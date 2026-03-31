@@ -331,6 +331,42 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
     if (testName == "header") {
         TestArgs args = _collectTestArgs(test);
 
+        // RFC 5231: :value — compare each header value against each key relationally
+        if (args.matchType == ":value") {
+            for (const auto &rawHeaderName : args.headerNames) {
+                std::string headerName = _expandVariables(rawHeaderName);
+                auto hdrValues = _email.header(headerName);
+                for (const auto &hdrVal : hdrValues) {
+                    for (const auto &rawPattern : args.values) {
+                        std::string pattern = _expandVariables(rawPattern);
+                        if (_relationalCompare(hdrVal, pattern, args.relationalOp, args.comparator)) {
+                            if (!quiet) std::cout << "MATCH: " << _describeTest(test) << std::endl;
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        // RFC 5231: :count — count total header field instances, compare against each key
+        if (args.matchType == ":count") {
+            long count = 0;
+            for (const auto &rawHeaderName : args.headerNames) {
+                std::string headerName = _expandVariables(rawHeaderName);
+                count += static_cast<long>(_email.header(headerName).size());
+            }
+            std::string countStr = std::to_string(count);
+            for (const auto &rawPattern : args.values) {
+                std::string pattern = _expandVariables(rawPattern);
+                if (_relationalCompare(countStr, pattern, args.relationalOp, args.comparator)) {
+                    if (!quiet) std::cout << "MATCH: " << _describeTest(test) << std::endl;
+                    return true;
+                }
+            }
+            return false;
+        }
+
         for (const auto &rawHeaderName : args.headerNames) {
             std::string headerName = _expandVariables(rawHeaderName);
             auto values = _email.header(headerName);
@@ -353,6 +389,43 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
 
     if (testName == "address") {
         TestArgs args = _collectTestArgs(test);
+
+        // RFC 5231: :value — compare each address against each key relationally
+        if (args.matchType == ":value") {
+            for (const auto &rawHeaderName : args.headerNames) {
+                std::string headerName = _expandVariables(rawHeaderName);
+                auto hdrValues = _email.header(headerName);
+                for (const auto &hdrVal : hdrValues) {
+                    std::string addr = _extractAddressPart(hdrVal, args.addressPart);
+                    for (const auto &rawPattern : args.values) {
+                        std::string pattern = _expandVariables(rawPattern);
+                        if (_relationalCompare(addr, pattern, args.relationalOp, args.comparator)) {
+                            if (!quiet) std::cout << "MATCH: " << _describeTest(test) << std::endl;
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        // RFC 5231: :count — count mailboxes across all named address fields
+        if (args.matchType == ":count") {
+            long count = 0;
+            for (const auto &rawHeaderName : args.headerNames) {
+                std::string headerName = _expandVariables(rawHeaderName);
+                count += static_cast<long>(_email.header(headerName).size());
+            }
+            std::string countStr = std::to_string(count);
+            for (const auto &rawPattern : args.values) {
+                std::string pattern = _expandVariables(rawPattern);
+                if (_relationalCompare(countStr, pattern, args.relationalOp, args.comparator)) {
+                    if (!quiet) std::cout << "MATCH: " << _describeTest(test) << std::endl;
+                    return true;
+                }
+            }
+            return false;
+        }
 
         for (const auto &rawHeaderName : args.headerNames) {
             std::string headerName = _expandVariables(rawHeaderName);
@@ -379,6 +452,59 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
         std::cerr << "WARNING: envelope test approximated from message headers" << std::endl;
         TestArgs args = _collectTestArgs(test);
 
+        // Helper to map envelope part name to header name
+        auto envToHeader = [](const std::string &lowerPart) -> std::string {
+            if (lowerPart == "from") return "from";
+            if (lowerPart == "to") return "to";
+            return "";
+        };
+
+        // RFC 5231: :value — compare each envelope address against each key relationally
+        if (args.matchType == ":value") {
+            for (const auto &rawEnvPart : args.headerNames) {
+                std::string envPart = _expandVariables(rawEnvPart);
+                std::string lowerPart = envPart;
+                std::transform(lowerPart.begin(), lowerPart.end(), lowerPart.begin(),
+                               [](unsigned char c) { return std::tolower(c); });
+                std::string headerName = envToHeader(lowerPart);
+                if (headerName.empty()) continue;
+                for (const auto &hdrVal : _email.header(headerName)) {
+                    std::string addr = _extractAddressPart(hdrVal, args.addressPart);
+                    for (const auto &rawPattern : args.values) {
+                        std::string pattern = _expandVariables(rawPattern);
+                        if (_relationalCompare(addr, pattern, args.relationalOp, args.comparator)) {
+                            if (!quiet) std::cout << "MATCH: " << _describeTest(test) << std::endl;
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        // RFC 5231: :count — count envelope addresses
+        if (args.matchType == ":count") {
+            long count = 0;
+            for (const auto &rawEnvPart : args.headerNames) {
+                std::string envPart = _expandVariables(rawEnvPart);
+                std::string lowerPart = envPart;
+                std::transform(lowerPart.begin(), lowerPart.end(), lowerPart.begin(),
+                               [](unsigned char c) { return std::tolower(c); });
+                std::string headerName = envToHeader(lowerPart);
+                if (headerName.empty()) continue;
+                count += static_cast<long>(_email.header(headerName).size());
+            }
+            std::string countStr = std::to_string(count);
+            for (const auto &rawPattern : args.values) {
+                std::string pattern = _expandVariables(rawPattern);
+                if (_relationalCompare(countStr, pattern, args.relationalOp, args.comparator)) {
+                    if (!quiet) std::cout << "MATCH: " << _describeTest(test) << std::endl;
+                    return true;
+                }
+            }
+            return false;
+        }
+
         for (const auto &rawEnvPart : args.headerNames) {
             std::string envPart = _expandVariables(rawEnvPart);
             std::string lowerPart = envPart;
@@ -386,10 +512,8 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
                            [](unsigned char c) { return std::tolower(c); });
 
             // Map envelope parts to headers
-            std::string headerName;
-            if (lowerPart == "from") headerName = "from";
-            else if (lowerPart == "to") headerName = "to";
-            else continue;
+            std::string headerName = envToHeader(lowerPart);
+            if (headerName.empty()) continue;
 
             auto hdrValues = _email.header(headerName);
             for (const auto &hdrVal : hdrValues) {
@@ -524,6 +648,13 @@ ASTSimulationVisitor::TestArgs ASTSimulationVisitor::_collectTestArgs(ASTNode *n
             if (tagVal == ":is" || tagVal == ":contains" || tagVal == ":matches") {
                 args.matchType = tagVal;
                 lastTag.clear();
+            } else if (tagVal == ":value" || tagVal == ":count") {
+                // RFC 5231: relational match types; next string arg is the operator ("gt", etc.)
+                args.matchType = tagVal;
+                lastTag = tagVal;
+            } else if (tagVal == ":comparator") {
+                // RFC 5231: next string arg is the comparator name
+                lastTag = ":comparator";
             } else if (tagVal == ":localpart" || tagVal == ":domain" || tagVal == ":all") {
                 args.addressPart = tagVal;
                 lastTag.clear();
@@ -537,7 +668,16 @@ ASTSimulationVisitor::TestArgs ASTSimulationVisitor::_collectTestArgs(ASTNode *n
                 lastTag.clear();
             }
         } else if (dynamic_cast<ASTString*>(child) || dynamic_cast<ASTStringList*>(child)) {
-            if (lastTag == ":content") {
+            if (lastTag == ":value" || lastTag == ":count") {
+                // The string immediately following :value/:count is the relational operator
+                auto strs = _getStrings(child);
+                if (!strs.empty()) args.relationalOp = strs[0];
+                lastTag.clear();
+            } else if (lastTag == ":comparator") {
+                auto strs = _getStrings(child);
+                if (!strs.empty()) args.comparator = strs[0];
+                lastTag.clear();
+            } else if (lastTag == ":content") {
                 args.contentTypes = _getStrings(child);
                 lastTag.clear();
             } else {
@@ -648,6 +788,52 @@ bool ASTSimulationVisitor::_contentTypeMatches(const std::string &partType,
         }
     }
     return false;
+}
+
+bool ASTSimulationVisitor::_relationalCompare(const std::string &left, const std::string &right,
+                                               const std::string &op, const std::string &comparator) {
+    int cmp = 0;
+
+    if (comparator == "i;ascii-numeric") {
+        // RFC 4790: strings of decimal digits compared as unsigned integers.
+        // Non-digit strings are less than any digit string; two non-digit strings are equal.
+        auto isNumeric = [](const std::string &s) {
+            return !s.empty() && s.find_first_not_of("0123456789") == std::string::npos;
+        };
+        bool lNum = isNumeric(left);
+        bool rNum = isNumeric(right);
+        if (!lNum && !rNum) {
+            cmp = 0;
+        } else if (!lNum) {
+            cmp = -1;  // non-numeric < numeric
+        } else if (!rNum) {
+            cmp = 1;   // numeric > non-numeric
+        } else {
+            // Both numeric: compare as unsigned long long to handle large values
+            unsigned long long lVal = std::stoull(left);
+            unsigned long long rVal = std::stoull(right);
+            cmp = (lVal < rVal) ? -1 : (lVal > rVal) ? 1 : 0;
+        }
+    } else if (comparator == "i;octet") {
+        // Case-sensitive byte comparison
+        cmp = left.compare(right);
+    } else {
+        // i;ascii-casemap (default) and anything else: case-insensitive string comparison
+        std::string lLower = left, rLower = right;
+        std::transform(lLower.begin(), lLower.end(), lLower.begin(),
+                       [](unsigned char c) { return std::tolower(c); });
+        std::transform(rLower.begin(), rLower.end(), rLower.begin(),
+                       [](unsigned char c) { return std::tolower(c); });
+        cmp = lLower.compare(rLower);
+    }
+
+    if (op == "gt") return cmp > 0;
+    if (op == "lt") return cmp < 0;
+    if (op == "ge") return cmp >= 0;
+    if (op == "le") return cmp <= 0;
+    if (op == "eq") return cmp == 0;
+    if (op == "ne") return cmp != 0;
+    return false;  // unknown operator
 }
 
 bool ASTSimulationVisitor::_matchString(const std::string &value, const std::string &pattern, const std::string &matchType,

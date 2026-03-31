@@ -1,0 +1,5 @@
+---
+MATCH: header :value "eq" :comparator "i;ascii-casemap" "subject" "Hello World"
+ACTION: fileinto "Exact"
+---
+Actions: fileinto "Exact"

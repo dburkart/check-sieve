@@ -1,0 +1,5 @@
+---
+MATCH: header :value "lt" :comparator "i;ascii-numeric" "x-priority" "3"
+ACTION: fileinto "HighPriority"
+---
+Actions: fileinto "HighPriority"

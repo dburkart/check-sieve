@@ -1,0 +1,5 @@
+---
+MATCH: header :value "ne" :comparator "i;ascii-casemap" "subject" "Goodbye"
+ACTION: fileinto "NotGoodbye"
+---
+Actions: fileinto "NotGoodbye"

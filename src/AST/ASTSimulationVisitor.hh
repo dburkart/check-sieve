@@ -36,6 +36,8 @@ private:
         std::string addressPart = ":all";
         std::string sizeComparator;
         std::string bodyTransform;  // empty = not explicitly set (body test defaults to :text)
+        std::string relationalOp;   // RFC 5231: "gt", "lt", "ge", "le", "eq", "ne"
+        std::string comparator;     // RFC 5231: "i;ascii-casemap", "i;ascii-numeric", etc.
         std::vector<std::string> headerNames;
         std::vector<std::string> values;
         std::vector<std::string> contentTypes;
@@ -51,6 +53,8 @@ private:
 
     static bool _matchString(const std::string &value, const std::string &pattern, const std::string &matchType,
                              std::vector<std::string> *captures = nullptr);
+    static bool _relationalCompare(const std::string &left, const std::string &right,
+                                   const std::string &op, const std::string &comparator);
     static bool _globMatch(const std::string &str, const std::string &pattern,
                             std::vector<std::string> *captures = nullptr);
     static bool _contentTypeMatches(const std::string &partType, const std::vector<std::string> &patterns);

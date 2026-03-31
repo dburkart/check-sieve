@@ -1,0 +1,5 @@
+---
+MATCH: header :count "gt" :comparator "i;ascii-numeric" "to" "2"
+ACTION: fileinto "SPAM"
+---
+Actions: fileinto "SPAM"

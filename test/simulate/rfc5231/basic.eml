@@ -1,0 +1,9 @@
+From: Alice Smith <alice@example.com>
+To: Bob Jones <bob@example.com>
+Subject: Hello World
+X-Priority: 2
+Date: Mon, 30 Mar 2026 10:00:00 -0700
+MIME-Version: 1.0
+Content-Type: text/plain
+
+This is the message body.

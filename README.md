@@ -109,7 +109,13 @@ Options:
 
 [file-issue]: https://github.com/dburkart/check-sieve/issues/new
 
-### Mail Sorting Simulation
+### Server capability matching
+
+Some mail servers support a subset of the above capabilities.
+You can use the `--server` flag to have `check-sieve` match the capabilities of your sieve server.
+This helps avoid cases where your sieve might break because you use a feature your server doesn't support!
+
+### Mail sorting simulation
 
 You can simulate sorting a particular email by passing `--simulate <path/to/email.eml>`.
 `check-sieve` will parse your sieve script(s), and print out a list of matched tests, and actions taken.

@@ -37,6 +37,10 @@ for _rfc_dir in util.discover_rfc_dirs():
     _cls = type(_class_name, (util.DiffTestCase,), _methods)
     globals()[_class_name] = _cls
 
+# Clean up loop variables so unittest's loader doesn't discover _cls (a TestCase
+# subclass) as a duplicate of the last-created RFC class.
+del _rfc_dir, _class_name, _methods, _cls
+
 
 if __name__ == '__main__':
     unittest.main()

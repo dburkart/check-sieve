@@ -1,0 +1,4 @@
+---
+ACTION: fileinto "Trash" :flags "\\Deleted"
+---
+Actions: fileinto "Trash" :flags "\\Deleted"

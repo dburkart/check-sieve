@@ -1,0 +1,4 @@
+---
+ACTION: keep :flags "\\Flagged"
+---
+Actions: keep :flags "\\Flagged"

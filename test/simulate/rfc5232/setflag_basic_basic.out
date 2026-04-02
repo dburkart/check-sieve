@@ -1,0 +1,5 @@
+---
+ACTION: setflag "\\Flagged"
+ACTION: keep (implicit) :flags "\\Flagged"
+---
+Actions: setflag, keep (implicit) :flags "\\Flagged"

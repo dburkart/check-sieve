@@ -1,0 +1,5 @@
+---
+ACTION: addflag "\\Flagged \\Answered"
+ACTION: keep (implicit) :flags "\\Flagged \\Answered"
+---
+Actions: addflag, keep (implicit) :flags "\\Flagged \\Answered"

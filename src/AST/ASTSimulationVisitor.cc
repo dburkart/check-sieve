@@ -25,8 +25,12 @@ void ASTSimulationVisitor::walk( ASTSieve *root ) {
 
     // If no delivery action was taken, implicit keep (RFC 5228 §4.2)
     if (!_deliveryActionTaken) {
-        std::cout << "ACTION: keep (implicit)" << std::endl;
-        _actions.push_back("keep (implicit)");
+        std::string keepAction = "keep (implicit)";
+        if (!_internalFlags.empty()) {
+            keepAction += " :flags \"" + _internalFlags + "\"";
+        }
+        std::cout << "ACTION: " << keepAction << std::endl;
+        _actions.push_back(keepAction);
     }
 
     std::cout << "---" << std::endl;
@@ -90,15 +94,52 @@ void ASTSimulationVisitor::_simulate(ASTNode *node) {
             }
 
             std::string actionDesc = name;
+            std::string lastTag;
+            std::string flagsValue;
+            bool flagsProvided = false;
+            bool positionalArgSet = false;
 
-            // Extract argument for commands that take one
-            if (name == "fileinto" || name == "redirect" || name == "reject" || name == "ereject") {
-                for (auto *child : command->children()) {
-                    auto *str = dynamic_cast<ASTString*>(child);
-                    if (str) {
-                        actionDesc += " \"" + _expandVariables(std::string(str->value())) + "\"";
-                        break;
+            for (auto *child : command->children()) {
+                if (auto *tag = dynamic_cast<ASTTag*>(child)) {
+                    std::string tagVal = std::string(tag->value());
+                    if (tagVal == ":flags") {
+                        lastTag = ":flags";
+                        flagsProvided = true;
+                    } else {
+                        lastTag = tagVal;
                     }
+                } else if (dynamic_cast<ASTString*>(child) || dynamic_cast<ASTStringList*>(child)) {
+                    if (lastTag == ":flags") {
+                        std::vector<std::string> rawFlagStrs = _getStrings(child);
+                        for (auto &f : rawFlagStrs) f = _expandVariables(f);
+                        auto flagList = _parseFlags(rawFlagStrs);
+                        flagsValue.clear();
+                        for (size_t i = 0; i < flagList.size(); ++i) {
+                            if (i > 0) flagsValue += " ";
+                            flagsValue += flagList[i];
+                        }
+                        lastTag.clear();
+                    } else if (!positionalArgSet &&
+                               (name == "fileinto" || name == "redirect" ||
+                                name == "reject" || name == "ereject")) {
+                        if (auto *str = dynamic_cast<ASTString*>(child)) {
+                            actionDesc += " \"" + _expandVariables(std::string(str->value())) + "\"";
+                            positionalArgSet = true;
+                        }
+                        lastTag.clear();
+                    } else {
+                        lastTag.clear();
+                    }
+                }
+            }
+
+            // RFC 5232: apply :flags for keep and fileinto
+            if (name == "keep" || name == "fileinto") {
+                if (!flagsProvided) {
+                    flagsValue = _internalFlags;
+                }
+                if (!flagsValue.empty()) {
+                    actionDesc += " :flags \"" + flagsValue + "\"";
                 }
             }
 
@@ -217,7 +258,112 @@ void ASTSimulationVisitor::_simulate(ASTNode *node) {
             return;
         }
 
-        // For other commands (addflag, etc.), just note them
+        // RFC 5232: setflag, addflag, removeflag — manipulate the implicit flag variable
+        if (name == "setflag" || name == "addflag" || name == "removeflag") {
+            std::vector<ASTNode*> strArgs;
+            for (auto *child : command->children()) {
+                if (dynamic_cast<ASTString*>(child) || dynamic_cast<ASTStringList*>(child)) {
+                    strArgs.push_back(child);
+                }
+            }
+
+            // Optional first arg is variable name (string only, not list per RFC 5232 §4)
+            std::string varName;
+            std::vector<std::string> rawFlags;
+            if (strArgs.size() >= 2) {
+                if (auto *str = dynamic_cast<ASTString*>(strArgs[0])) {
+                    varName = _expandVariables(std::string(str->value()));
+                }
+                rawFlags = _getStrings(strArgs[1]);
+            } else if (strArgs.size() == 1) {
+                rawFlags = _getStrings(strArgs[0]);
+            }
+
+            for (auto &f : rawFlags) f = _expandVariables(f);
+            auto newFlags = _parseFlags(rawFlags);
+
+            std::string newFlagStr;
+            if (name == "setflag") {
+                for (size_t i = 0; i < newFlags.size(); ++i) {
+                    if (i > 0) newFlagStr += " ";
+                    newFlagStr += newFlags[i];
+                }
+                _setFlagSet(varName, newFlagStr);
+            } else if (name == "addflag") {
+                std::string existing = _getFlagSet(varName);
+                auto existingFlags = _parseFlags({existing});
+                for (const auto &f : newFlags) {
+                    std::string fLower = f;
+                    std::transform(fLower.begin(), fLower.end(), fLower.begin(),
+                                   [](unsigned char c) { return std::tolower(c); });
+                    bool found = false;
+                    for (const auto &e : existingFlags) {
+                        std::string eLower = e;
+                        std::transform(eLower.begin(), eLower.end(), eLower.begin(),
+                                       [](unsigned char c) { return std::tolower(c); });
+                        if (eLower == fLower) { found = true; break; }
+                    }
+                    if (!found) existingFlags.push_back(f);
+                }
+                for (size_t i = 0; i < existingFlags.size(); ++i) {
+                    if (i > 0) newFlagStr += " ";
+                    newFlagStr += existingFlags[i];
+                }
+                _setFlagSet(varName, newFlagStr);
+            } else { // removeflag
+                std::string existing = _getFlagSet(varName);
+                auto existingFlags = _parseFlags({existing});
+                std::vector<std::string> toRemoveLower;
+                for (const auto &f : newFlags) {
+                    std::string lower = f;
+                    std::transform(lower.begin(), lower.end(), lower.begin(),
+                                   [](unsigned char c) { return std::tolower(c); });
+                    toRemoveLower.push_back(lower);
+                }
+                std::vector<std::string> remaining;
+                for (const auto &e : existingFlags) {
+                    std::string eLower = e;
+                    std::transform(eLower.begin(), eLower.end(), eLower.begin(),
+                                   [](unsigned char c) { return std::tolower(c); });
+                    bool remove = false;
+                    for (const auto &r : toRemoveLower) {
+                        if (eLower == r) { remove = true; break; }
+                    }
+                    if (!remove) remaining.push_back(e);
+                }
+                for (size_t i = 0; i < remaining.size(); ++i) {
+                    if (i > 0) newFlagStr += " ";
+                    newFlagStr += remaining[i];
+                }
+                _setFlagSet(varName, newFlagStr);
+            }
+
+            std::string actionDesc = name;
+            if (!varName.empty()) {
+                actionDesc += " \"" + varName + "\"";
+            }
+            // Show flag-list argument
+            ASTNode *flagArg = strArgs.size() >= 2 ? strArgs[1] : (!strArgs.empty() ? strArgs[0] : nullptr);
+            if (flagArg) {
+                auto rawList = _getStrings(flagArg);
+                if (rawList.size() == 1) {
+                    actionDesc += " \"" + rawList[0] + "\"";
+                } else if (rawList.size() > 1) {
+                    actionDesc += " [";
+                    for (size_t i = 0; i < rawList.size(); ++i) {
+                        if (i > 0) actionDesc += ", ";
+                        actionDesc += "\"" + rawList[i] + "\"";
+                    }
+                    actionDesc += "]";
+                }
+            }
+
+            std::cout << "ACTION: " << actionDesc << std::endl;
+            _actions.push_back(name);
+            return;
+        }
+
+        // For other commands, just note them
         {
             std::cout << "ACTION: " << name;
             for (auto *child : command->children()) {
@@ -626,6 +772,94 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
                         std::cout << "MATCH: " << _describeTest(test) << std::endl;
                     }
                     return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // RFC 5232: hasflag — test whether a flag variable contains matching flags
+    if (testName == "hasflag") {
+        std::string matchType = ":is";
+        std::string relationalOp;
+        std::string comparator;
+        std::vector<ASTNode*> strArgs;
+        std::string lastTag;
+
+        for (auto *child : test->children()) {
+            if (auto *tag = dynamic_cast<ASTTag*>(child)) {
+                std::string tagVal = std::string(tag->value());
+                if (tagVal == ":is" || tagVal == ":contains" || tagVal == ":matches") {
+                    matchType = tagVal;
+                    lastTag.clear();
+                } else if (tagVal == ":value" || tagVal == ":count") {
+                    matchType = tagVal;
+                    lastTag = tagVal;
+                } else if (tagVal == ":comparator") {
+                    lastTag = ":comparator";
+                } else {
+                    lastTag.clear();
+                }
+            } else if (dynamic_cast<ASTString*>(child) || dynamic_cast<ASTStringList*>(child)) {
+                if (lastTag == ":value" || lastTag == ":count") {
+                    auto strs = _getStrings(child);
+                    if (!strs.empty()) relationalOp = strs[0];
+                    lastTag.clear();
+                } else if (lastTag == ":comparator") {
+                    auto strs = _getStrings(child);
+                    if (!strs.empty()) comparator = strs[0];
+                    lastTag.clear();
+                } else {
+                    strArgs.push_back(child);
+                    lastTag.clear();
+                }
+            }
+        }
+
+        // First string arg = variable-list (optional); last = flag-list (required)
+        std::vector<std::string> varList;
+        std::vector<std::string> flagPatterns;
+        if (strArgs.size() >= 2) {
+            varList = _getStrings(strArgs[0]);
+            flagPatterns = _getStrings(strArgs[1]);
+        } else if (strArgs.size() == 1) {
+            varList = {""};  // empty = internal variable
+            flagPatterns = _getStrings(strArgs[0]);
+        } else {
+            return false;
+        }
+
+        if (matchType == ":count") {
+            long count = 0;
+            for (const auto &rawVarName : varList) {
+                std::string varName = _expandVariables(rawVarName);
+                std::string flagSet = _getFlagSet(varName);
+                count += static_cast<long>(_parseFlags({flagSet}).size());
+            }
+            std::string countStr = std::to_string(count);
+            for (const auto &rawPattern : flagPatterns) {
+                std::string pattern = _expandVariables(rawPattern);
+                if (_relationalCompare(countStr, pattern, relationalOp, comparator)) {
+                    if (!quiet) std::cout << "MATCH: " << _describeTest(test) << std::endl;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        for (const auto &rawVarName : varList) {
+            std::string varName = _expandVariables(rawVarName);
+            std::string flagSet = _getFlagSet(varName);
+            auto flags = _parseFlags({flagSet});
+            for (const auto &flag : flags) {
+                for (const auto &rawPattern : flagPatterns) {
+                    std::string pattern = _expandVariables(rawPattern);
+                    std::vector<std::string> captures;
+                    if (_matchString(flag, pattern, matchType, &captures)) {
+                        if (matchType == ":matches") _matchVars = captures;
+                        if (!quiet) std::cout << "MATCH: " << _describeTest(test) << std::endl;
+                        return true;
+                    }
                 }
             }
         }
@@ -1115,6 +1349,51 @@ std::string ASTSimulationVisitor::_applyModifiers(const std::string &value,
         }
     }
     return result;
+}
+
+// RFC 5232: Parse a list of flag strings (may contain space-separated flags within each string)
+// Returns deduplicated list (case-insensitive), preserving original case of first occurrence.
+std::vector<std::string> ASTSimulationVisitor::_parseFlags(const std::vector<std::string> &flagStrings) {
+    std::vector<std::string> result;
+    std::vector<std::string> seenLower;
+    for (const auto &s : flagStrings) {
+        std::istringstream iss(s);
+        std::string token;
+        while (iss >> token) {
+            std::string lower = token;
+            std::transform(lower.begin(), lower.end(), lower.begin(),
+                           [](unsigned char c) { return std::tolower(c); });
+            bool found = false;
+            for (const auto &seen : seenLower) {
+                if (seen == lower) { found = true; break; }
+            }
+            if (!found) {
+                result.push_back(token);
+                seenLower.push_back(lower);
+            }
+        }
+    }
+    return result;
+}
+
+std::string ASTSimulationVisitor::_getFlagSet(const std::string &varName) const {
+    if (varName.empty()) return _internalFlags;
+    std::string lower = varName;
+    std::transform(lower.begin(), lower.end(), lower.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+    auto it = _variables.find(lower);
+    return (it != _variables.end()) ? it->second : "";
+}
+
+void ASTSimulationVisitor::_setFlagSet(const std::string &varName, const std::string &flags) {
+    if (varName.empty()) {
+        _internalFlags = flags;
+    } else {
+        std::string lower = varName;
+        std::transform(lower.begin(), lower.end(), lower.begin(),
+                       [](unsigned char c) { return std::tolower(c); });
+        _variables[lower] = flags;
+    }
 }
 
 // Required visit() implementations (mostly unused -- traversal is via _simulate)

@@ -1,0 +1,5 @@
+---
+ACTION: addflag "myflags" "\\Flagged"
+ACTION: fileinto "Archive" :flags "\\Flagged"
+---
+Actions: addflag, fileinto "Archive" :flags "\\Flagged"

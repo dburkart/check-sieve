@@ -65,6 +65,10 @@ private:
     std::string _expandVariables(const std::string &s) const;
     std::string _applyModifiers(const std::string &value, const std::vector<std::string> &modifiers) const;
 
+    static std::vector<std::string> _parseFlags(const std::vector<std::string> &flagStrings);
+    std::string _getFlagSet(const std::string &varName) const;
+    void _setFlagSet(const std::string &varName, const std::string &flags);
+
     const EmailMessage &_email;
     std::string _sieveFile;
     std::string _emailFile;
@@ -73,6 +77,7 @@ private:
     std::vector<std::string> _actions;
     std::map<std::string, std::string> _variables;
     std::vector<std::string> _matchVars = std::vector<std::string>(10, "");
+    std::string _internalFlags;   // RFC 5232: implicit flag variable (space-separated)
 };
 
 } // namespace sieve

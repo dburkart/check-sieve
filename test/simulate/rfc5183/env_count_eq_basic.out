@@ -1,0 +1,5 @@
+---
+MATCH: environment :count "eq" :comparator "i;ascii-numeric" "domain" "1"
+ACTION: fileinto "KnownItem"
+---
+Actions: fileinto "KnownItem"

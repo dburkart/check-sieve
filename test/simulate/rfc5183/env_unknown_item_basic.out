@@ -1,0 +1,5 @@
+---
+MATCH: environment :is "location" "MTA"
+ACTION: fileinto "ViaMailTransfer"
+---
+Actions: fileinto "ViaMailTransfer"

@@ -1,0 +1,5 @@
+---
+MATCH: environment :is "name" "check-sieve"
+ACTION: fileinto "Matched"
+---
+Actions: fileinto "Matched"

@@ -78,6 +78,7 @@ private:
     std::map<std::string, std::string> _variables;
     std::vector<std::string> _matchVars = std::vector<std::string>(10, "");
     std::string _internalFlags;   // RFC 5232: implicit flag variable (space-separated)
+    std::map<std::string, std::string> _environmentItems;  // RFC 5183
 };
 
 } // namespace sieve

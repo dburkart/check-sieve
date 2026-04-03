@@ -1,0 +1,5 @@
+---
+MATCH: environment :contains "host" "example"
+ACTION: fileinto "Internal"
+---
+Actions: fileinto "Internal"

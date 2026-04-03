@@ -1,0 +1,5 @@
+---
+MATCH: environment :matches "host" "*.example.com"
+ACTION: fileinto "LocalHost"
+---
+Actions: fileinto "LocalHost"

@@ -12,6 +12,15 @@ ASTSimulationVisitor::ASTSimulationVisitor(const EmailMessage &email, const std:
     , _sieveFile(sieveFile)
     , _emailFile(emailFile)
 {
+    // RFC 5183: fixed simulation defaults (RFC 2606 / RFC 5737 reserved values)
+    _environmentItems["domain"]      = "example.com";
+    _environmentItems["host"]        = "mail.example.com";
+    _environmentItems["location"]    = "MTA";
+    _environmentItems["name"]        = "check-sieve";
+    _environmentItems["phase"]       = "during";
+    _environmentItems["remote-host"] = "remote.example.net";
+    _environmentItems["remote-ip"]   = "192.0.2.1";
+    _environmentItems["version"]     = "1.0";
 }
 
 void ASTSimulationVisitor::walk( ASTSieve *root ) {
@@ -865,6 +874,70 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
                         if (!quiet) std::cout << "MATCH: " << _describeTest(test) << std::endl;
                         return true;
                     }
+                }
+            }
+        }
+        return false;
+    }
+
+    // RFC 5183: environment — test named items about the server environment
+    if (testName == "environment") {
+        TestArgs args = _collectTestArgs(test);
+
+        auto lookupItem = [&](const std::string &raw) -> std::string {
+            std::string name = _expandVariables(raw);
+            std::transform(name.begin(), name.end(), name.begin(),
+                           [](unsigned char c) { return std::tolower(c); });
+            return name;
+        };
+
+        // RFC 5231: :count — each known item counts as 1, unknown as 0
+        if (args.matchType == ":count") {
+            long count = 0;
+            for (const auto &rawItemName : args.headerNames) {
+                std::string lowerItem = lookupItem(rawItemName);
+                if (_environmentItems.count(lowerItem)) count += 1;
+            }
+            std::string countStr = std::to_string(count);
+            for (const auto &rawPattern : args.values) {
+                std::string pattern = _expandVariables(rawPattern);
+                if (_relationalCompare(countStr, pattern, args.relationalOp, args.comparator)) {
+                    if (!quiet) std::cout << "MATCH: " << _describeTest(test) << std::endl;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // RFC 5231: :value — relational comparison on item's string value
+        if (args.matchType == ":value") {
+            for (const auto &rawItemName : args.headerNames) {
+                std::string lowerItem = lookupItem(rawItemName);
+                auto it = _environmentItems.find(lowerItem);
+                if (it == _environmentItems.end()) continue;
+                for (const auto &rawPattern : args.values) {
+                    std::string pattern = _expandVariables(rawPattern);
+                    if (_relationalCompare(it->second, pattern, args.relationalOp, args.comparator)) {
+                        if (!quiet) std::cout << "MATCH: " << _describeTest(test) << std::endl;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        // Standard match types: :is (default), :contains, :matches
+        for (const auto &rawItemName : args.headerNames) {
+            std::string lowerItem = lookupItem(rawItemName);
+            auto it = _environmentItems.find(lowerItem);
+            if (it == _environmentItems.end()) continue;  // unknown item → test fails
+            for (const auto &rawPattern : args.values) {
+                std::string pattern = _expandVariables(rawPattern);
+                std::vector<std::string> captures;
+                if (_matchString(it->second, pattern, args.matchType, &captures)) {
+                    if (args.matchType == ":matches") _matchVars = captures;
+                    if (!quiet) std::cout << "MATCH: " << _describeTest(test) << std::endl;
+                    return true;
                 }
             }
         }

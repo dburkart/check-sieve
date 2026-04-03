@@ -43,7 +43,7 @@ Command::Command() {
     _usage_map["setflag"] = "setflag [<variablename: string>] <list-of-flags: string-list>";
     _usage_map["stop"] = "stop";
     _usage_map["unexpire"] = "unexpire";
-    _usage_map["vacation"] = "vacation [:days number] [:subject string] [:from string]\n\t[:addresses string-list] [:mime] [:handle string]\n\t[:fcc string] <reason: string>";
+    _usage_map["vacation"] = "vacation [:days number / :seconds number] [:subject string] [:from string]\n\t[:addresses string-list] [:mime] [:handle string]\n\t[:fcc string] <reason: string>";
     _usage_map["pipe"] = "pipe [:try] <program-name: string>\n\t[<arguments: string-list>]";
     _usage_map["filter"] = "filter <program-name: string> [<arguments: string-list>]";
     _usage_map["execute"] = "execute [:input <input-data: string> / :pipe]\n\t[:output <varname: string>]\n\t<program-name: string> [<arguments: string-list>]";
@@ -410,8 +410,20 @@ ValidationResult Command::_validateVacationCommand(const ASTNode *node) {
     const size_t size = children.size();
     
     size_t numArguments = 1;
-    
-    if (command->find(ASTTag(":days")) != command->children().end()) {
+
+    bool hasDays = command->find(ASTTag(":days")) != command->children().end();
+    bool hasSeconds = command->find(ASTTag(":seconds")) != command->children().end();
+
+    // :days and :seconds are mutually exclusive (RFC 6131)
+    if (hasDays && hasSeconds) {
+        return ValidationResult(false);
+    }
+
+    if (hasDays) {
+        numArguments += 2;
+    }
+
+    if (hasSeconds) {
         numArguments += 2;
     }
     

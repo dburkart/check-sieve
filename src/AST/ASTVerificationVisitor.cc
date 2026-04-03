@@ -391,6 +391,17 @@ void ASTVerificationVisitor::_enable_capability(std::string_view capability) {
     _require_lookup[":mime"] = "vacation";
     _require_lookup[":handle"] = "vacation";
 
+    // "vacation-seconds"
+    // RFC 6131
+    if (capability == "vacation-seconds") {
+        _enable_capability("vacation");
+        _tag_map[":seconds"] = true;
+    }
+
+    // Require hints
+    _require_lookup["vacation-seconds"] = "vacation-seconds";
+    _require_lookup[":seconds"] = "vacation-seconds";
+
     // "relational"
     // RFC 5231
     if (capability == "relational") {
@@ -718,7 +729,8 @@ void ASTVerificationVisitor::_enable_capability(std::string_view capability) {
     _require_lookup[":handle"] = "duplicate";
     _require_lookup[":header"] = "duplicate";
     _require_lookup[":uniqueid"] = "duplicate";
-    _require_lookup[":seconds"] = "duplicate";
+    if (!has_required("vacation-seconds"))
+        _require_lookup[":seconds"] = "duplicate";
 
     // "special-use"
     // RFC 8579

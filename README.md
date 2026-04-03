@@ -73,6 +73,7 @@ Options:
 * Variables Extension ([RFC 5229](https://tools.ietf.org/html/rfc5229))
 * Date and Index Extensions ([RFC 5260](https://tools.ietf.org/html/rfc5260))
 * Vacation Extension ([RFC 5230](https://tools.ietf.org/html/rfc5230))
+* Vacation "Seconds" Parameter ([RFC 6131](https://tools.ietf.org/html/rfc6131))
 * Include Extension ([RFC 6609](https://tools.ietf.org/html/rfc6609))
 * Copying Without Side Effects ([RFC 3894](https://tools.ietf.org/html/rfc3894))
 * Reject and Extended Reject Extensions ([RFC 5429](https://tools.ietf.org/html/rfc5429))

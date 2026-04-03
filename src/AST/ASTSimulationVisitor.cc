@@ -184,6 +184,7 @@ void ASTSimulationVisitor::_simulate(ASTNode *node) {
         if (name == "vacation") {
             std::string lastTag;
             std::string daysValue;
+            std::string secondsValue;
             std::string subject;
             std::string from;
             std::string handle;
@@ -203,6 +204,8 @@ void ASTSimulationVisitor::_simulate(ASTNode *node) {
                 } else if (auto *num = dynamic_cast<ASTNumeric*>(child)) {
                     if (lastTag == ":days") {
                         daysValue = std::to_string(num->value());
+                    } else if (lastTag == ":seconds") {
+                        secondsValue = std::to_string(num->value());
                     }
                     lastTag.clear();
                 } else if (auto *strList = dynamic_cast<ASTStringList*>(child)) {
@@ -234,6 +237,8 @@ void ASTSimulationVisitor::_simulate(ASTNode *node) {
             actionLine << "vacation";
             if (!daysValue.empty())
                 actionLine << " :days " << daysValue;
+            if (!secondsValue.empty())
+                actionLine << " :seconds " << secondsValue;
             if (!subject.empty())
                 actionLine << " :subject \"" << subject << "\"";
             if (!from.empty())

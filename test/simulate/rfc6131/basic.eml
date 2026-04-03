@@ -1,0 +1,7 @@
+From: Alice <alice@example.com>
+To: Bob <bob@example.org>
+Subject: Hello World
+Date: Mon, 1 Jan 2024 12:00:00 +0000
+Content-Type: text/plain
+
+This is the body of the email.

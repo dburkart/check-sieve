@@ -36,7 +36,7 @@ Tag::Tag() {
     _usage_map[":handle"] = ":handle string";
     _usage_map[":header"] = ":header string";
     _usage_map[":uniqueid"] = ":uniqueid string";
-    _usage_map[":seconds"] = ":seconds string";
+    _usage_map[":seconds"] = ":seconds number";
     _usage_map[":specialuse"] = "fileinto [:specialuse string] ...";
 
     // RFC 9042

@@ -1,4 +1,6 @@
 #include <algorithm>
+#include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <sstream>
 
@@ -495,7 +497,7 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
         if (args.matchType == ":value") {
             for (const auto &rawHeaderName : args.headerNames) {
                 std::string headerName = _expandVariables(rawHeaderName);
-                auto hdrValues = _email.header(headerName);
+                auto hdrValues = _applyIndex(_email.header(headerName), args.indexField, args.indexLast);
                 for (const auto &hdrVal : hdrValues) {
                     for (const auto &rawPattern : args.values) {
                         std::string pattern = _expandVariables(rawPattern);
@@ -514,7 +516,7 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
             long count = 0;
             for (const auto &rawHeaderName : args.headerNames) {
                 std::string headerName = _expandVariables(rawHeaderName);
-                count += static_cast<long>(_email.header(headerName).size());
+                count += static_cast<long>(_applyIndex(_email.header(headerName), args.indexField, args.indexLast).size());
             }
             std::string countStr = std::to_string(count);
             for (const auto &rawPattern : args.values) {
@@ -529,7 +531,7 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
 
         for (const auto &rawHeaderName : args.headerNames) {
             std::string headerName = _expandVariables(rawHeaderName);
-            auto values = _email.header(headerName);
+            auto values = _applyIndex(_email.header(headerName), args.indexField, args.indexLast);
             for (const auto &hdrVal : values) {
                 for (const auto &rawPattern : args.values) {
                     std::string pattern = _expandVariables(rawPattern);
@@ -554,7 +556,7 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
         if (args.matchType == ":value") {
             for (const auto &rawHeaderName : args.headerNames) {
                 std::string headerName = _expandVariables(rawHeaderName);
-                auto hdrValues = _email.header(headerName);
+                auto hdrValues = _applyIndex(_email.header(headerName), args.indexField, args.indexLast);
                 for (const auto &hdrVal : hdrValues) {
                     auto addrOpt = _extractAddressPart(hdrVal, args.addressPart);
                     if (!addrOpt) continue;
@@ -576,7 +578,7 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
             long count = 0;
             for (const auto &rawHeaderName : args.headerNames) {
                 std::string headerName = _expandVariables(rawHeaderName);
-                count += static_cast<long>(_email.header(headerName).size());
+                count += static_cast<long>(_applyIndex(_email.header(headerName), args.indexField, args.indexLast).size());
             }
             std::string countStr = std::to_string(count);
             for (const auto &rawPattern : args.values) {
@@ -591,7 +593,7 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
 
         for (const auto &rawHeaderName : args.headerNames) {
             std::string headerName = _expandVariables(rawHeaderName);
-            auto values = _email.header(headerName);
+            auto values = _applyIndex(_email.header(headerName), args.indexField, args.indexLast);
             for (const auto &hdrVal : values) {
                 auto addrOpt = _extractAddressPart(hdrVal, args.addressPart);
                 if (!addrOpt) continue;
@@ -952,6 +954,186 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
         return false;
     }
 
+    if (testName == "date") {
+        TestArgs args = _collectTestArgs(test);
+
+        // Collect the three positional string args: header-name, date-part, key-list
+        // Must skip strings consumed by tags like :value "ge", :comparator "...", :zone "..."
+        std::vector<ASTNode*> posNodes;
+        {
+            std::string lastTag;
+            for (auto *child : test->children()) {
+                if (auto *tag = dynamic_cast<ASTTag*>(child)) {
+                    std::string tv = tag->value();
+                    if (tv == ":value" || tv == ":count" || tv == ":comparator" || tv == ":zone")
+                        lastTag = tv;
+                    else
+                        lastTag.clear();
+                } else if (dynamic_cast<ASTString*>(child) || dynamic_cast<ASTStringList*>(child)) {
+                    if (!lastTag.empty())
+                        lastTag.clear(); // this string was consumed by preceding tag
+                    else
+                        posNodes.push_back(child);
+                } else if (dynamic_cast<ASTNumeric*>(child)) {
+                    lastTag.clear();
+                }
+            }
+        }
+        if (posNodes.size() < 3) return false;
+
+        std::string headerName = _expandVariables(_getStrings(posNodes[0])[0]);
+        std::string datePart;
+        { auto v = _getStrings(posNodes[1]); if (!v.empty()) datePart = v[0]; }
+        std::vector<std::string> keyList = _getStrings(posNodes[2]);
+
+        auto headerValues = _applyIndex(_email.header(headerName), args.indexField, args.indexLast);
+
+        if (args.matchType == ":count") {
+            long count = 0;
+            for (const auto &hdrVal : headerValues) {
+                struct tm utcTm; int offsetMin = 0;
+                if (_parseRFC2822Date(hdrVal, utcTm, offsetMin)) count = 1;
+            }
+            std::string countStr = std::to_string(count);
+            for (const auto &rawKey : keyList) {
+                std::string key = _expandVariables(rawKey);
+                if (_relationalCompare(countStr, key, args.relationalOp, args.comparator)) {
+                    if (!quiet) std::cout << "MATCH: " << _describeTest(test) << std::endl;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        for (const auto &hdrVal : headerValues) {
+            struct tm utcTm; int headerOffsetMin = 0;
+            if (!_parseRFC2822Date(hdrVal, utcTm, headerOffsetMin)) continue;
+
+            int effectiveOffset = 0;
+            if (args.zone == "original") {
+                effectiveOffset = headerOffsetMin;
+            } else if (!args.zone.empty()) {
+                int sign = (args.zone[0] == '-') ? -1 : 1;
+                std::string digits = args.zone.substr(1);
+                if (digits.size() == 4 && std::isdigit((unsigned char)digits[0])) {
+                    int hh = std::stoi(digits.substr(0, 2));
+                    int mm = std::stoi(digits.substr(2, 2));
+                    effectiveOffset = sign * (hh * 60 + mm);
+                }
+            }
+
+            std::string partValue = _extractDatePart(utcTm, datePart, effectiveOffset);
+            if (partValue.empty()) continue;
+
+            if (args.matchType == ":value") {
+                for (const auto &rawKey : keyList) {
+                    std::string key = _expandVariables(rawKey);
+                    if (_relationalCompare(partValue, key, args.relationalOp, args.comparator)) {
+                        if (!quiet) std::cout << "MATCH: " << _describeTest(test) << std::endl;
+                        return true;
+                    }
+                }
+            } else {
+                for (const auto &rawKey : keyList) {
+                    std::string key = _expandVariables(rawKey);
+                    std::vector<std::string> captures;
+                    if (_matchString(partValue, key, args.matchType, &captures)) {
+                        if (args.matchType == ":matches") _matchVars = captures;
+                        if (!quiet) std::cout << "MATCH: " << _describeTest(test) << std::endl;
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    if (testName == "currentdate") {
+        // Capture script execution time once (RFC 5260 §5)
+        if (_scriptTime == 0) _scriptTime = std::time(nullptr);
+
+        TestArgs args = _collectTestArgs(test);
+
+        // Collect two positional string args: date-part, key-list
+        // Must skip strings consumed by tags like :value "ge", :comparator "...", :zone "..."
+        std::vector<ASTNode*> posNodes;
+        {
+            std::string lastTag;
+            for (auto *child : test->children()) {
+                if (auto *tag = dynamic_cast<ASTTag*>(child)) {
+                    std::string tv = tag->value();
+                    if (tv == ":value" || tv == ":count" || tv == ":comparator" || tv == ":zone")
+                        lastTag = tv;
+                    else
+                        lastTag.clear();
+                } else if (dynamic_cast<ASTString*>(child) || dynamic_cast<ASTStringList*>(child)) {
+                    if (!lastTag.empty())
+                        lastTag.clear();
+                    else
+                        posNodes.push_back(child);
+                } else if (dynamic_cast<ASTNumeric*>(child)) {
+                    lastTag.clear();
+                }
+            }
+        }
+        if (posNodes.size() < 2) return false;
+
+        std::string datePart;
+        { auto v = _getStrings(posNodes[0]); if (!v.empty()) datePart = v[0]; }
+        std::vector<std::string> keyList = _getStrings(posNodes[1]);
+
+        struct tm utcTm;
+        gmtime_r(&_scriptTime, &utcTm);
+
+        // :count always returns 1 for currentdate (RFC 5260 §4)
+        if (args.matchType == ":count") {
+            std::string countStr = "1";
+            for (const auto &rawKey : keyList) {
+                std::string key = _expandVariables(rawKey);
+                if (_relationalCompare(countStr, key, args.relationalOp, args.comparator)) {
+                    if (!quiet) std::cout << "MATCH: " << _describeTest(test) << std::endl;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        int effectiveOffset = 0;
+        if (!args.zone.empty() && args.zone != "original") {
+            int sign = (args.zone[0] == '-') ? -1 : 1;
+            std::string digits = args.zone.substr(1);
+            if (digits.size() == 4 && std::isdigit((unsigned char)digits[0])) {
+                int hh = std::stoi(digits.substr(0, 2));
+                int mm = std::stoi(digits.substr(2, 2));
+                effectiveOffset = sign * (hh * 60 + mm);
+            }
+        }
+
+        std::string partValue = _extractDatePart(utcTm, datePart, effectiveOffset);
+        if (partValue.empty()) return false;
+
+        if (args.matchType == ":value") {
+            for (const auto &rawKey : keyList) {
+                std::string key = _expandVariables(rawKey);
+                if (_relationalCompare(partValue, key, args.relationalOp, args.comparator)) {
+                    if (!quiet) std::cout << "MATCH: " << _describeTest(test) << std::endl;
+                    return true;
+                }
+            }
+        } else {
+            for (const auto &rawKey : keyList) {
+                std::string key = _expandVariables(rawKey);
+                std::vector<std::string> captures;
+                if (_matchString(partValue, key, args.matchType, &captures)) {
+                    if (args.matchType == ":matches") _matchVars = captures;
+                    if (!quiet) std::cout << "MATCH: " << _describeTest(test) << std::endl;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     // Unsupported test
     std::cerr << "WARNING: Unsupported test \"" << testName << "\" -- assuming false" << std::endl;
     return false;
@@ -985,6 +1167,16 @@ ASTSimulationVisitor::TestArgs ASTSimulationVisitor::_collectTestArgs(ASTNode *n
             } else if (tagVal == ":raw" || tagVal == ":text" || tagVal == ":content") {
                 args.bodyTransform = tagVal;
                 lastTag = tagVal;
+            } else if (tagVal == ":zone") {
+                lastTag = ":zone";
+            } else if (tagVal == ":originalzone") {
+                args.zone = "original";
+                lastTag.clear();
+            } else if (tagVal == ":index") {
+                lastTag = ":index";
+            } else if (tagVal == ":last") {
+                args.indexLast = true;
+                lastTag.clear();
             } else {
                 lastTag.clear();
             }
@@ -1001,14 +1193,23 @@ ASTSimulationVisitor::TestArgs ASTSimulationVisitor::_collectTestArgs(ASTNode *n
             } else if (lastTag == ":content") {
                 args.contentTypes = _getStrings(child);
                 lastTag.clear();
+            } else if (lastTag == ":zone") {
+                auto strs = _getStrings(child);
+                if (!strs.empty()) args.zone = strs[0];
+                lastTag.clear();
             } else {
                 stringArgs.push_back(child);
                 lastTag.clear();
             }
         } else if (auto *num = dynamic_cast<ASTNumeric*>(child)) {
-            args.numericValue = num->value();
-            args.hasNumeric = true;
-            lastTag.clear();
+            if (lastTag == ":index") {
+                args.indexField = static_cast<int>(num->value());
+                lastTag.clear();
+            } else {
+                args.numericValue = num->value();
+                args.hasNumeric = true;
+                lastTag.clear();
+            }
         }
     }
 
@@ -1511,5 +1712,138 @@ void ASTSimulationVisitor::visit( ASTStringList* ) {}
 void ASTSimulationVisitor::visit( ASTTag* ) {}
 void ASTSimulationVisitor::visit( ASTTest* ) {}
 void ASTSimulationVisitor::visit( ASTTestList* ) {}
+
+// RFC 5260: apply :index / :last selection to a vector of header values
+std::vector<std::string> ASTSimulationVisitor::_applyIndex(
+    const std::vector<std::string> &values, int indexField, bool indexLast)
+{
+    if (indexField <= 0 || values.empty()) return values;
+    size_t idx;
+    if (indexLast) {
+        if (static_cast<size_t>(indexField) > values.size()) return {};
+        idx = values.size() - static_cast<size_t>(indexField);
+    } else {
+        idx = static_cast<size_t>(indexField) - 1;
+        if (idx >= values.size()) return {};
+    }
+    return { values[idx] };
+}
+
+// RFC 5260: parse an RFC 2822 date-time value into a UTC struct tm.
+// Handles plain Date: header values and Received: values (date after last ';').
+// offsetMinutes is set to the original UTC offset from the header (e.g. -300 for -0500).
+bool ASTSimulationVisitor::_parseRFC2822Date(const std::string &headerValue,
+                                              struct tm &tmOut, int &offsetMinutes)
+{
+    offsetMinutes = 0;
+
+    // Received: headers embed the date after the last ';'
+    std::string toParse = headerValue;
+    size_t semi = headerValue.rfind(';');
+    if (semi != std::string::npos) {
+        toParse = headerValue.substr(semi + 1);
+        size_t first = toParse.find_first_not_of(" \t\r\n");
+        if (first == std::string::npos) return false;
+        toParse = toParse.substr(first);
+    }
+
+    // Manually extract trailing timezone token to avoid strptime %z portability issues
+    size_t lastSpace = toParse.rfind(' ');
+    if (lastSpace == std::string::npos) return false;
+    std::string tzToken = toParse.substr(lastSpace + 1);
+    std::string dateStr = toParse.substr(0, lastSpace);
+
+    // Parse numeric timezone: "+0500" / "-0700" (5 chars including sign)
+    if (tzToken.size() == 5 && (tzToken[0] == '+' || tzToken[0] == '-')) {
+        int sign = (tzToken[0] == '+') ? 1 : -1;
+        std::string digits = tzToken.substr(1);
+        if (std::isdigit((unsigned char)digits[0])) {
+            int hh = std::stoi(digits.substr(0, 2));
+            int mm = std::stoi(digits.substr(2, 2));
+            offsetMinutes = sign * (hh * 60 + mm);
+        }
+    }
+    // Named zones (UTC, GMT, UT, etc.) remain at 0
+
+    memset(&tmOut, 0, sizeof(tmOut));
+    const char *p = strptime(dateStr.c_str(), "%a, %d %b %Y %H:%M:%S", &tmOut);
+    if (!p) p = strptime(dateStr.c_str(), "%d %b %Y %H:%M:%S", &tmOut);
+    if (!p) return false;
+
+    // tmOut fields are set for the header's local timezone; convert to UTC
+    time_t asLocal = timegm(&tmOut);
+    if (asLocal == static_cast<time_t>(-1)) return false;
+    time_t asUTC = asLocal - (static_cast<time_t>(offsetMinutes) * 60);
+    gmtime_r(&asUTC, &tmOut);
+    return true;
+}
+
+// RFC 5260: extract the named date-part from a UTC struct tm, applying offsetMinutes
+// to shift into the effective timezone before formatting.
+std::string ASTSimulationVisitor::_extractDatePart(const struct tm &utcTm,
+                                                    const std::string &part,
+                                                    int offsetMinutes)
+{
+    // Shift UTC time into the effective timezone
+    struct tm shifted = utcTm;
+    time_t t = timegm(&shifted);
+    t += static_cast<time_t>(offsetMinutes) * 60;
+    struct tm local;
+    gmtime_r(&t, &local);
+
+    char buf[64];
+    if (part == "year") {
+        snprintf(buf, sizeof(buf), "%04d", local.tm_year + 1900);
+    } else if (part == "month") {
+        snprintf(buf, sizeof(buf), "%02d", local.tm_mon + 1);
+    } else if (part == "day") {
+        snprintf(buf, sizeof(buf), "%02d", local.tm_mday);
+    } else if (part == "date") {
+        snprintf(buf, sizeof(buf), "%04d-%02d-%02d",
+                 local.tm_year + 1900, local.tm_mon + 1, local.tm_mday);
+    } else if (part == "hour") {
+        snprintf(buf, sizeof(buf), "%02d", local.tm_hour);
+    } else if (part == "minute") {
+        snprintf(buf, sizeof(buf), "%02d", local.tm_min);
+    } else if (part == "second") {
+        snprintf(buf, sizeof(buf), "%02d", local.tm_sec);
+    } else if (part == "time") {
+        snprintf(buf, sizeof(buf), "%02d:%02d:%02d",
+                 local.tm_hour, local.tm_min, local.tm_sec);
+    } else if (part == "weekday") {
+        snprintf(buf, sizeof(buf), "%d", local.tm_wday);
+    } else if (part == "zone") {
+        int absOff = std::abs(offsetMinutes);
+        snprintf(buf, sizeof(buf), "%c%02d%02d",
+                 offsetMinutes >= 0 ? '+' : '-', absOff / 60, absOff % 60);
+    } else if (part == "iso8601") {
+        if (offsetMinutes == 0) {
+            snprintf(buf, sizeof(buf), "%04d-%02d-%02dT%02d:%02d:%02dZ",
+                     local.tm_year + 1900, local.tm_mon + 1, local.tm_mday,
+                     local.tm_hour, local.tm_min, local.tm_sec);
+        } else {
+            int absOff = std::abs(offsetMinutes);
+            snprintf(buf, sizeof(buf), "%04d-%02d-%02dT%02d:%02d:%02d%c%02d:%02d",
+                     local.tm_year + 1900, local.tm_mon + 1, local.tm_mday,
+                     local.tm_hour, local.tm_min, local.tm_sec,
+                     offsetMinutes >= 0 ? '+' : '-', absOff / 60, absOff % 60);
+        }
+    } else if (part == "std11") {
+        strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S", &local);
+        int absOff = std::abs(offsetMinutes);
+        char off[16];
+        snprintf(off, sizeof(off), " %c%02d%02d",
+                 offsetMinutes >= 0 ? '+' : '-', absOff / 60, absOff % 60);
+        return std::string(buf) + off;
+    } else if (part == "julian") {
+        int Y = local.tm_year + 1900, M = local.tm_mon + 1, D = local.tm_mday;
+        int a = (14 - M) / 12, y = Y + 4800 - a, m = M + 12 * a - 3;
+        long jdn = D + (153 * m + 2) / 5 + 365L * y + y / 4 - y / 100 + y / 400 - 32045;
+        snprintf(buf, sizeof(buf), "%ld", jdn - 2400001L);
+    } else {
+        return "";  // unknown date-part
+    }
+    return std::string(buf);
+}
 
 } // namespace sieve

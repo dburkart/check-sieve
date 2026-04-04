@@ -1,0 +1,12 @@
+Received: from mail1.example.com (mail1.example.com [192.0.2.10])
+        by mx.example.com with ESMTP id abc123; Sat, 01 Mar 2025 20:00:00 +0000
+Received: from smtp.example.net (smtp.example.net [198.51.100.5])
+        by mail1.example.com with ESMTP id def456; Sat, 01 Mar 2025 18:00:00 -0500
+From: sender@example.net
+To: recipient@example.com
+Subject: Index Test
+Date: Sat, 01 Mar 2025 14:30:00 +0000
+MIME-Version: 1.0
+Content-Type: text/plain
+
+Test body for index tests.

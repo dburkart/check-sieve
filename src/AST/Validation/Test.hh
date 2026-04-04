@@ -34,6 +34,8 @@ private:
     ValidationResult _validateFilterTest(const ASTNode *node);
     ValidationResult _validateExecuteTest(const ASTNode *node);
     ValidationResult _validateEnvelopeTest(const ASTNode *node);
+    ValidationResult _validateDateTest(const ASTNode *node);
+    ValidationResult _validateCurrentdateTest(const ASTNode *node);
 
     std::map<std::string, ValidationResult (Test::*)(const ASTNode *)> _validation_fn_map;
     std::map<std::string, std::string> _usage_map;

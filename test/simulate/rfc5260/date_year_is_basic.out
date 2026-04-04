@@ -1,0 +1,5 @@
+---
+MATCH: date :is "date" "year" "2025"
+ACTION: fileinto "year-2025"
+---
+Actions: fileinto "year-2025"

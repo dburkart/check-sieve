@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ctime>
 #include <map>
 #include <optional>
 #include <string>
@@ -44,6 +45,9 @@ private:
         std::vector<std::string> contentTypes;
         long numericValue = 0;
         bool hasNumeric = false;
+        int  indexField  = 0;       // RFC 5260: 0 = not set; 1..N = :index value
+        bool indexLast   = false;   // RFC 5260: true if :last was specified
+        std::string zone;           // RFC 5260: "" = UTC/local; "original" = :originalzone; "+hhmm"/"-hhmm" = :zone
     };
 
     void _simulate(ASTNode *node);
@@ -60,6 +64,9 @@ private:
                             std::vector<std::string> *captures = nullptr);
     static bool _contentTypeMatches(const std::string &partType, const std::vector<std::string> &patterns);
     static std::optional<std::string> _extractAddressPart(const std::string &headerValue, const std::string &partTag);
+    static std::vector<std::string> _applyIndex(const std::vector<std::string> &values, int indexField, bool indexLast);
+    static bool _parseRFC2822Date(const std::string &headerValue, struct tm &tmOut, int &offsetMinutes);
+    static std::string _extractDatePart(const struct tm &utcTm, const std::string &part, int offsetMinutes);
     static std::string _extractAddress(const std::string &headerValue);
     static std::vector<std::string> _getStrings(ASTNode *node);
 
@@ -80,6 +87,7 @@ private:
     std::vector<std::string> _matchVars = std::vector<std::string>(10, "");
     std::string _internalFlags;   // RFC 5232: implicit flag variable (space-separated)
     std::map<std::string, std::string> _environmentItems;  // RFC 5183
+    std::time_t _scriptTime = 0;  // RFC 5260: captured once for all currentdate tests
 };
 
 } // namespace sieve

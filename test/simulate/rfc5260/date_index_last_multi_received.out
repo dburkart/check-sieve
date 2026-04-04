@@ -1,0 +1,5 @@
+---
+MATCH: date :value "eq" :index 1 :last "received" "hour" "23"
+ACTION: fileinto "last-received-11pm-utc"
+---
+Actions: fileinto "last-received-11pm-utc"

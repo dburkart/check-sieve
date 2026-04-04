@@ -1,0 +1,5 @@
+---
+MATCH: date :count "eq" :comparator "i;ascii-numeric" "date" "year" "1"
+ACTION: fileinto "has-date"
+---
+Actions: fileinto "has-date"

@@ -2,6 +2,7 @@
 #include <string>
 #include <unordered_set>
 
+#include "ASTNumeric.hh"
 #include "ASTString.hh"
 #include "ASTStringList.hh"
 #include "ASTVerificationVisitor.hh"
@@ -44,6 +45,12 @@ Test::Test() {
     _usage_map["mailboxidexists"]       = "mailboxidexists <mailbox-objectids: string-list>";
     _usage_map["envelope"]              = "envelope [COMPARATOR] [ADDRESS-PART] [MATCH-TYPE]                              \n"
                                           "         <envelope-part: string-list> <key-list: string-list>";
+    _usage_map["date"]                  =        "date [:zone <time-zone> / :originalzone] [COMPARATOR] [MATCH-TYPE]        \n"
+                                          "          <header-name: string> <date-part: string> <key-list: string-list>     \n"
+                                          "          date-part: year|month|day|date|hour|minute|second|time|               \n"
+                                          "                     iso8601|std11|zone|weekday|julian                          \n";
+    _usage_map["currentdate"]           =        "currentdate [:zone <time-zone>] [COMPARATOR] [MATCH-TYPE]                \n"
+                                          "               <date-part: string> <key-list: string-list>                     \n";
 
     _validation_fn_map["allof"]                 = &Test::_validateHasOnlyTestList;
     _validation_fn_map["anyof"]                 = &Test::_validateHasOnlyTestList;
@@ -63,6 +70,8 @@ Test::Test() {
     _validation_fn_map["filter"]                = &Test::_validateFilterTest;
     _validation_fn_map["execute"]               = &Test::_validateExecuteTest;
     _validation_fn_map["envelope"]              = &Test::_validateEnvelopeTest;
+    _validation_fn_map["date"]                  = &Test::_validateDateTest;
+    _validation_fn_map["currentdate"]           = &Test::_validateCurrentdateTest;
 }
 
 ValidationResult Test::validate(const ASTNode *node) {
@@ -261,6 +270,7 @@ ValidationResult Test::_validateHeaderTest(const ASTNode *node) {
                 tagValue == ":value" ||
                 tagValue == ":count" ||
                 tagValue == ":index" ||
+                tagValue == ":last" ||
                 tagValue == ":list") {
                     continue;
                 }
@@ -439,6 +449,98 @@ ValidationResult Test::_validateEnvelopeTest(const ASTNode *node) {
             return ValidationResult(false, "unexpected envelope-part found: " + std::string(it), true);
     }
 
+
+    return ValidationResult(true);
+}
+
+ValidationResult Test::_validateDateTest(const ASTNode *node) {
+    std::vector<ASTNode *> children = node->children();
+
+    static const std::unordered_set<std::string> validDateParts = {
+        "year", "month", "day", "date", "hour", "minute", "second",
+        "time", "iso8601", "std11", "zone", "weekday", "julian"
+    };
+
+    // Collect positional args, skipping strings consumed by tags like :value "ge", :zone "+0500"
+    std::vector<const ASTNode *> posArgs;
+    {
+        std::string lastTag;
+        for (auto *child : children) {
+            if (const auto *tag = dynamic_cast<const ASTTag*>(child)) {
+                std::string tv = tag->value();
+                if (tv == ":zone" || tv == ":originalzone" ||
+                    tv == ":comparator" ||
+                    tv == ":is" || tv == ":contains" || tv == ":matches" || tv == ":list" ||
+                    tv == ":value" || tv == ":count" ||
+                    tv == ":index" || tv == ":last") {
+                    // Tags that consume the next string arg
+                    if (tv == ":zone" || tv == ":comparator" || tv == ":value" || tv == ":count")
+                        lastTag = tv;
+                    else
+                        lastTag.clear();
+                    continue;
+                }
+                return ValidationResult(false);
+            }
+            if (dynamic_cast<const ASTNumeric*>(child)) { lastTag.clear(); continue; }
+            if (!lastTag.empty()) { lastTag.clear(); continue; }  // consumed by preceding tag
+            posArgs.push_back(child);
+        }
+    }
+
+    // Require exactly 3 positional args: header-name, date-part, key-list
+    if (posArgs.size() < 3) return ValidationResult(false);
+
+    const auto *datePart = dynamic_cast<const ASTString*>(posArgs[1]);
+    if (datePart == nullptr) return ValidationResult(false);
+    if (validDateParts.find(std::string(datePart->value())) == validDateParts.end()) {
+        return ValidationResult(false, "invalid date-part \"" + std::string(datePart->value()) + "\"", true);
+    }
+
+    return ValidationResult(true);
+}
+
+ValidationResult Test::_validateCurrentdateTest(const ASTNode *node) {
+    std::vector<ASTNode *> children = node->children();
+
+    static const std::unordered_set<std::string> validDateParts = {
+        "year", "month", "day", "date", "hour", "minute", "second",
+        "time", "iso8601", "std11", "zone", "weekday", "julian"
+    };
+
+    // Collect positional args, skipping strings consumed by tags like :value "ge", :zone "+0500"
+    std::vector<const ASTNode *> posArgs;
+    {
+        std::string lastTag;
+        for (auto *child : children) {
+            if (const auto *tag = dynamic_cast<const ASTTag*>(child)) {
+                std::string tv = tag->value();
+                if (tv == ":zone" || tv == ":comparator" ||
+                    tv == ":is" || tv == ":contains" || tv == ":matches" || tv == ":list" ||
+                    tv == ":value" || tv == ":count") {
+                    if (tv == ":zone" || tv == ":comparator" || tv == ":value" || tv == ":count")
+                        lastTag = tv;
+                    else
+                        lastTag.clear();
+                    continue;
+                }
+                // :originalzone is not valid for currentdate (RFC 5260 §4)
+                return ValidationResult(false);
+            }
+            if (dynamic_cast<const ASTNumeric*>(child)) { lastTag.clear(); continue; }
+            if (!lastTag.empty()) { lastTag.clear(); continue; }  // consumed by preceding tag
+            posArgs.push_back(child);
+        }
+    }
+
+    // Require exactly 2 positional args: date-part, key-list
+    if (posArgs.size() < 2) return ValidationResult(false);
+
+    const auto *datePart = dynamic_cast<const ASTString*>(posArgs[0]);
+    if (datePart == nullptr) return ValidationResult(false);
+    if (validDateParts.find(std::string(datePart->value())) == validDateParts.end()) {
+        return ValidationResult(false, "invalid date-part \"" + std::string(datePart->value()) + "\"", true);
+    }
 
     return ValidationResult(true);
 }

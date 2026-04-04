@@ -1,0 +1,5 @@
+---
+MATCH: currentdate :count "eq" :comparator "i;ascii-numeric" "year" "1"
+ACTION: fileinto "date-available"
+---
+Actions: fileinto "date-available"

@@ -1,0 +1,5 @@
+---
+MATCH: date :is "date" "weekday" "6"
+ACTION: fileinto "weekend"
+---
+Actions: fileinto "weekend"

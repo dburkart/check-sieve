@@ -1,0 +1,5 @@
+---
+MATCH: date :value "eq" :zone "-0500" "date" "hour" "09"
+ACTION: fileinto "eastern-morning"
+---
+Actions: fileinto "eastern-morning"

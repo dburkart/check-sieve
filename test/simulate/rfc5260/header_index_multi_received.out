@@ -1,0 +1,5 @@
+---
+MATCH: header :index 1 :contains "received" "abc123"
+ACTION: fileinto "first-hop"
+---
+Actions: fileinto "first-hop"

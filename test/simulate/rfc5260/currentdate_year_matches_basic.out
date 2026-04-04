@@ -1,0 +1,5 @@
+---
+MATCH: currentdate :matches "year" "????"
+ACTION: fileinto "has-year"
+---
+Actions: fileinto "has-year"

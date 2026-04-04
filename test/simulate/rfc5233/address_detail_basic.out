@@ -1,0 +1,5 @@
+---
+MATCH: address :detail :is "To" "detail"
+ACTION: fileinto "matched-detail"
+---
+Actions: fileinto "matched-detail"

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -58,7 +59,7 @@ private:
     static bool _globMatch(const std::string &str, const std::string &pattern,
                             std::vector<std::string> *captures = nullptr);
     static bool _contentTypeMatches(const std::string &partType, const std::vector<std::string> &patterns);
-    static std::string _extractAddressPart(const std::string &headerValue, const std::string &partTag);
+    static std::optional<std::string> _extractAddressPart(const std::string &headerValue, const std::string &partTag);
     static std::string _extractAddress(const std::string &headerValue);
     static std::vector<std::string> _getStrings(ASTNode *node);
 

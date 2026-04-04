@@ -1,0 +1,5 @@
+---
+MATCH: address :user :is "From" "sender"
+ACTION: fileinto "matched-no-plus"
+---
+Actions: fileinto "matched-no-plus"

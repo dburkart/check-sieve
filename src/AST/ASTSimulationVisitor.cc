@@ -556,7 +556,9 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
                 std::string headerName = _expandVariables(rawHeaderName);
                 auto hdrValues = _email.header(headerName);
                 for (const auto &hdrVal : hdrValues) {
-                    std::string addr = _extractAddressPart(hdrVal, args.addressPart);
+                    auto addrOpt = _extractAddressPart(hdrVal, args.addressPart);
+                    if (!addrOpt) continue;
+                    std::string addr = *addrOpt;
                     for (const auto &rawPattern : args.values) {
                         std::string pattern = _expandVariables(rawPattern);
                         if (_relationalCompare(addr, pattern, args.relationalOp, args.comparator)) {
@@ -591,7 +593,9 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
             std::string headerName = _expandVariables(rawHeaderName);
             auto values = _email.header(headerName);
             for (const auto &hdrVal : values) {
-                std::string addr = _extractAddressPart(hdrVal, args.addressPart);
+                auto addrOpt = _extractAddressPart(hdrVal, args.addressPart);
+                if (!addrOpt) continue;
+                std::string addr = *addrOpt;
                 for (const auto &rawPattern : args.values) {
                     std::string pattern = _expandVariables(rawPattern);
                     std::vector<std::string> captures;
@@ -629,7 +633,9 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
                 std::string headerName = envToHeader(lowerPart);
                 if (headerName.empty()) continue;
                 for (const auto &hdrVal : _email.header(headerName)) {
-                    std::string addr = _extractAddressPart(hdrVal, args.addressPart);
+                    auto addrOpt = _extractAddressPart(hdrVal, args.addressPart);
+                    if (!addrOpt) continue;
+                    std::string addr = *addrOpt;
                     for (const auto &rawPattern : args.values) {
                         std::string pattern = _expandVariables(rawPattern);
                         if (_relationalCompare(addr, pattern, args.relationalOp, args.comparator)) {
@@ -677,7 +683,9 @@ bool ASTSimulationVisitor::_evaluateTest(ASTNode *node, bool quiet) {
 
             auto hdrValues = _email.header(headerName);
             for (const auto &hdrVal : hdrValues) {
-                std::string addr = _extractAddressPart(hdrVal, args.addressPart);
+                auto addrOpt = _extractAddressPart(hdrVal, args.addressPart);
+                if (!addrOpt) continue;
+                std::string addr = *addrOpt;
                 for (const auto &rawPattern : args.values) {
                     std::string pattern = _expandVariables(rawPattern);
                     std::vector<std::string> captures;
@@ -967,7 +975,8 @@ ASTSimulationVisitor::TestArgs ASTSimulationVisitor::_collectTestArgs(ASTNode *n
             } else if (tagVal == ":comparator") {
                 // RFC 5231: next string arg is the comparator name
                 lastTag = ":comparator";
-            } else if (tagVal == ":localpart" || tagVal == ":domain" || tagVal == ":all") {
+            } else if (tagVal == ":localpart" || tagVal == ":domain" || tagVal == ":all"
+                       || tagVal == ":user" || tagVal == ":detail") {
                 args.addressPart = tagVal;
                 lastTag.clear();
             } else if (tagVal == ":over" || tagVal == ":under") {
@@ -1273,16 +1282,29 @@ bool ASTSimulationVisitor::_globMatch(const std::string &str, const std::string 
     return true;
 }
 
-std::string ASTSimulationVisitor::_extractAddressPart(const std::string &headerValue, const std::string &partTag) {
+std::optional<std::string> ASTSimulationVisitor::_extractAddressPart(const std::string &headerValue, const std::string &partTag) {
     std::string addr = _extractAddress(headerValue);
 
     if (partTag == ":localpart") {
         auto at = addr.find('@');
-        return (at != std::string::npos) ? addr.substr(0, at) : "";
+        return (at != std::string::npos) ? addr.substr(0, at) : std::string{};
     }
     if (partTag == ":domain") {
         auto at = addr.find('@');
-        return (at != std::string::npos) ? addr.substr(at + 1) : "";
+        return (at != std::string::npos) ? addr.substr(at + 1) : std::string{};
+    }
+    if (partTag == ":user") {
+        auto at = addr.find('@');
+        std::string localpart = (at != std::string::npos) ? addr.substr(0, at) : addr;
+        auto plus = localpart.find('+');
+        return (plus != std::string::npos) ? localpart.substr(0, plus) : localpart;
+    }
+    if (partTag == ":detail") {
+        auto at = addr.find('@');
+        std::string localpart = (at != std::string::npos) ? addr.substr(0, at) : addr;
+        auto plus = localpart.find('+');
+        if (plus == std::string::npos) return std::nullopt;  // no subaddress → no match (RFC 5233)
+        return localpart.substr(plus + 1);
     }
     return addr; // :all
 }

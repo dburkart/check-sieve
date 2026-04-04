@@ -1,0 +1,5 @@
+---
+MATCH: address :user :is "To" "user"
+ACTION: fileinto "matched-user"
+---
+Actions: fileinto "matched-user"

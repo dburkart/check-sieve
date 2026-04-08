@@ -1,3 +1,8 @@
+Version 1.0.0:
+ * Experimental: Adds mail sorting simulation flag (--simulate).
+ * Support for Vacation Extension: "Seconds" (RFC 6131).
+ * Adds --test-dir flag for batch mail sorting simulation.
+
 Version 0.11:
  * Support for Extension for Processing Calendar Attachments (RFC 9671).
  * Support for Delivery Status Notifications and Deliver-By Extensions (RFC 6009).

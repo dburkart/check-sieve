@@ -120,7 +120,10 @@ This helps avoid cases where your sieve might break because you use a feature yo
 
 You can simulate sorting a particular email by passing `--simulate <path/to/email.eml>`.
 `check-sieve` will parse your sieve script(s), and print out a list of matched tests, and actions taken.
-The plan is to also have an easy way of testing your sieve script against a directory of input emails, and a directory of expectations, essentially allowing you to "unit test" your sieve script before pushing it to the server.
+
+Additionally, you can maintain a directory of "test" email files, which can function as regression tests with the `--test-dir` flag.
+Simply run `check-sieve <sieve-file> --test-dir <path/to/dir>`, and `check-sieve` will simulate mail sorting, comparing output to any .out files in the same directory.
+Rebase the `.out` files with the `--rebase` flag.
 
 > [!NOTE]
 > This feature is experimental, and does not currently

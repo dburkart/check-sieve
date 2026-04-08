@@ -1,9 +1,10 @@
 #include <cstdio>
 #include <cstring>
-#include <filesystem>
+#include <dirent.h>
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <vector>
 
@@ -203,7 +204,6 @@ int main( int argc, char *argv[] ) {
     }
 
     if (!test_dir_path.empty() || !rebase_dir_path.empty()) {
-        namespace fs = std::filesystem;
         const std::string &dir = !test_dir_path.empty() ? test_dir_path : rebase_dir_path;
 
         if (sieve_files.size() != 1) {
@@ -226,10 +226,17 @@ int main( int argc, char *argv[] ) {
 
         int failures = 0, total = 0;
 
-        for (const auto &entry : fs::directory_iterator(dir)) {
-            if (entry.path().extension() != ".eml") continue;
+        DIR *dp = opendir(dir.c_str());
+        if (!dp) {
+            std::cerr << "Cannot open directory: " << dir << std::endl;
+            return 1;
+        }
+        struct dirent *de;
+        while ((de = readdir(dp)) != nullptr) {
+            std::string name = de->d_name;
+            if (name.size() < 4 || name.substr(name.size() - 4) != ".eml") continue;
             total++;
-            std::string eml_path = entry.path().string();
+            std::string eml_path = dir + "/" + name;
 
             // Capture simulation output
             std::ostringstream captured;
@@ -244,15 +251,16 @@ int main( int argc, char *argv[] ) {
             auto nl = output.find('\n');
             std::string stripped = (nl != std::string::npos) ? output.substr(nl + 1) : output;
 
-            fs::path out_path = entry.path();
-            out_path.replace_extension(".out");
+            std::string out_path = eml_path.substr(0, eml_path.size() - 4) + ".out";
 
             if (!rebase_dir_path.empty()) {
                 std::ofstream out_file(out_path);
                 out_file << stripped;
             } else {
                 std::string expected;
-                if (fs::exists(out_path)) {
+                struct stat st;
+                bool out_exists = (stat(out_path.c_str(), &st) == 0);
+                if (out_exists) {
                     std::ifstream in(out_path);
                     expected.assign((std::istreambuf_iterator<char>(in)),
                                      std::istreambuf_iterator<char>());
@@ -263,7 +271,7 @@ int main( int argc, char *argv[] ) {
                     int fd = mkstemp(tmpname);
                     write(fd, stripped.c_str(), stripped.size());
                     close(fd);
-                    std::string expected_arg = fs::exists(out_path) ? out_path.string() : "/dev/null";
+                    std::string expected_arg = out_exists ? out_path : "/dev/null";
                     std::string cmd = "diff -ubBd " + expected_arg + " " + std::string(tmpname);
                     FILE *pipe = popen(cmd.c_str(), "r");
                     char buf[256];
@@ -273,6 +281,7 @@ int main( int argc, char *argv[] ) {
                 }
             }
         }
+        closedir(dp);
 
         if (!rebase_dir_path.empty()) {
             return 0;

@@ -1,0 +1,5 @@
+---
+ACTION: redirect :copy "copy@example.com"
+ACTION: keep (implicit)
+---
+Actions: redirect :copy "copy@example.com", keep (implicit)

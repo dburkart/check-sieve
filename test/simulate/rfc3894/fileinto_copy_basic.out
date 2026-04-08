@@ -1,0 +1,5 @@
+---
+ACTION: fileinto :copy "archive"
+ACTION: keep (implicit)
+---
+Actions: fileinto :copy "archive", keep (implicit)

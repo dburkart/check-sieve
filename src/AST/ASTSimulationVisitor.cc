@@ -99,9 +99,19 @@ void ASTSimulationVisitor::_simulate(ASTNode *node) {
             name == "fileinto" || name == "redirect" || name == "reject" ||
             name == "ereject") {
 
+            // RFC 3894: :copy does not cancel implicit keep
+            bool hasCopy = false;
+            for (auto *child : command->children()) {
+                if (auto *tag = dynamic_cast<ASTTag*>(child)) {
+                    if (std::string(tag->value()) == ":copy") { hasCopy = true; break; }
+                }
+            }
+
             if (name == "keep" || name == "discard" || name == "fileinto" ||
                 name == "redirect") {
-                _deliveryActionTaken = true;
+                if (!hasCopy) {
+                    _deliveryActionTaken = true;
+                }
             }
 
             std::string actionDesc = name;
@@ -116,6 +126,9 @@ void ASTSimulationVisitor::_simulate(ASTNode *node) {
                     if (tagVal == ":flags") {
                         lastTag = ":flags";
                         flagsProvided = true;
+                    } else if (tagVal == ":copy") {
+                        actionDesc += " :copy";
+                        lastTag.clear();
                     } else {
                         lastTag = tagVal;
                     }

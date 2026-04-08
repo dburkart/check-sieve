@@ -39,18 +39,68 @@ Trace the operation of the scanner
 .IP "--trace-tree"
 Trace the abstract-syntax-tree
 .IP "--simulate <email-file>"
-Simulate sieve processing against the specified email file (.eml format). After
-validating the sieve script, the program will evaluate each test against the
-message headers and print any matching tests and resulting actions to stdout.
-.br
-Supported tests: header, address, envelope (approximated from headers), exists,
-size, allof, anyof, not, true, false.
-.br
-.B NOTE: 
-Many RFC extensions are still in progress, filing an issue for unsupported
-extensions will help me prioritize what to work on next!
+Simulate sieve processing against an email file (.eml format).
+See
+.B SIMULATION
+below.
+.IP "--test-dir <dir>"
+Run simulation for every .eml file in
+.I dir
+and diff each result against a matching .out file.
+See
+.B SIMULATION
+below.
+.IP "--rebase <dir>"
+Regenerate the .out files in
+.I dir
+from current simulation output.
+See
+.B SIMULATION
+below.
 .IP "--version"
 Print out version information
+.
+.SH SIMULATION
+.
+.B check-sieve
+can simulate how a sieve script sorts mail, making it straightforward to verify
+script behavior without deploying to a mail server.
+.SS Single-message simulation
+.IP "--simulate <email-file>"
+.
+Validates the sieve script and then evaluates it against the given .eml file.
+Each test that matches is printed as
+.BR "MATCH: " <test>
+and each executed action as
+.BR "ACTION: " <action> .
+If no delivery action is taken,
+.B keep (implicit)
+is added automatically per RFC 5228 §4.2.
+.br
+.B NOTE:
+Many RFC extensions are still in progress. Filing an issue for unsupported
+extensions will help prioritize what to work on next.
+.SS Batch testing with a test directory
+A test directory contains .eml files and, optionally, .out files that record
+expected simulation output. The .out file for a given email is named after the
+email's stem (e.g.\&
+.I msg.eml
+→
+.IR msg.out ).
+.IP "--test-dir <dir>"
+Runs simulation against every .eml file in
+.IR dir .
+For each email that has a matching .out file, the actual output (with the
+environment-specific first line stripped) is diffed against it. If all
+comparisons pass the program exits 0 with no output. If any differ, each diff
+is printed followed by a summary on stderr and the program exits 1. Emails
+without a .out file are simulated but not compared.
+.IP "--rebase <dir>"
+Regenerates the .out file for every .eml file in
+.IR dir ,
+creating or overwriting as needed. Run this after making intentional changes to
+a sieve script or the simulator to update the expected output before re-running
+.BR --test-dir .
 .
 .SH BUGS
 .

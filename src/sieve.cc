@@ -1,5 +1,10 @@
+#include <cstdio>
 #include <cstring>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
+#include <sstream>
+#include <unistd.h>
 #include <vector>
 
 #include "AST.hh"
@@ -21,6 +26,10 @@ const char *usage_string  =
 "  --trace-scanner          Trace the operation of the scanner                  \n"
 "  --trace-tree             Trace the abstract-syntax-tree                      \n"
 "  --simulate <email-file>  Simulate sieve processing against an email (.eml)  \n"
+"  --test-dir <dir>         Run simulation for all .eml files in dir and diff  \n"
+"                           against matching .out files; exit 1 if any differ  \n"
+"  --rebase <dir>           Regenerate all .out files in dir from current      \n"
+"                           simulation output                                  \n"
 "  --version                Print out version information                       \n";
 
 void print_version() {
@@ -42,6 +51,8 @@ int main( int argc, char *argv[] ) {
     bool trace_parsing = false;
     bool trace_tree = false;
     std::string simulate_email_path;
+    std::string test_dir_path;
+    std::string rebase_dir_path;
     std::vector<std::string> sieve_files;
     sieve::Diagnostic diag;
     struct sieve::parse_options options;
@@ -100,6 +111,26 @@ int main( int argc, char *argv[] ) {
                 continue;
             }
 
+            if (strcmp(argv[i], "--test-dir") == 0) {
+                if (i + 1 >= argc) {
+                    std::cerr << "Expected a directory path after --test-dir." << std::endl;
+                    return 1;
+                }
+                test_dir_path = argv[i+1];
+                i++;
+                continue;
+            }
+
+            if (strcmp(argv[i], "--rebase") == 0) {
+                if (i + 1 >= argc) {
+                    std::cerr << "Expected a directory path after --rebase." << std::endl;
+                    return 1;
+                }
+                rebase_dir_path = argv[i+1];
+                i++;
+                continue;
+            }
+
             if (strcmp(argv[i], "--server") == 0) {
                 if (i + 1 >= argc)
                 {
@@ -130,8 +161,8 @@ int main( int argc, char *argv[] ) {
         }
     }
 
-    // Second pass: process sieve files
-    for (const auto &sieve_file : sieve_files) {
+    // Second pass: process sieve files (skipped when --test-dir or --rebase is used)
+    for (const auto &sieve_file : (!test_dir_path.empty() || !rebase_dir_path.empty() ? std::vector<std::string>{} : sieve_files)) {
         if (!file_exists(sieve_file.c_str())) {
             std::cerr << "Could not find file \"" << sieve_file << "\"." << std::endl;
             result = 2;
@@ -169,6 +200,88 @@ int main( int argc, char *argv[] ) {
             std::cerr << diag.describe(parse_res, fin);
             result = 1;
         }
+    }
+
+    if (!test_dir_path.empty() || !rebase_dir_path.empty()) {
+        namespace fs = std::filesystem;
+        const std::string &dir = !test_dir_path.empty() ? test_dir_path : rebase_dir_path;
+
+        if (sieve_files.size() != 1) {
+            std::cerr << "--test-dir/--rebase requires exactly one sieve file argument." << std::endl;
+            return 1;
+        }
+        const std::string &sieve_file = sieve_files[0];
+
+        sieve::driver driver(options);
+        driver.trace_scanning = trace_scanning;
+        driver.trace_parsing = trace_parsing;
+        driver.trace_tree = trace_tree;
+        sieve::parse_result parse_res = driver.parse_file(sieve_file);
+        if (parse_res.status) {
+            std::ifstream fin(sieve_file);
+            std::cerr << "Errors found in \"" << sieve_file << "\":" << std::endl << std::endl;
+            std::cerr << diag.describe(parse_res, fin);
+            return 1;
+        }
+
+        int failures = 0, total = 0;
+
+        for (const auto &entry : fs::directory_iterator(dir)) {
+            if (entry.path().extension() != ".eml") continue;
+            total++;
+            std::string eml_path = entry.path().string();
+
+            // Capture simulation output
+            std::ostringstream captured;
+            std::streambuf *orig = std::cout.rdbuf(captured.rdbuf());
+            sieve::EmailMessage email = sieve::EmailMessage::parse(eml_path);
+            sieve::ASTSimulationVisitor sim(email, sieve_file, eml_path);
+            sim.walk(driver.syntax_tree());
+            std::cout.rdbuf(orig);
+
+            // Strip first line (environment-specific path line)
+            std::string output = captured.str();
+            auto nl = output.find('\n');
+            std::string stripped = (nl != std::string::npos) ? output.substr(nl + 1) : output;
+
+            fs::path out_path = entry.path();
+            out_path.replace_extension(".out");
+
+            if (!rebase_dir_path.empty()) {
+                std::ofstream out_file(out_path);
+                out_file << stripped;
+            } else {
+                std::string expected;
+                if (fs::exists(out_path)) {
+                    std::ifstream in(out_path);
+                    expected.assign((std::istreambuf_iterator<char>(in)),
+                                     std::istreambuf_iterator<char>());
+                }
+                if (stripped != expected) {
+                    failures++;
+                    char tmpname[] = "/tmp/check-sieve-XXXXXX";
+                    int fd = mkstemp(tmpname);
+                    write(fd, stripped.c_str(), stripped.size());
+                    close(fd);
+                    std::string expected_arg = fs::exists(out_path) ? out_path.string() : "/dev/null";
+                    std::string cmd = "diff -ubBd " + expected_arg + " " + std::string(tmpname);
+                    FILE *pipe = popen(cmd.c_str(), "r");
+                    char buf[256];
+                    while (fgets(buf, sizeof(buf), pipe)) std::cout << buf;
+                    pclose(pipe);
+                    unlink(tmpname);
+                }
+            }
+        }
+
+        if (!rebase_dir_path.empty()) {
+            return 0;
+        }
+        if (failures > 0) {
+            std::cerr << failures << " of " << total << " sort(s) failed." << std::endl;
+            return 1;
+        }
+        return 0;
     }
 
     return result;

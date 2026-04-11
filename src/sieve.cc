@@ -269,7 +269,12 @@ int main( int argc, char *argv[] ) {
                     failures++;
                     char tmpname[] = "/tmp/check-sieve-XXXXXX";
                     int fd = mkstemp(tmpname);
-                    write(fd, stripped.c_str(), stripped.size());
+                    if (write(fd, stripped.c_str(), stripped.size()) < 0) {
+                        std::cerr << "Failed writing to temporary file at "
+                                  << tmpname << ": "
+                                  << std::strerror(errno) << "\n";
+                        abort();
+                    }
                     close(fd);
                     std::string expected_arg = out_exists ? out_path : "/dev/null";
                     std::string cmd = "diff -ubBd " + expected_arg + " " + std::string(tmpname);

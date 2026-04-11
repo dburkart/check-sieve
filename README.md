@@ -53,18 +53,22 @@ For a web-based demonstration of check-sieve which is entirely browser-based, vi
 
 ## Usage
 ```
-Usage: check-sieve [options] file1 [file2 ...]                                 
-                                                                               
-Options:                                                                       
-  -h, --help               Show this message                                   
-  --max-list-length N      Flag lists over a certain length (default: none)    
-  --server <host>:<port>   Only allow capabilities advertised by the specified 
-                           server.                                             
-  --trace-parser           Trace the operation of the parser                   
-  --trace-scanner          Trace the operation of the scanner                  
-  --trace-tree             Trace the abstract-syntax-tree                      
+Usage: check-sieve [options] file1 [file2 ...]
+
+Options:
+  -h, --help               Show this message
+  --max-list-length N      Flag lists over a certain length (default: none)
+  --server <host>:<port>   Only allow capabilities advertised by the specified
+                           server.
+  --trace-parser           Trace the operation of the parser
+  --trace-scanner          Trace the operation of the scanner
+  --trace-tree             Trace the abstract-syntax-tree
   --simulate <email-file>  Simulate sieve processing against an email (.eml)
-  --version                Print out version information 
+  --test-dir <dir>         Run simulation for all .eml files in dir and diff
+                           against matching .out files; exit 1 if any differ
+  --rebase <dir>           Regenerate all .out files in dir from current
+                           simulation output
+  --version                Print out version information
 ```
 
 ## Features

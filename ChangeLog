@@ -1,3 +1,6 @@
+Version 1.0.1:
+ * Fix build error introduced in 1.0.0. (mweinelt)
+
 Version 1.0.0:
  * Experimental: Adds mail sorting simulation flag (--simulate).
  * Support for Vacation Extension: "Seconds" (RFC 6131).

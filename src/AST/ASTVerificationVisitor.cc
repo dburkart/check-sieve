@@ -283,7 +283,7 @@ void ASTVerificationVisitor::_init() {
 }
 
 void ASTVerificationVisitor::_enable_capability(std::string_view capability) {
-    if (!_options.all_supported_capabilities && !_options.capabilities[capability])
+    if (!_options.all_supported_capabilities && !_options.capabilities.count(std::string(capability)))
     {
         _verification_result = {
                 1,

@@ -23,7 +23,7 @@ driver::driver( struct parse_options options )
     , trace_parsing( false )
     , trace_tree( false )
     , result( 0 )
-    , _options( options )
+    , _options( std::move( options ) )
     , yyscanner()
     , _sieve() {}
 

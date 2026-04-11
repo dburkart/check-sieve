@@ -142,6 +142,7 @@ int main( int argc, char *argv[] ) {
                 auto server = sieve::MailServer::create(argv[i+1]);
                 options.all_supported_capabilities = false;
                 options.capabilities = server.capabilities();
+
                 i++;
                 continue;
             }

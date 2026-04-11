@@ -12,7 +12,7 @@ public:
     static MailServer create(const std::string& host_with_port);
     ~MailServer();
 
-    std::map<std::string_view, bool> capabilities();
+    std::map<std::string, bool> capabilities();
 
 protected:
     MailServer(std::string hostname, uint32_t port);

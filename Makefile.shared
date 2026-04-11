@@ -21,6 +21,14 @@ ifeq ($(PLATFORM), FreeBSD)
 MAKE = gmake
 endif
 
+LIBDIR = lib
+
+ifeq ($(PLATFORM), Linux)
+ifeq ($(ARCH), x86_64)
+	LIBDIR = lib64
+endif
+endif
+
 ifdef DEBUG
 CFLAGS += -DDEBUG
 endif

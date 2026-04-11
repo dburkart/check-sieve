@@ -42,11 +42,11 @@ test: libchecksieve.a check-sieve
 
 install: all
 	mkdir -p $(INSTALL_PREFIX)/bin
-	mkdir -p $(INSTALL_PREFIX)/lib
+	mkdir -p $(INSTALL_PREFIX)/$(LIBDIR)
 	mkdir -p $(INSTALL_PREFIX)/share/man/man1
 	install check-sieve $(INSTALL_PREFIX)/bin
-	install libchecksieve.a $(INSTALL_PREFIX)/lib
-	install ./docs/man1/check-sieve.1 $(INSTALL_PREFIX)/share/man/man1
+	install libchecksieve.a $(INSTALL_PREFIX)/$(LIBDIR)
+	cp ./docs/man1/check-sieve.1 $(INSTALL_PREFIX)/share/man/man1
 
 wasm:
 	emcc --bind -o checksieve.js $(CFLAGS) $(GENERATED_SRC) $(LIBCHECKSIEVE_SRC) $(AST_SRC) $(BASE)/src/webchecksieve.cc

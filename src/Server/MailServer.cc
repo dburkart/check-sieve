@@ -3,7 +3,6 @@
 #include <string>
 #include <utility>
 
-#include <arpa/inet.h>
 #include <cctype>
 #include <netdb.h>
 #include <sys/socket.h>
@@ -84,41 +83,33 @@ void MailServer::_connect()
     if (_socket >= 0)
         return;
 
-    if ((_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        std::cout << "Socket creation error" << std::endl;
+    struct addrinfo hints{};
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+
+    std::string port_str = std::to_string(this->_port);
+    struct addrinfo *res;
+    int err = getaddrinfo(this->_hostname.c_str(), port_str.c_str(), &hints, &res);
+    if (err != 0) {
+        std::cout << "getaddrinfo: " << gai_strerror(err) << std::endl;
         abort();
     }
 
-    struct sockaddr_in server_address{};
-    server_address.sin_family = AF_INET;
-    server_address.sin_port = htons(this->_port);
-
-    struct hostent *host_entry;
-    struct in_addr **address_list;
-
-    if ((host_entry = gethostbyname(this->_hostname.c_str())) == nullptr) {
-        herror("gethostbyname");
-        abort();
+    bool connected = false;
+    for (struct addrinfo *ai = res; ai != nullptr; ai = ai->ai_next) {
+        _socket = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
+        if (_socket < 0)
+            continue;
+        if (connect(_socket, ai->ai_addr, ai->ai_addrlen) == 0) {
+            connected = true;
+            break;
+        }
+        close(_socket);
+        _socket = -1;
     }
+    freeaddrinfo(res);
 
-    address_list = (struct in_addr **) host_entry->h_addr_list;
-
-    char ip[100] = {};
-    if (address_list[0] == nullptr)
-    {
-        std::cout << "Could not map hostname: " << this->_hostname << " to an IP address." << std::endl;
-        abort();
-    }
-    strcpy(ip, inet_ntoa(*address_list[0]));
-
-    if (inet_pton(AF_INET, ip, &server_address.sin_addr) <= 0)
-    {
-        std::cout << "Invalid address / Address not supported" << ip << std::endl;
-        abort();
-    }
-
-    if (connect(_socket, (struct sockaddr *)&server_address, sizeof(server_address)) < 0)
-    {
+    if (!connected) {
         std::cout << "Connection Failed" << std::endl;
         abort();
     }

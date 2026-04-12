@@ -15,7 +15,11 @@ include $(BASE)/src/AST/Makefile.env
 include $(BASE)/src/Server/Makefile.env
 include $(BASE)/src/Email/Makefile.env
 
-.PHONY: test rebase
+ASAN_LIB     := $(shell ldconfig -p 2>/dev/null | grep 'libasan\.so\b' | head -1 | awk '{print $$NF}')
+ASAN_CFLAGS  := -fsanitize=address -fno-omit-frame-pointer -g
+ASAN_LDFLAGS := -fsanitize=address
+
+.PHONY: test test-asan rebase
 
 all: libchecksieve.a check-sieve
 
@@ -39,6 +43,14 @@ test: libchecksieve.a check-sieve
 	@python3 --version
 	python3 $(BASE)/test/setup.py build_ext -i
 	python3 -m unittest discover -s test -p '*_test.py'
+
+test-asan:
+	$(MAKE) clean
+	CFLAGS="$(ASAN_CFLAGS)" $(MAKE) all
+	rm -Rf build checksieve*.so
+	CFLAGS="$(ASAN_CFLAGS)" LDFLAGS="$(ASAN_LDFLAGS)" python3 $(BASE)/test/setup.py build_ext -i
+	ASAN_OPTIONS="halt_on_error=0:detect_leaks=1" LD_PRELOAD="$(ASAN_LIB)" \
+		python3 -m unittest discover -s test -p '*_test.py'
 
 install: all
 	mkdir -p $(INSTALL_PREFIX)/bin

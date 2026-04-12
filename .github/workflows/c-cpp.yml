@@ -3,7 +3,9 @@ name: C/C++ CI
 permissions:
   contents: read
 
-on: [push]
+on:
+  push:
+  pull_request:
 
 jobs:
   ubuntu_matrix:

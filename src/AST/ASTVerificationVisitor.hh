@@ -36,11 +36,8 @@ public:
     parse_result result() { return _verification_result; }
     
     bool requires_capability( std::string capability ) const {
-        try {
-            return _capability_map.at(capability);
-        } catch (const std::out_of_range& ex) {
-            return false;
-        }
+        auto it = _capability_map.find(capability);
+        return it != _capability_map.end() && it->second;
     }
     bool has_required( std::string require ) const {
         return requires_capability(require) || (

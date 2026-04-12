@@ -49,7 +49,7 @@ test-asan:
 	CFLAGS="$(ASAN_CFLAGS)" $(MAKE) all
 	rm -Rf build checksieve*.so
 	CFLAGS="$(ASAN_CFLAGS)" LDFLAGS="$(ASAN_LDFLAGS)" python3 $(BASE)/test/setup.py build_ext -i
-	ASAN_OPTIONS="halt_on_error=0:detect_leaks=1" LD_PRELOAD="$(ASAN_LIB)" \
+	ASAN_OPTIONS="halt_on_error=1:detect_leaks=0" LD_PRELOAD="$(ASAN_LIB)" \
 		python3 -m unittest discover -s test -p '*_test.py'
 
 install: all

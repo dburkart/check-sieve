@@ -18,6 +18,11 @@ public:
         , _children()
         , _location(location.begin, location.end) {}
 
+    virtual ~ASTNode() {
+        for (ASTNode *child : _children)
+            delete child;
+    }
+
     virtual void accept(ASTVisitor& visitor) =0;
     
     const std::vector<ASTNode *> &children() const { return this->_children; }

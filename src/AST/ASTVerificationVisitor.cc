@@ -48,7 +48,7 @@ void ASTVerificationVisitor::visit( ASTCommand* node ) {
     std::string value_lower = node->value();
     std::transform(value_lower.begin(), value_lower.end(), value_lower.begin(), ::tolower);
 
-    if (!_command_map[value_lower]) {
+    if (!_command_map.count(value_lower)) {
         _verification_result = {1, node->location(), "Unrecognized command \"" + node->value() + "\"."};
 
         auto require = _require_lookup.find(value_lower);
@@ -133,7 +133,7 @@ void ASTVerificationVisitor::visit( ASTTag* node ) {
     std::string value_lower = node->value();
     std::transform(value_lower.begin(), value_lower.end(), value_lower.begin(), ::tolower);
 
-    if (!_tag_map[value_lower]) {
+    if (!_tag_map.count(value_lower)) {
         _verification_result = {1, node->location(), "Unrecognized tag \"" + node->value() + "\"."};
 
         auto require = _require_lookup.find(value_lower);
@@ -177,7 +177,7 @@ void ASTVerificationVisitor::visit( ASTTest* node ) {
     const ASTTag *first_match_tag = nullptr;
     const ASTTag *second_match_tag = nullptr;
 
-    if (!_test_map[value_lower]) {
+    if (!_test_map.count(value_lower)) {
         _verification_result = {1, node->location(), "Unrecognized test \"" + node->value() + "\"."};
 
         auto require = _require_lookup.find(value_lower);

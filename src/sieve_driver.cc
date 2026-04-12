@@ -27,7 +27,9 @@ driver::driver( struct parse_options options )
     , yyscanner()
     , _sieve() {}
 
-driver::~driver() = default;
+driver::~driver() {
+    delete _sieve;
+}
 
 parse_result driver::parse_file( const std::string &fp ) {
     std::string line;

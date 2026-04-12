@@ -43,6 +43,23 @@ jobs:
       run: python3 -m pip install --upgrade setuptools
     - name: make test-asan
       run: make test-asan
+  ubsan:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v3
+      with:
+        python-version: "3.12"
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-dev
+        UBSAN_PKG=$(apt-cache search '^libubsan[0-9]' | awk '{print $1}' | sort -V | tail -1)
+        sudo apt-get install -y $UBSAN_PKG
+    - name: setup test dependencies
+      run: python3 -m pip install --upgrade setuptools
+    - name: make test-ubsan
+      run: make test-ubsan
   macos_matrix:
     runs-on: macos-latest
     strategy:

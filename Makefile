@@ -19,7 +19,10 @@ ASAN_LIB     := $(shell ldconfig -p 2>/dev/null | grep 'libasan\.so\b' | head -1
 ASAN_CFLAGS  := -fsanitize=address -fno-omit-frame-pointer -g
 ASAN_LDFLAGS := -fsanitize=address
 
-.PHONY: test test-asan rebase
+UBSAN_CFLAGS  := -fsanitize=undefined -fno-omit-frame-pointer -g -fno-sanitize-recover=all
+UBSAN_LDFLAGS := -fsanitize=undefined
+
+.PHONY: test test-asan test-ubsan rebase
 
 all: libchecksieve.a check-sieve
 
@@ -50,6 +53,14 @@ test-asan:
 	rm -Rf build checksieve*.so
 	CFLAGS="$(ASAN_CFLAGS)" LDFLAGS="$(ASAN_LDFLAGS)" python3 $(BASE)/test/setup.py build_ext -i
 	ASAN_OPTIONS="halt_on_error=1:detect_leaks=0" LD_PRELOAD="$(ASAN_LIB)" \
+		python3 -m unittest discover -s test -p '*_test.py'
+
+test-ubsan:
+	$(MAKE) clean
+	CFLAGS="$(UBSAN_CFLAGS)" $(MAKE) all
+	rm -Rf build checksieve*.so
+	CFLAGS="$(UBSAN_CFLAGS)" LDFLAGS="$(UBSAN_LDFLAGS)" python3 $(BASE)/test/setup.py build_ext -i
+	UBSAN_OPTIONS="halt_on_error=1:print_stacktrace=1" \
 		python3 -m unittest discover -s test -p '*_test.py'
 
 install: all
